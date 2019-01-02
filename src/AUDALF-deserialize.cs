@@ -169,6 +169,10 @@ namespace CSharp_AUDALF
 				{
 					value = reader.ReadInt32();
 				}
+				else if (ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
+				{
+					value = reader.ReadSingle();
+				}
 				else if (ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8))
 				{
 					ulong stringLengthInBytes = reader.ReadUInt64();

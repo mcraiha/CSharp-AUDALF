@@ -24,6 +24,14 @@ namespace CSharp_AUDALF
 			return GenericSerialize(generateResult.bytes, generateResult.positions);
 		}
 
+		public static byte[] Serialize(IEnumerable<float> floats)
+		{
+			IEnumerable<object> objects = floats.Cast<object>();
+			// Generate Key and value pairs section
+			var generateResult = GenerateListKeyValuePairs(objects, typeof(float));
+			return GenericSerialize(generateResult.bytes, generateResult.positions);
+		}
+
 		private static byte[] GenericSerialize(byte[] keyValuePairsBytes, List<ulong> keyValuePairsOffsets)
 		{
 			using (MemoryStream stream = new MemoryStream())
@@ -80,25 +88,6 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		/*private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<int> ints)
-		{
-			using (MemoryStream stream = new MemoryStream())
-			{
-				// Use UTF-8 because it has best support in different environments
-				using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
-				{
-					List<ulong> offsets = new List<ulong>();
-					ulong index = 0;
-					foreach (int i in ints)
-					{
-						offsets.Add(WriteOneListKeyValuePair(writer, index, i));
-						index++;
-					}
-					return (stream.ToArray(), offsets);
-				}
-			}
-		}*/
-
 		private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType)
 		{
 			using (MemoryStream stream = new MemoryStream())
@@ -134,6 +123,17 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 				// Write int as 4 bytes
 				writer.Write((int)value);
+				// Write 4 bytes of padding
+				PadWithZeros(writer, 4);
+			}
+			else if (typeof(float) == originalType)
+			{
+				// Single float value is 16 bytes
+
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+				// Write float as 4 bytes
+				writer.Write((float)value);
 				// Write 4 bytes of padding
 				PadWithZeros(writer, 4);
 			}
