@@ -16,35 +16,18 @@ namespace CSharp_AUDALF
 
 	public static class AUDALF_Deserialize
 	{
-		public static int[] Deserialize(byte[] payload, bool doSafetyChecks = true)
+		public static T[] Deserialize<T>(byte[] payload, bool doSafetyChecks = true)
 		{
-			return Deserialize(new MemoryStream(payload, writable: false), doSafetyChecks);
+			return Deserialize<T>(new MemoryStream(payload, writable: false), doSafetyChecks);
 		}
 
-		public static int[] Deserialize(Stream inputStream, bool doSafetyChecks = true)
+		public static T[] Deserialize<T>(Stream inputStream, bool doSafetyChecks = true)
 		{
 			ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
-			int[] returnValues = new int[entryOffsets.Length];
+			T[] returnValues = new T[entryOffsets.Length];
 			for (int i = 0; i < returnValues.Length; i++)
 			{
-				returnValues[i] = (int)ReadListKeyAndValueFromOffset(inputStream, entryOffsets[i]).value;
-			}
-
-			return returnValues;
-		}
-
-		public static string[] DeserializeStringArray(byte[] payload, bool doSafetyChecks = true)
-		{
-			return DeserializeStringArray(new MemoryStream(payload, writable: false), doSafetyChecks);
-		}
-
-		public static string[] DeserializeStringArray(Stream inputStream, bool doSafetyChecks = true)
-		{
-			ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
-			string[] returnValues = new string[entryOffsets.Length];
-			for (int i = 0; i < returnValues.Length; i++)
-			{
-				returnValues[i] = (string)ReadListKeyAndValueFromOffset(inputStream, entryOffsets[i]).value;
+				returnValues[i] = (T)ReadListKeyAndValueFromOffset(inputStream, entryOffsets[i]).value;
 			}
 
 			return returnValues;

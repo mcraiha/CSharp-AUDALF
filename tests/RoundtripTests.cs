@@ -18,7 +18,7 @@ namespace Tests
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(intArray);
-			int[] intArrayDeserialized = AUDALF_Deserialize.Deserialize(result);
+			int[] intArrayDeserialized = AUDALF_Deserialize.Deserialize<int>(result);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -35,7 +35,7 @@ namespace Tests
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringArray);
-			string[] stringArrayDeserialized = AUDALF_Deserialize.DeserializeStringArray(result);
+			string[] stringArrayDeserialized = AUDALF_Deserialize.Deserialize<string>(result);
 
 			// Assert
 			Assert.IsNotNull(result);
