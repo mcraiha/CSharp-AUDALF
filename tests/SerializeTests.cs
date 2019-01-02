@@ -39,6 +39,7 @@ namespace Tests
 			{
 				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
 				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
 			}
 		}
 
@@ -70,6 +71,7 @@ namespace Tests
 			{
 				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
 				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
 			}
 		}
 	}
