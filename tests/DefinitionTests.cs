@@ -117,5 +117,37 @@ namespace Tests
 			Assert.AreEqual(expected2048bit, result2048bit);
 			Assert.AreEqual(expected4096bit, result4096bit);
 		}
+
+		[Test]
+		public void FloatingPointsTest()
+		{
+			// Arrange
+			ulong expected8bit = 33554433;
+			ulong expected16bit = 33554434;
+			ulong expected32bit = 33554435;
+			ulong expected64bit = 33554436;
+			ulong expected128bit = 33554437;
+			ulong expected256bit = 33554438;
+			ulong expected512bit = 33554439;
+
+			// Act
+			ulong result8bit = BitConverter.ToUInt64(Definitions.floating_point_8_bit, 0);
+			ulong result16bit = BitConverter.ToUInt64(Definitions.floating_point_16_bit, 0);
+			ulong result32bit = BitConverter.ToUInt64(Definitions.floating_point_32_bit, 0);
+			ulong result64bit = BitConverter.ToUInt64(Definitions.floating_point_64_bit, 0);
+			ulong result128bit = BitConverter.ToUInt64(Definitions.floating_point_128_bit, 0);
+			ulong result256bit = BitConverter.ToUInt64(Definitions.floating_point_256_bit, 0);
+			ulong result512bit = BitConverter.ToUInt64(Definitions.floating_point_512_bit, 0);
+
+
+			// Assert
+			Assert.AreEqual(expected8bit, result8bit);
+			Assert.AreEqual(expected16bit, result16bit);
+			Assert.AreEqual(expected32bit, result32bit);
+			Assert.AreEqual(expected64bit, result64bit);
+			Assert.AreEqual(expected128bit, result128bit);
+			Assert.AreEqual(expected256bit, result256bit);
+			Assert.AreEqual(expected512bit, result512bit);
+		}
 	}
 }

@@ -43,6 +43,24 @@ namespace CSharp_AUDALF
 
 		#endregion // Signed integer
 
+		#region Floating points
+
+		public static readonly byte[] floating_point_8_bit = new byte[8] { 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] floating_point_16_bit = new byte[8] { 0x02, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] floating_point_32_bit = new byte[8] { 0x03, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] floating_point_64_bit = new byte[8] { 0x04, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] floating_point_128_bit = new byte[8] { 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] floating_point_256_bit = new byte[8] { 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] floating_point_512_bit = new byte[8] { 0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+
+		#endregion // Floating points
+
 
 		#region Strings
 
@@ -79,6 +97,7 @@ namespace CSharp_AUDALF
 		static Definitions()
 		{
 			dotnetTypeToAUDALF.Add(typeof(int), signed_32_bit_integerType);
+			dotnetTypeToAUDALF.Add(typeof(float), floating_point_32_bit);
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
 
 			audalfToDotnetType.Add(BitConverter.ToUInt64(unsigned_8_bit_integerType, 0), typeof(byte));
