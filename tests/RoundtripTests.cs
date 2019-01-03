@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using CSharp_AUDALF;
+using System.Collections.Generic;
 
 namespace Tests
 {
@@ -59,6 +60,28 @@ namespace Tests
 			Assert.IsNotNull(stringArrayDeserialized);
 
 			CollectionAssert.AreEqual(stringArray, stringArrayDeserialized);
+		}
+
+		[Test]
+		public void StringStringDictionaryRoundtripTest()
+		{
+			// Arrange
+			Dictionary<string, string> stringStringDictionary = new Dictionary<string, string>() 
+			{
+				{ "1", "is one" },
+				{ "second", null },
+				{ "emojis", "🐶🍦"}
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringStringDictionary);
+			Dictionary<string, string> stringStringDictionaryDeserialized = AUDALF_Deserialize.Deserialize<string, string>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(stringStringDictionaryDeserialized);
+
+			CollectionAssert.AreEqual(stringStringDictionary, stringStringDictionaryDeserialized);
 		}
 	}
 }

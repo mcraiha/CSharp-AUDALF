@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace CSharp_AUDALF
 {
@@ -31,6 +32,26 @@ namespace CSharp_AUDALF
 			}
 
 			return returnValues;
+		}
+
+		public static Dictionary<T, V> Deserialize<T, V>(byte[] payload, bool doSafetyChecks = true)
+		{
+			return Deserialize<T,V>(new MemoryStream(payload, writable: false), doSafetyChecks);
+		}
+
+		public static Dictionary<T, V> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true)
+		{
+			byte[] typeIdOfKeys = ReadKeyType(inputStream);
+
+			ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
+			Dictionary<T, V> returnDictionary = new Dictionary<T, V>(entryOffsets.Length);
+			for (int i = 0; i < entryOffsets.Length; i++)
+			{
+				(object key, object value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys);
+				returnDictionary.Add((T)key, (V)value);
+			}
+
+			return returnDictionary;
 		}
 
 		public static bool IsAUDALF(byte[] payload)
@@ -87,6 +108,20 @@ namespace CSharp_AUDALF
 				reader.BaseStream.Seek(Definitions.keyTypeOffset, SeekOrigin.Begin);
 				byte[] keyType = reader.ReadBytes(8);
 				return !ByteArrayCompare(Definitions.specialType, keyType);
+			}
+		}
+
+		public static byte[] ReadKeyType(byte[] payload)
+		{
+			return ReadKeyType(new MemoryStream(payload, writable: false));
+		}
+
+		public static byte[] ReadKeyType(Stream inputStream)
+		{
+			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
+			{
+				reader.BaseStream.Seek(Definitions.keyTypeOffset, SeekOrigin.Begin);
+				return reader.ReadBytes(8);
 			}
 		}
 
@@ -181,6 +216,48 @@ namespace CSharp_AUDALF
 
 				return (key, value);
 			}
+		}
+
+		public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(Stream inputStream, ulong offset, byte[] typeIdOfKeyAsBytes)
+		{
+			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
+			{
+				reader.BaseStream.Seek((long)offset, SeekOrigin.Begin);
+				object key = Read(reader, typeIdOfKeyAsBytes);
+				object value = null;
+				byte[] typeIdOfValueAsBytes = reader.ReadBytes(8);
+
+				value = Read(reader, typeIdOfValueAsBytes);
+
+				return (key, value);
+			}
+		}
+
+		private static object Read(BinaryReader reader, byte[] typeIdAsBytes)
+		{
+			if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
+			{
+
+			}
+			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType))
+			{
+				return reader.ReadUInt32();
+			}
+			else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType))
+			{
+				return reader.ReadInt32();
+			}
+			else if (ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
+			{
+				return reader.ReadSingle();
+			}
+			else if (ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8))
+			{
+				ulong stringLengthInBytes = reader.ReadUInt64();
+				return Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
+			}
+
+			return null;
 		}
 
 		private static bool ByteArrayCompare(byte[] a1, byte[] a2) 
