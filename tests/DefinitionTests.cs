@@ -149,5 +149,27 @@ namespace Tests
 			Assert.AreEqual(expected256bit, result256bit);
 			Assert.AreEqual(expected512bit, result512bit);
 		}
+
+		[Test]
+		public void StringsTest()
+		{
+			// Arrange
+			ulong expectedAscii = 83886081;
+			ulong expectedUtf8 = 83886082;
+			ulong expectedUtf16 = 83886083;
+			ulong expectedUtf32 = 83886084;
+
+			// Act
+			ulong resultAscii = BitConverter.ToUInt64(Definitions.string_ascii, 0);
+			ulong resultUtf8 = BitConverter.ToUInt64(Definitions.string_utf8, 0);
+			ulong resultUtf16 = BitConverter.ToUInt64(Definitions.string_utf16, 0);
+			ulong resultUtf32 = BitConverter.ToUInt64(Definitions.string_utf32, 0);
+
+			// Assert
+			Assert.AreEqual(expectedAscii, resultAscii);
+			Assert.AreEqual(expectedUtf8, resultUtf8);
+			Assert.AreEqual(expectedUtf16, resultUtf16);
+			Assert.AreEqual(expectedUtf32, resultUtf32);
+		}
 	}
 }
