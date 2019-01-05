@@ -133,24 +133,6 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		/*private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs(Dictionary<string, object> pairs, Dictionary<string, Type> valueTypes = null)
-		{
-			using (MemoryStream stream = new MemoryStream())
-			{
-				// Use UTF-8 because it has best support in different environments
-				using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
-				{
-					List<ulong> offsets = new List<ulong>();;
-					foreach (var pair in pairs)
-					{
-						Type typeOfValue = valueTypes != null && valueTypes.ContainsKey(pair.Key) ? valueTypes[pair.Key] : null;
-						offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeOfValue));
-					}
-					return (stream.ToArray(), offsets);
-				}
-			}
-		}*/
-
 		private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType)
 		{
 			using (MemoryStream stream = new MemoryStream())
