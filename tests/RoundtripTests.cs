@@ -83,7 +83,7 @@ namespace Tests
 		public void IntArrayRoundtripTest()
 		{
 			// Arrange
-			int[] intArray = new int[] { 1, 10, 100, 1000 };
+			int[] intArray = new int[] { int.MinValue, 0, 1, 10, 100, 1000, 1000000, int.MaxValue };
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(intArray);
