@@ -32,7 +32,7 @@ Dictionary<string, string> fromBytes = AUDALF_Deserialize.Deserialize<string, st
 
 ## What types are currently supported
 
-int, float, string
+byte, int, float, string
 
 ## Test cases
 
