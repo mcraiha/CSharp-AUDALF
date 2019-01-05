@@ -190,15 +190,15 @@ namespace CSharp_AUDALF
 		{
 			if (typeof(int) == originalType)
 			{
-				WriteInt(writer, variableToWrite, originalType, isKey: false);
+				WriteInt(writer, variableToWrite, originalType, isKey: isKey);
 			}
 			else if (typeof(float) == originalType)
 			{
-				WriteFloat(writer, variableToWrite, originalType, isKey: false);
+				WriteFloat(writer, variableToWrite, originalType, isKey: isKey);
 			}
 			else if (typeof(string) == originalType)
 			{
-				WriteString(writer, variableToWrite, originalType, isKey: false);
+				WriteString(writer, variableToWrite, originalType, isKey: isKey);
 			}
 		}
 
@@ -266,7 +266,7 @@ namespace CSharp_AUDALF
 				
 				// Pad with zeroes if needed
 				ulong currentPos = (ulong)writer.BaseStream.Position;
-				ulong nextDivisableBy8 = NextDivisableBy8(currentPos);
+				ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
 				PadWithZeros(writer, nextDivisableBy8 - currentPos);
 			}
 		}
@@ -294,11 +294,6 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static ulong NextDivisableBy8(ulong current)
-		{
-			ulong bits = current & 7;
-    		if (bits == 0) return current;
-    		return current + (8-bits);
-		}
+		
 	}
 }

@@ -224,6 +224,11 @@ namespace CSharp_AUDALF
 			{
 				reader.BaseStream.Seek((long)offset, SeekOrigin.Begin);
 				object key = Read(reader, typeIdOfKeyAsBytes);
+
+				// Since key might not end in 8 byte alignment, move to it
+				long nextValid8ByteBlock = (long)Definitions.NextDivisableBy8((ulong)reader.BaseStream.Position);
+				reader.BaseStream.Seek(nextValid8ByteBlock, SeekOrigin.Begin);
+				
 				object value = null;
 				byte[] typeIdOfValueAsBytes = reader.ReadBytes(8);
 

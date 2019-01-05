@@ -116,5 +116,17 @@ namespace CSharp_AUDALF
 		}
 
 		#endregion // Types to types pairings
+
+
+		#region Common math
+
+		public static ulong NextDivisableBy8(ulong current)
+		{
+			ulong bits = current & 7;
+    		if (bits == 0) return current;
+    		return current + (8-bits);
+		}
+
+		#endregion
 	}
 }
