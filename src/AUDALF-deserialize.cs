@@ -192,27 +192,7 @@ namespace CSharp_AUDALF
 				object value = null;
 				byte[] typeIdAsBytes = reader.ReadBytes(8);
 
-				if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
-				{
-
-				}
-				else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType))
-				{
-					value = reader.ReadUInt32();
-				}
-				else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType))
-				{
-					value = reader.ReadInt32();
-				}
-				else if (ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
-				{
-					value = reader.ReadSingle();
-				}
-				else if (ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8))
-				{
-					ulong stringLengthInBytes = reader.ReadUInt64();
-					value = Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
-				}
+				value = Read(reader, typeIdAsBytes);
 
 				return (key, value);
 			}
@@ -228,7 +208,7 @@ namespace CSharp_AUDALF
 				// Since key might not end in 8 byte alignment, move to it
 				long nextValid8ByteBlock = (long)Definitions.NextDivisableBy8((ulong)reader.BaseStream.Position);
 				reader.BaseStream.Seek(nextValid8ByteBlock, SeekOrigin.Begin);
-				
+
 				object value = null;
 				byte[] typeIdOfValueAsBytes = reader.ReadBytes(8);
 
