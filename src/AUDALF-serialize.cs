@@ -10,35 +10,11 @@ namespace CSharp_AUDALF
 	{
 		private static readonly string KeyCannotBeNullError = "Key cannot be null!";
 
-		public static byte[] Serialize(IEnumerable<byte> bytes)
+		public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure)
 		{
-			IEnumerable<object> objects = bytes.Cast<object>();
+			IEnumerable<object> objects = ienumerableStructure.Cast<object>();
 			// Generate Key and value pairs section
-			var generateResult = GenerateListKeyValuePairs(objects, typeof(byte));
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
-		}
-
-		public static byte[] Serialize(IEnumerable<int> ints)
-		{
-			IEnumerable<object> objects = ints.Cast<object>();
-			// Generate Key and value pairs section
-			var generateResult = GenerateListKeyValuePairs(objects, typeof(int));
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
-		}
-
-		public static byte[] Serialize(IEnumerable<string> strings)
-		{
-			IEnumerable<object> objects = strings.Cast<object>();
-			// Generate Key and value pairs section
-			var generateResult = GenerateListKeyValuePairs(objects, typeof(string));
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
-		}
-
-		public static byte[] Serialize(IEnumerable<float> floats)
-		{
-			IEnumerable<object> objects = floats.Cast<object>();
-			// Generate Key and value pairs section
-			var generateResult = GenerateListKeyValuePairs(objects, typeof(float));
+			var generateResult = GenerateListKeyValuePairs(objects, typeof(T));
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
 		}
 
