@@ -92,22 +92,11 @@ namespace CSharp_AUDALF
 
 		private static Dictionary<Type, byte[]> dotnetTypeToAUDALF = new Dictionary<Type, byte[]>();
 
-		private static Dictionary<UInt64, Type> audalfToDotnetType = new Dictionary<UInt64, Type>();
-
 		static Definitions()
 		{
 			dotnetTypeToAUDALF.Add(typeof(int), signed_32_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(float), floating_point_32_bit);
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
-
-			audalfToDotnetType.Add(BitConverter.ToUInt64(unsigned_8_bit_integerType, 0), typeof(byte));
-			audalfToDotnetType.Add(BitConverter.ToUInt64(unsigned_32_bit_integerType, 0), typeof(UInt32));
-			audalfToDotnetType.Add(BitConverter.ToUInt64(signed_32_bit_integerType, 0), typeof(Int32));
-		}
-
-		public static Type GetLanguageTypeWithAudalfType(byte[] audalfBytes)
-		{
-			return audalfToDotnetType[BitConverter.ToUInt64(audalfBytes, 0)];
 		}
 
 		public static byte[] GetAUDALFtypeWithDotnetType(Type type)
