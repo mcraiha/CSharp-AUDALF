@@ -94,9 +94,10 @@ namespace CSharp_AUDALF
 
 		static Definitions()
 		{
+			dotnetTypeToAUDALF.Add(typeof(byte), unsigned_8_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(int), signed_32_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(float), floating_point_32_bit);
-			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
+			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);			
 		}
 
 		public static byte[] GetAUDALFtypeWithDotnetType(Type type)

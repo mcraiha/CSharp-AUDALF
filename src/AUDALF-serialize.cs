@@ -10,6 +10,14 @@ namespace CSharp_AUDALF
 	{
 		private static readonly string KeyCannotBeNullError = "Key cannot be null!";
 
+		public static byte[] Serialize(IEnumerable<byte> bytes)
+		{
+			IEnumerable<object> objects = bytes.Cast<object>();
+			// Generate Key and value pairs section
+			var generateResult = GenerateListKeyValuePairs(objects, typeof(byte));
+			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
+		}
+
 		public static byte[] Serialize(IEnumerable<int> ints)
 		{
 			IEnumerable<object> objects = ints.Cast<object>();
@@ -188,7 +196,11 @@ namespace CSharp_AUDALF
 
 		private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey)
 		{
-			if (typeof(int) == originalType)
+			if (typeof(byte) == originalType)
+			{
+				WriteByte(writer, variableToWrite, originalType, isKey: isKey);
+			}
+			else if (typeof(int) == originalType)
 			{
 				WriteInt(writer, variableToWrite, originalType, isKey: isKey);
 			}
@@ -202,9 +214,24 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		private static void WriteByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single byte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write byte as 1 byte
+			writer.Write((byte)valueToWrite);
+			// Write 7 bytes of padding
+			PadWithZeros(writer, 7);
+		}
+
 		private static void WriteInt(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
 		{
-			// Single int takes either 8 bytes (key) or 16 bytes (value)
+			// Single int takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 			if (!isKey)
 			{
 				// Write value type ID (8 bytes)
@@ -219,7 +246,7 @@ namespace CSharp_AUDALF
 
 		private static void WriteFloat(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
 		{
-			// Single float takes either 8 bytes (key) or 16 bytes (value)
+			// Single float takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 			if (!isKey)
 			{
 				// Write value type ID (8 bytes)
