@@ -158,6 +158,18 @@ namespace CSharp_AUDALF
 			{
 				WriteByte(writer, variableToWrite, originalType, isKey: isKey);
 			}
+			else if (typeof(ushort) == originalType)
+			{
+				WriteUShort(writer, variableToWrite, originalType, isKey: isKey);
+			}
+			else if (typeof(uint) == originalType)
+			{
+				WriteUInt(writer, variableToWrite, originalType, isKey: isKey);
+			}
+			else if (typeof(ulong) == originalType)
+			{
+				WriteULong(writer, variableToWrite, originalType, isKey: isKey);
+			}
 			else if (typeof(int) == originalType)
 			{
 				WriteInt(writer, variableToWrite, originalType, isKey: isKey);
@@ -185,6 +197,50 @@ namespace CSharp_AUDALF
 			writer.Write((byte)valueToWrite);
 			// Write 7 bytes of padding
 			PadWithZeros(writer, 7);
+		}
+
+		private static void WriteUShort(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single ushort takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write ushort as 2 bytes
+			writer.Write((ushort)valueToWrite);
+			// Write 6 bytes of padding
+			PadWithZeros(writer, 6);
+		}
+
+		private static void WriteUInt(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single uint takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write ushort as 4 bytes
+			writer.Write((uint)valueToWrite);
+			// Write 4 bytes of padding
+			PadWithZeros(writer, 4);
+		}
+
+		private static void WriteULong(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single ulong takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write ulong as 8 bytes
+			writer.Write((ulong)valueToWrite);
+			// No padding needed
 		}
 
 		private static void WriteInt(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
