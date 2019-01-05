@@ -29,6 +29,57 @@ namespace Tests
 		}
 
 		[Test]
+		public void UShortArrayRoundtripTest()
+		{
+			// Arrange
+			ushort[] ushortArray = new ushort[] { 0, 1, 10, 100, 1000, ushort.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(ushortArray);
+			ushort[] uShortArrayDeserialized = AUDALF_Deserialize.Deserialize<ushort>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(uShortArrayDeserialized);
+
+			CollectionAssert.AreEqual(ushortArray, uShortArrayDeserialized);
+		}
+
+		[Test]
+		public void UIntArrayRoundtripTest()
+		{
+			// Arrange
+			uint[] uintArray = new uint[] { 0, 1, 10, 100, 1000, 1000000, uint.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(uintArray);
+			uint[] uIntArrayDeserialized = AUDALF_Deserialize.Deserialize<uint>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(uIntArrayDeserialized);
+
+			CollectionAssert.AreEqual(uintArray, uIntArrayDeserialized);
+		}
+
+		[Test]
+		public void ULongArrayRoundtripTest()
+		{
+			// Arrange
+			ulong[] ulongArray = new ulong[] { 0, 1, 10, 100, 1000, 1000000, 1000000000, ulong.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(ulongArray);
+			ulong[] uLongArrayDeserialized = AUDALF_Deserialize.Deserialize<ulong>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(uLongArrayDeserialized);
+
+			CollectionAssert.AreEqual(ulongArray, uLongArrayDeserialized);
+		}
+
+		[Test]
 		public void IntArrayRoundtripTest()
 		{
 			// Arrange
