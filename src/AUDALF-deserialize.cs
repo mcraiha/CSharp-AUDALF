@@ -222,7 +222,7 @@ namespace CSharp_AUDALF
 		{
 			if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
 			{
-
+				return reader.ReadByte();
 			}
 			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType))
 			{

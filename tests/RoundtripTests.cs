@@ -12,6 +12,23 @@ namespace Tests
 		}
 
 		[Test]
+		public void ByteArrayRoundtripTest()
+		{
+			// Arrange
+			byte[] byteArray = new byte[] { 0, 1, 10, 100, 255 };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(byteArray);
+			byte[] byteArrayDeserialized = AUDALF_Deserialize.Deserialize<byte>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(byteArrayDeserialized);
+
+			CollectionAssert.AreEqual(byteArray, byteArrayDeserialized);
+		}
+
+		[Test]
 		public void IntArrayRoundtripTest()
 		{
 			// Arrange
