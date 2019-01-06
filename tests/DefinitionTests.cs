@@ -171,5 +171,24 @@ namespace Tests
 			Assert.AreEqual(expectedUtf16, resultUtf16);
 			Assert.AreEqual(expectedUtf32, resultUtf32);
 		}
+
+		[Test]
+		public void DateTimesTest()
+		{
+			// Arrange
+			ulong expectedUnixSeconds = 117440513;
+			ulong expectedUnixMilliseconds = 117440514;
+			ulong expectedISO8601 = 117440515;
+
+			// Act
+			ulong resultUnixSeconds = BitConverter.ToUInt64(Definitions.datetime_unix_seconds, 0);
+			ulong resultUnixMilliseconds = BitConverter.ToUInt64(Definitions.datetime_unix_milliseconds, 0);
+			ulong resultISO8601 = BitConverter.ToUInt64(Definitions.datetime_iso_8601, 0);
+
+			// Assert
+			Assert.AreEqual(expectedUnixSeconds, resultUnixSeconds);
+			Assert.AreEqual(expectedUnixMilliseconds, resultUnixMilliseconds);
+			Assert.AreEqual(expectedISO8601, resultISO8601);
+		}
 	}
 }

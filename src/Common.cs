@@ -28,6 +28,7 @@ namespace CSharp_AUDALF
 
 		public static readonly byte[] specialType = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+
 		#region Unsigned integer
 
 		public static readonly byte[] unsigned_8_bit_integerType = new byte[8] { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -57,6 +58,7 @@ namespace CSharp_AUDALF
 		public static readonly byte[] signed_4096_bit_integerType = new byte[8] { 0x0A, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 }; 
 
 		#endregion // Signed integer
+
 
 		#region Floating points
 
@@ -89,6 +91,16 @@ namespace CSharp_AUDALF
 
 		#endregion // Strings
 
+
+		#region Date / time 
+
+		public static readonly byte[] datetime_unix_seconds = new byte[8] { 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] datetime_unix_milliseconds = new byte[8] { 0x02, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00 };
+
+		public static readonly byte[] datetime_iso_8601 = new byte[8] { 0x03, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00 };
+
+		#endregion // Date / time 
 
 		#region Known offsets
 
