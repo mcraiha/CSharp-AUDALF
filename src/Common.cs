@@ -3,6 +3,21 @@ using System.Collections.Generic;
 
 namespace CSharp_AUDALF
 {
+	public enum DateTimeFormat
+	{
+		/// <summary>
+		/// Default value
+		/// </summary>
+		ISO8601 = 0,
+		UnixInMilliseconds,
+		UnixInSeconds
+	}
+
+	public class SerializationSettings
+	{
+		public DateTimeFormat dateTimeFormat;
+	}
+
 	public static class Definitions
 	{
 		public static readonly byte[] fourCC = new byte[4] { 0x41, 0x55, 0x44, 0x41 };

@@ -10,27 +10,27 @@ namespace CSharp_AUDALF
 	{
 		private static readonly string KeyCannotBeNullError = "Key cannot be null!";
 
-		public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure)
+		public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings serializationSettings = null)
 		{
 			IEnumerable<object> objects = ienumerableStructure.Cast<object>();
 			// Generate Key and value pairs section
-			var generateResult = GenerateListKeyValuePairs(objects, typeof(T));
+			var generateResult = GenerateListKeyValuePairs(objects, typeof(T), serializationSettings);
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
 		}
 
-		public static byte[] Serialize(Dictionary<string, string> dictionary)
+		public static byte[] Serialize(Dictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
 		{
 			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(string));
 			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes);
+			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
 
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
 		}
 
-		public static byte[] Serialize(Dictionary<string, object> dictionary, Dictionary<string, Type> valueTypes = null)
+		public static byte[] Serialize(Dictionary<string, object> dictionary, Dictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes);
+			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
 
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
 		}
@@ -91,7 +91,7 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(Dictionary<T, V> pairs, Dictionary<T, Type> valueTypes = null)
+		private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(Dictionary<T, V> pairs, Dictionary<T, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			using (MemoryStream stream = new MemoryStream())
 			{
@@ -102,14 +102,14 @@ namespace CSharp_AUDALF
 					foreach (var pair in pairs)
 					{
 						Type typeOfValue = valueTypes != null && valueTypes.ContainsKey(pair.Key) ? valueTypes[pair.Key] : null;
-						offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeOfValue));
+						offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeOfValue, serializationSettings));
 					}
 					return (stream.ToArray(), offsets);
 				}
 			}
 		}
 
-		private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType)
+		private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType, SerializationSettings serializationSettings)
 		{
 			using (MemoryStream stream = new MemoryStream())
 			{
@@ -120,7 +120,7 @@ namespace CSharp_AUDALF
 					ulong index = 0;
 					foreach (object o in values)
 					{
-						offsets.Add(WriteOneListKeyValuePair(writer, index, o, originalType));
+						offsets.Add(WriteOneListKeyValuePair(writer, index, o, originalType, serializationSettings));
 						index++;
 					}
 					return (stream.ToArray(), offsets);
@@ -128,18 +128,18 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type originalType)
+		private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type originalType, SerializationSettings serializationSettings)
 		{
 			// Store current offset, because different types can take different amount of space
 			ulong returnValue = (ulong)writer.BaseStream.Position;
 
-			GenericWrite(writer, key, originalType, isKey: true);
-			GenericWrite(writer, value, originalType, isKey: false);
+			GenericWrite(writer, key, originalType, isKey: true, serializationSettings: serializationSettings);
+			GenericWrite(writer, value, originalType, isKey: false, serializationSettings: serializationSettings);
 
 			return returnValue;
 		}
 
-		private static ulong WriteOneListKeyValuePair(BinaryWriter writer, ulong index, object value, Type originalType)
+		private static ulong WriteOneListKeyValuePair(BinaryWriter writer, ulong index, object value, Type originalType, SerializationSettings serializationSettings)
 		{
 			// Store current offset, because different types can take different amount of space
 			ulong returnValue = (ulong)writer.BaseStream.Position;
@@ -147,12 +147,12 @@ namespace CSharp_AUDALF
 			// Write Index number which is always 8 bytes
 			writer.Write(index);
 
-			GenericWrite(writer, value, originalType, isKey: false);
+			GenericWrite(writer, value, originalType, isKey: false, serializationSettings: serializationSettings);
 
 			return returnValue;
 		}
 
-		private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey)
+		private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
 		{
 			if (typeof(byte) == originalType)
 			{
