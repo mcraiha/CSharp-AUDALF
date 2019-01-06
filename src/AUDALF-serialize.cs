@@ -170,9 +170,21 @@ namespace CSharp_AUDALF
 			{
 				WriteULong(writer, variableToWrite, originalType, isKey: isKey);
 			}
+			if (typeof(sbyte) == originalType)
+			{
+				WriteSByte(writer, variableToWrite, originalType, isKey: isKey);
+			}
+			else if (typeof(short) == originalType)
+			{
+				WriteShort(writer, variableToWrite, originalType, isKey: isKey);
+			}
 			else if (typeof(int) == originalType)
 			{
 				WriteInt(writer, variableToWrite, originalType, isKey: isKey);
+			}
+			else if (typeof(long) == originalType)
+			{
+				WriteLong(writer, variableToWrite, originalType, isKey: isKey);
 			}
 			else if (typeof(float) == originalType)
 			{
