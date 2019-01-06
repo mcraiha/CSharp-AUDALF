@@ -165,6 +165,23 @@ namespace Tests
 		}
 
 		[Test]
+		public void DoubleArrayRoundtripTest()
+		{
+			// Arrange
+			double[] doubleArray = new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(doubleArray);
+			double[] doubleArrayDeserialized = AUDALF_Deserialize.Deserialize<double>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(doubleArrayDeserialized);
+
+			CollectionAssert.AreEqual(doubleArray, doubleArrayDeserialized);
+		}
+
+		[Test]
 		public void StringArrayRoundtripTest()
 		{
 			// Arrange
