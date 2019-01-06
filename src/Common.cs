@@ -98,7 +98,12 @@ namespace CSharp_AUDALF
 			dotnetTypeToAUDALF.Add(typeof(ushort), unsigned_16_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(uint), unsigned_32_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(ulong), unsigned_64_bit_integerType);
+
+			dotnetTypeToAUDALF.Add(typeof(sbyte), signed_8_bit_integerType);
+			dotnetTypeToAUDALF.Add(typeof(short), signed_16_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(int), signed_32_bit_integerType);
+			dotnetTypeToAUDALF.Add(typeof(long), signed_64_bit_integerType);
+
 			dotnetTypeToAUDALF.Add(typeof(float), floating_point_32_bit);
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);			
 		}

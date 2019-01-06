@@ -243,6 +243,36 @@ namespace CSharp_AUDALF
 			// No padding needed
 		}
 
+		private static void WriteSByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single sbyte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write sbyte as 1 byte
+			writer.Write((sbyte)valueToWrite);
+			// Write 7 bytes of padding
+			PadWithZeros(writer, 7);
+		}
+
+		private static void WriteShort(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single short takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write short as 2 bytes
+			writer.Write((short)valueToWrite);
+			// Write 6 bytes of padding
+			PadWithZeros(writer, 6);
+		}
+
 		private static void WriteInt(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
 		{
 			// Single int takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
@@ -256,6 +286,20 @@ namespace CSharp_AUDALF
 			writer.Write((int)valueToWrite);
 			// Write 4 bytes of padding
 			PadWithZeros(writer, 4);
+		}
+
+		private static void WriteLong(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single long takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write ulong as 8 bytes
+			writer.Write((long)valueToWrite);
+			// No padding needed
 		}
 
 		private static void WriteFloat(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
