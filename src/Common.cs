@@ -133,7 +133,10 @@ namespace CSharp_AUDALF
 
 			dotnetTypeToAUDALF.Add(typeof(float), floating_point_32_bit);
 			dotnetTypeToAUDALF.Add(typeof(double), floating_point_64_bit);
-			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);			
+
+			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
+
+			// DateTimes are missing for reason, they have Settings for choosing wanted serialization
 		}
 
 		public static byte[] GetAUDALFtypeWithDotnetType(Type type)

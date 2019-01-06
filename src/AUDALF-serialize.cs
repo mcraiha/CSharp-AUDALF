@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 
 namespace CSharp_AUDALF
 {
@@ -198,6 +199,10 @@ namespace CSharp_AUDALF
 			{
 				WriteString(writer, variableToWrite, originalType, isKey: isKey);
 			}
+			else if (typeof(DateTime) == originalType)
+			{
+				WriteDateTime(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+			}
 		}
 
 		private static void WriteByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -383,6 +388,51 @@ namespace CSharp_AUDALF
 				ulong currentPos = (ulong)writer.BaseStream.Position;
 				ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
 				PadWithZeros(writer, nextDivisableBy8 - currentPos);
+			}
+		}
+
+		private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey, DateTimeFormat dateTimeFormat)
+		{
+			// Single datetime might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				switch (dateTimeFormat)
+				{
+					case DateTimeFormat.UnixInSeconds:
+						writer.Write(Definitions.datetime_unix_seconds);
+						break;
+
+					case DateTimeFormat.UnixInMilliseconds:
+						writer.Write(Definitions.datetime_unix_milliseconds);
+						break;
+
+					case DateTimeFormat.ISO8601:
+						writer.Write(Definitions.datetime_iso_8601);
+						break;
+
+				}
+			}
+
+			DateTime dt = (DateTime)valueToWrite;
+
+			switch (dateTimeFormat)
+			{
+				case DateTimeFormat.UnixInSeconds:
+					long unixTimeSeconds = ((DateTimeOffset)dt).ToUnixTimeSeconds();
+					writer.Write(unixTimeSeconds);
+					break;
+				
+				case DateTimeFormat.UnixInMilliseconds:
+					long unixTimeMilliSeconds = ((DateTimeOffset)dt).ToUnixTimeMilliseconds();
+					writer.Write(unixTimeMilliSeconds);
+					break;
+
+				case DateTimeFormat.ISO8601:
+					string iso8601Time = dt.ToString("o", CultureInfo.InvariantCulture);
+					// Use existing string writing for this
+					WriteString(writer, iso8601Time, originalType, isKey: true);
+					break;
 			}
 		}
 
