@@ -80,6 +80,40 @@ namespace Tests
 		}
 
 		[Test]
+		public void SByteArrayRoundtripTest()
+		{
+			// Arrange
+			sbyte[] sbyteArray = new sbyte[] { sbyte.MinValue, 0, 1, 10, 100, sbyte.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(sbyteArray);
+			sbyte[] sbyteArrayDeserialized = AUDALF_Deserialize.Deserialize<sbyte>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(sbyteArrayDeserialized);
+
+			CollectionAssert.AreEqual(sbyteArray, sbyteArrayDeserialized);
+		}
+
+		[Test]
+		public void ShortArrayRoundtripTest()
+		{
+			// Arrange
+			short[] shortArray = new short[] { short.MinValue, 0, 1, 10, 100, 1000, short.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(shortArray);
+			short[] shortArrayDeserialized = AUDALF_Deserialize.Deserialize<short>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(shortArrayDeserialized);
+
+			CollectionAssert.AreEqual(shortArray, shortArrayDeserialized);
+		}
+
+		[Test]
 		public void IntArrayRoundtripTest()
 		{
 			// Arrange
@@ -94,6 +128,23 @@ namespace Tests
 			Assert.IsNotNull(intArrayDeserialized);
 
 			CollectionAssert.AreEqual(intArray, intArrayDeserialized);
+		}
+
+		[Test]
+		public void LongArrayRoundtripTest()
+		{
+			// Arrange
+			long[] longArray = new long[] { long.MinValue, 0, 1, 10, 100, 1000, 1000000, 1000000000, long.MaxValue };
+			
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(longArray);
+			long[] LongArrayDeserialized = AUDALF_Deserialize.Deserialize<long>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(LongArrayDeserialized);
+
+			CollectionAssert.AreEqual(longArray, LongArrayDeserialized);
 		}
 
 		[Test]
