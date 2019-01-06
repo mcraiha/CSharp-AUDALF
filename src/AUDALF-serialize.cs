@@ -170,7 +170,7 @@ namespace CSharp_AUDALF
 			{
 				WriteULong(writer, variableToWrite, originalType, isKey: isKey);
 			}
-			if (typeof(sbyte) == originalType)
+			else if (typeof(sbyte) == originalType)
 			{
 				WriteSByte(writer, variableToWrite, originalType, isKey: isKey);
 			}
@@ -189,6 +189,10 @@ namespace CSharp_AUDALF
 			else if (typeof(float) == originalType)
 			{
 				WriteFloat(writer, variableToWrite, originalType, isKey: isKey);
+			}
+			else if (typeof(double) == originalType)
+			{
+				WriteDouble(writer, variableToWrite, originalType, isKey: isKey);
 			}
 			else if (typeof(string) == originalType)
 			{
@@ -327,6 +331,20 @@ namespace CSharp_AUDALF
 			writer.Write((float)valueToWrite);
 			// Write 4 bytes of padding
 			PadWithZeros(writer, 4);
+		}
+
+		private static void WriteDouble(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single double takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write double as 8 bytes
+			writer.Write((double)valueToWrite);
+			// No padding needed
 		}
 
 		private static void WriteString(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
