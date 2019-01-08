@@ -203,6 +203,10 @@ namespace CSharp_AUDALF
 			{
 				WriteDateTime(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
 			}
+			else if (typeof(DateTimeOffset) == originalType)
+			{
+				WriteDateTimeOffset(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+			}
 		}
 
 		private static void WriteByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -418,18 +422,63 @@ namespace CSharp_AUDALF
 
 			switch (dateTimeFormat)
 			{
-				case DateTimeFormat.UnixInSeconds:
-					long unixTimeSeconds = ((DateTimeOffset)dt).ToUnixTimeSeconds();
+				case DateTimeFormat.UnixInSeconds:				
+					long unixTimeSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeSeconds();
 					writer.Write(unixTimeSeconds);
 					break;
 				
 				case DateTimeFormat.UnixInMilliseconds:
-					long unixTimeMilliSeconds = ((DateTimeOffset)dt).ToUnixTimeMilliseconds();
+					long unixTimeMilliSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeMilliseconds();
 					writer.Write(unixTimeMilliSeconds);
 					break;
 
 				case DateTimeFormat.ISO8601:
 					string iso8601Time = dt.ToString("o", CultureInfo.InvariantCulture);
+					// Use existing string writing for this
+					WriteString(writer, iso8601Time, originalType, isKey: true);
+					break;
+			}
+		}
+
+		private static void WriteDateTimeOffset(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey, DateTimeFormat dateTimeFormat)
+		{
+			// Single datetimeoffset might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				switch (dateTimeFormat)
+				{
+					case DateTimeFormat.UnixInSeconds:
+						writer.Write(Definitions.datetime_unix_seconds);
+						break;
+
+					case DateTimeFormat.UnixInMilliseconds:
+						writer.Write(Definitions.datetime_unix_milliseconds);
+						break;
+
+					case DateTimeFormat.ISO8601:
+						writer.Write(Definitions.datetime_iso_8601);
+						break;
+
+				}
+			}
+
+			DateTimeOffset dto = (DateTimeOffset)valueToWrite;
+
+			switch (dateTimeFormat)
+			{
+				case DateTimeFormat.UnixInSeconds:
+					long unixTimeSeconds = dto.ToUnixTimeSeconds();
+					writer.Write(unixTimeSeconds);
+					break;
+				
+				case DateTimeFormat.UnixInMilliseconds:
+					long unixTimeMilliSeconds = dto.ToUnixTimeMilliseconds();
+					writer.Write(unixTimeMilliSeconds);
+					break;
+
+				case DateTimeFormat.ISO8601:
+					string iso8601Time = dto.ToString("o", CultureInfo.InvariantCulture);
 					// Use existing string writing for this
 					WriteString(writer, iso8601Time, originalType, isKey: true);
 					break;

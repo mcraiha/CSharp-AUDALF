@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using CSharp_AUDALF;
+using System;
 using System.Collections.Generic;
 
 namespace Tests
@@ -218,6 +219,70 @@ namespace Tests
 			Assert.IsNotNull(stringStringDictionaryDeserialized);
 
 			CollectionAssert.AreEqual(stringStringDictionary, stringStringDictionaryDeserialized);
+		}
+
+		[Test]
+		public void DateTimeArrayRoundtripTest()
+		{
+			// Arrange
+			DateTime[] dateTimeArray = new DateTime[] { new DateTime(1966, 1, 1), new DateTime(2000, 2, 28), new DateTime(2022, 6, 6) };
+			SerializationSettings settings1 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.ISO8601 };
+			SerializationSettings settings2 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.UnixInMilliseconds };
+			SerializationSettings settings3 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.UnixInSeconds };
+
+			// Act
+			byte[] result1 = AUDALF_Serialize.Serialize(dateTimeArray, settings1);
+			byte[] result2 = AUDALF_Serialize.Serialize(dateTimeArray, settings2);
+			byte[] result3 = AUDALF_Serialize.Serialize(dateTimeArray, settings3);
+
+			DateTime[] dateTimeArrayDeserialized1 = AUDALF_Deserialize.Deserialize<DateTime>(result1);
+			DateTime[] dateTimeArrayDeserialized2 = AUDALF_Deserialize.Deserialize<DateTime>(result2);
+			DateTime[] dateTimeArrayDeserialized3 = AUDALF_Deserialize.Deserialize<DateTime>(result3);
+
+			// Assert
+			Assert.IsNotNull(result1);
+			Assert.IsNotNull(result2);
+			Assert.IsNotNull(result3);
+
+			Assert.IsNotNull(dateTimeArrayDeserialized1);
+			Assert.IsNotNull(dateTimeArrayDeserialized2);
+			Assert.IsNotNull(dateTimeArrayDeserialized3);
+
+			CollectionAssert.AreEqual(dateTimeArray, dateTimeArrayDeserialized1);
+			CollectionAssert.AreEqual(dateTimeArray, dateTimeArrayDeserialized2);
+			CollectionAssert.AreEqual(dateTimeArray, dateTimeArrayDeserialized3);
+		}
+
+		[Test]
+		public void DateTimeOffsetArrayRoundtripTest()
+		{
+			// Arrange
+			DateTimeOffset[] dateTimeOffsetArray = new DateTimeOffset[] { new DateTimeOffset(new DateTime(1966, 1, 1)), new DateTimeOffset(new DateTime(2000, 2, 28)), new DateTimeOffset(new DateTime(2022, 6, 6)) };
+			SerializationSettings settings1 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.ISO8601 };
+			SerializationSettings settings2 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.UnixInMilliseconds };
+			SerializationSettings settings3 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.UnixInSeconds };
+
+			// Act
+			byte[] result1 = AUDALF_Serialize.Serialize(dateTimeOffsetArray, settings1);
+			byte[] result2 = AUDALF_Serialize.Serialize(dateTimeOffsetArray, settings2);
+			byte[] result3 = AUDALF_Serialize.Serialize(dateTimeOffsetArray, settings3);
+
+			DateTimeOffset[] dateTimeArrayDeserialized1 = AUDALF_Deserialize.Deserialize<DateTimeOffset>(result1);
+			DateTimeOffset[] dateTimeArrayDeserialized2 = AUDALF_Deserialize.Deserialize<DateTimeOffset>(result2);
+			DateTimeOffset[] dateTimeArrayDeserialized3 = AUDALF_Deserialize.Deserialize<DateTimeOffset>(result3);
+
+			// Assert
+			Assert.IsNotNull(result1);
+			Assert.IsNotNull(result2);
+			Assert.IsNotNull(result3);
+
+			Assert.IsNotNull(dateTimeArrayDeserialized1);
+			Assert.IsNotNull(dateTimeArrayDeserialized2);
+			Assert.IsNotNull(dateTimeArrayDeserialized3);
+
+			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized1);
+			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized2);
+			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized3);
 		}
 	}
 }

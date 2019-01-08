@@ -484,5 +484,89 @@ namespace Tests
 			CollectionAssert.AreNotEqual(result1, result2);
 			CollectionAssert.AreNotEqual(result2, result3);
 		}
+
+		[Test]
+		public void SerializeDateTimeOffsetArray()
+		{
+			// Arrange
+			DateTimeOffset[] dateTimeOffsetArray = new DateTimeOffset[] { new DateTimeOffset(new DateTime(1966, 1, 1)), new DateTimeOffset(new DateTime(2000, 2, 28)), new DateTimeOffset(new DateTime(2022, 6, 6)) };
+			SerializationSettings settings1 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.ISO8601 };
+			SerializationSettings settings2 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.UnixInMilliseconds };
+			SerializationSettings settings3 = new SerializationSettings() { dateTimeFormat = DateTimeFormat.UnixInSeconds };
+
+			// Act
+			byte[] result1 = AUDALF_Serialize.Serialize(dateTimeOffsetArray, settings1);
+			bool isAUDALF1 = AUDALF_Deserialize.IsAUDALF(result1);
+			uint versionNumber1 = AUDALF_Deserialize.GetVersionNumber(result1);
+			ulong byteSize1 = AUDALF_Deserialize.GetByteSize(result1);
+			bool isDictionary1 = AUDALF_Deserialize.IsDictionary(result1);
+			ulong indexCount1 = AUDALF_Deserialize.GetIndexCount(result1);
+			ulong[] entryDefinitionOffsets1 = AUDALF_Deserialize.GetEntryDefinitionOffsets(result1);
+
+			byte[] result2 = AUDALF_Serialize.Serialize(dateTimeOffsetArray, settings2);
+			bool isAUDALF2 = AUDALF_Deserialize.IsAUDALF(result2);
+			uint versionNumber2 = AUDALF_Deserialize.GetVersionNumber(result2);
+			ulong byteSize2 = AUDALF_Deserialize.GetByteSize(result2);
+			bool isDictionary2 = AUDALF_Deserialize.IsDictionary(result2);
+			ulong indexCount2 = AUDALF_Deserialize.GetIndexCount(result2);
+			ulong[] entryDefinitionOffsets2 = AUDALF_Deserialize.GetEntryDefinitionOffsets(result2);
+
+			byte[] result3 = AUDALF_Serialize.Serialize(dateTimeOffsetArray, settings3);
+			bool isAUDALF3 = AUDALF_Deserialize.IsAUDALF(result3);
+			uint versionNumber3 = AUDALF_Deserialize.GetVersionNumber(result3);
+			ulong byteSize3 = AUDALF_Deserialize.GetByteSize(result3);
+			bool isDictionary3 = AUDALF_Deserialize.IsDictionary(result3);
+			ulong indexCount3 = AUDALF_Deserialize.GetIndexCount(result3);
+			ulong[] entryDefinitionOffsets3 = AUDALF_Deserialize.GetEntryDefinitionOffsets(result3);
+
+			// Assert
+			Assert.IsNotNull(result1, "Result should NOT be null");
+			Assert.IsTrue(isAUDALF1, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber1, "Result should have correct version number");
+			Assert.AreEqual(result1.LongLength, byteSize1, "Result payload should have correct amount lenght info");
+			Assert.IsFalse(isDictionary1, "Result should contain an array, not a dictionary");
+			Assert.AreEqual((ulong)dateTimeOffsetArray.LongLength, indexCount1, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount1, (ulong)entryDefinitionOffsets1.LongLength, "Result should have certain number of entry definitions");
+
+			Assert.IsNotNull(result2, "Result should NOT be null");
+			Assert.IsTrue(isAUDALF2, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber2, "Result should have correct version number");
+			Assert.AreEqual(result2.LongLength, byteSize2, "Result payload should have correct amount lenght info");
+			Assert.IsFalse(isDictionary2, "Result should contain an array, not a dictionary");
+			Assert.AreEqual((ulong)dateTimeOffsetArray.LongLength, indexCount2, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount2, (ulong)entryDefinitionOffsets2.LongLength, "Result should have certain number of entry definitions");
+
+			Assert.IsNotNull(result3, "Result should NOT be null");
+			Assert.IsTrue(isAUDALF3, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber3, "Result should have correct version number");
+			Assert.AreEqual(result3.LongLength, byteSize3, "Result payload should have correct amount lenght info");
+			Assert.IsFalse(isDictionary3, "Result should contain an array, not a dictionary");
+			Assert.AreEqual((ulong)dateTimeOffsetArray.LongLength, indexCount3, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount3, (ulong)entryDefinitionOffsets3.LongLength, "Result should have certain number of entry definitions");
+			
+			foreach (ulong u in entryDefinitionOffsets1)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize1, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+
+			foreach (ulong u in entryDefinitionOffsets2)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize2, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+
+			foreach (ulong u in entryDefinitionOffsets3)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize3, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+
+			CollectionAssert.AreNotEqual(result1, result2);
+			CollectionAssert.AreNotEqual(result2, result3);
+		}
 	}
 }
