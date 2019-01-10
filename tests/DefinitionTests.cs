@@ -173,6 +173,19 @@ namespace Tests
 		}
 
 		[Test]
+		public void BooleanTest()
+		{
+			// Arrange
+			ulong expectedBoolean = 100663297;
+
+			// Act
+			ulong resultBoolean = BitConverter.ToUInt64(Definitions.booleans, 0);
+
+			// Assert
+			Assert.AreEqual(expectedBoolean, resultBoolean);
+		}
+
+		[Test]
 		public void DateTimesTest()
 		{
 			// Arrange

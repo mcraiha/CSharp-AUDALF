@@ -91,6 +91,11 @@ namespace CSharp_AUDALF
 
 		#endregion // Strings
 
+		#region Booleans
+
+		public static readonly byte[] booleans = new byte[8] { 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00 };
+
+		#endregion // Booleans
 
 		#region Date / time 
 
@@ -135,6 +140,8 @@ namespace CSharp_AUDALF
 			dotnetTypeToAUDALF.Add(typeof(double), floating_point_64_bit);
 
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
+
+			dotnetTypeToAUDALF.Add(typeof(bool), string_utf8);
 
 			// DateTimes are missing for reason, they have Settings for choosing wanted serialization
 		}
