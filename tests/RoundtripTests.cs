@@ -222,6 +222,23 @@ namespace Tests
 		}
 
 		[Test]
+		public void BooleansArrayRoundtripTest()
+		{
+			// Arrange
+			bool[] boolArray = new bool[] { true, true, true, false, true, false, false, true, false };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(boolArray);
+			bool[] boolArrayDeserialized = AUDALF_Deserialize.Deserialize<bool>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(boolArrayDeserialized);
+
+			CollectionAssert.AreEqual(boolArray, boolArrayDeserialized);
+		}
+
+		[Test]
 		public void DateTimeArrayRoundtripTest()
 		{
 			// Arrange

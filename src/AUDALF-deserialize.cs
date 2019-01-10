@@ -266,6 +266,10 @@ namespace CSharp_AUDALF
 				ulong stringLengthInBytes = reader.ReadUInt64();
 				return Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
 			}
+			else if (ByteArrayCompare(typeIdAsBytes, Definitions.booleans))
+			{
+				return reader.ReadBoolean();
+			}
 			else if (ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_seconds))
 			{
 				long timeStamp = reader.ReadInt64();

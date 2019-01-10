@@ -141,7 +141,7 @@ namespace CSharp_AUDALF
 
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
 
-			dotnetTypeToAUDALF.Add(typeof(bool), string_utf8);
+			dotnetTypeToAUDALF.Add(typeof(bool), booleans);
 
 			// DateTimes are missing for reason, they have Settings for choosing wanted serialization
 		}
