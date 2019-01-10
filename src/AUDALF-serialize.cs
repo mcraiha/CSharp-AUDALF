@@ -199,6 +199,10 @@ namespace CSharp_AUDALF
 			{
 				WriteString(writer, variableToWrite, originalType, isKey: isKey);
 			}
+			else if (typeof(bool) == originalType)
+			{
+				WriteBoolean(writer, variableToWrite, originalType, isKey: isKey);
+			}
 			else if (typeof(DateTime) == originalType)
 			{
 				WriteDateTime(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
@@ -393,6 +397,21 @@ namespace CSharp_AUDALF
 				ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
 				PadWithZeros(writer, nextDivisableBy8 - currentPos);
 			}
+		}
+
+		private static void WriteBoolean(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Single boolean takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+			if (!isKey)
+			{
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}
+			
+			// Write boolean as 1 byte
+			writer.Write((bool)valueToWrite);
+			// Write 7 bytes of padding
+			PadWithZeros(writer, 7);
 		}
 
 		private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey, DateTimeFormat dateTimeFormat)
