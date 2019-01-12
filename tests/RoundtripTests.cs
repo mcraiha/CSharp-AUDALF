@@ -301,5 +301,34 @@ namespace Tests
 			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized2);
 			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized3);
 		}
+
+		[Test]
+		public void StringObjectDictionaryRoundtripTest()
+		{
+			// Arrange
+			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			{
+				{ "1", "is one" },
+				{ "second", 137f },
+				{ "emojis", "🐶🍦"},
+				{ "nicebool", true },
+				{ "ain", new DateTimeOffset(2011, 11, 17, 4, 45, 32, new TimeSpan(7, 0, 0))},
+			};
+
+			DeserializationSettings deserializationSettings = new DeserializationSettings()
+			{
+				wantedDateTimeType = typeof(DateTimeOffset)
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringObjectDictionary);
+			Dictionary<string, object> stringObjectDictionaryDeserialized = AUDALF_Deserialize.Deserialize<string, object>(result, doSafetyChecks: false, settings: deserializationSettings);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(stringObjectDictionaryDeserialized);
+
+			CollectionAssert.AreEqual(stringObjectDictionary, stringObjectDictionaryDeserialized);
+		}
 	}
 }

@@ -10,6 +10,7 @@ namespace CSharp_AUDALF
 	public static class AUDALF_Serialize
 	{
 		private static readonly string KeyCannotBeNullError = "Key cannot be null!";
+		private static readonly string ValueCannotBeNullWithoutKnownValueTypeError = "You cannot use null value without known value type!";
 
 		public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings serializationSettings = null)
 		{
@@ -99,15 +100,37 @@ namespace CSharp_AUDALF
 				// Use UTF-8 because it has best support in different environments
 				using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
 				{
-					List<ulong> offsets = new List<ulong>();;
+					List<ulong> offsets = new List<ulong>();
 					foreach (var pair in pairs)
 					{
-						Type typeOfValue = valueTypes != null && valueTypes.ContainsKey(pair.Key) ? valueTypes[pair.Key] : null;
-						offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeOfValue, serializationSettings));
+						Type typeOfValue = FigureOutTypeOfValue(pair.Key, pair.Value, valueTypes);
+
+						if (typeOfValue == null)
+						{
+							throw new ArgumentNullException(ValueCannotBeNullWithoutKnownValueTypeError);
+						}
+
+						offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeof(T), typeOfValue, serializationSettings));
 					}
 					return (stream.ToArray(), offsets);
 				}
 			}
+		}
+
+		private static Type FigureOutTypeOfValue<T>(T key, object value, Dictionary<T, Type> valueTypes = null)
+		{
+			// ValueTypes will override everything else
+			if (valueTypes != null && valueTypes.ContainsKey(key))
+			{
+				return valueTypes[key];
+			}
+			else if (value != null)
+			{
+				return value.GetType();
+			}
+
+			// Not good, return null
+			return null;
 		}
 
 		private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType, SerializationSettings serializationSettings)
@@ -129,13 +152,13 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type originalType, SerializationSettings serializationSettings)
+		private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type keyType, Type valueType, SerializationSettings serializationSettings)
 		{
 			// Store current offset, because different types can take different amount of space
 			ulong returnValue = (ulong)writer.BaseStream.Position;
 
-			GenericWrite(writer, key, originalType, isKey: true, serializationSettings: serializationSettings);
-			GenericWrite(writer, value, originalType, isKey: false, serializationSettings: serializationSettings);
+			GenericWrite(writer, key, keyType, isKey: true, serializationSettings: serializationSettings);
+			GenericWrite(writer, value, valueType, isKey: false, serializationSettings: serializationSettings);
 
 			return returnValue;
 		}

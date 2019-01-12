@@ -18,6 +18,11 @@ namespace CSharp_AUDALF
 		public DateTimeFormat dateTimeFormat;
 	}
 
+	public class DeserializationSettings
+	{
+		public Type wantedDateTimeType;
+	}
+
 	public static class Definitions
 	{
 		public static readonly byte[] fourCC = new byte[4] { 0x41, 0x55, 0x44, 0x41 };

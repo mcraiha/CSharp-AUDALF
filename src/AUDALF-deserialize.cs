@@ -35,12 +35,12 @@ namespace CSharp_AUDALF
 			return returnValues;
 		}
 
-		public static Dictionary<T, V> Deserialize<T, V>(byte[] payload, bool doSafetyChecks = true)
+		public static Dictionary<T, V> Deserialize<T, V>(byte[] payload, bool doSafetyChecks = true, DeserializationSettings settings = null)
 		{
-			return Deserialize<T,V>(new MemoryStream(payload, writable: false), doSafetyChecks);
+			return Deserialize<T,V>(new MemoryStream(payload, writable: false), doSafetyChecks, settings);
 		}
 
-		public static Dictionary<T, V> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true)
+		public static Dictionary<T, V> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true, DeserializationSettings settings = null)
 		{
 			byte[] typeIdOfKeys = ReadKeyType(inputStream);
 
@@ -48,7 +48,7 @@ namespace CSharp_AUDALF
 			Dictionary<T, V> returnDictionary = new Dictionary<T, V>(entryOffsets.Length);
 			for (int i = 0; i < entryOffsets.Length; i++)
 			{
-				(object key, object value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V));
+				(object key, object value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
 				returnDictionary.Add((T)key, (V)value);
 			}
 
@@ -199,7 +199,7 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(Stream inputStream, ulong offset, byte[] typeIdOfKeyAsBytes, Type keyType, Type valueType)
+		public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(Stream inputStream, ulong offset, byte[] typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings settings = null)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 			{
@@ -213,13 +213,13 @@ namespace CSharp_AUDALF
 				object value = null;
 				byte[] typeIdOfValueAsBytes = reader.ReadBytes(8);
 
-				value = Read(reader, typeIdOfValueAsBytes, valueType);
+				value = Read(reader, typeIdOfValueAsBytes, valueType, settings);
 
 				return (key, value);
 			}
 		}
 
-		private static object Read(BinaryReader reader, byte[] typeIdAsBytes, Type wantedType)
+		private static object Read(BinaryReader reader, byte[] typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
 		{
 			if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
 			{
@@ -275,7 +275,7 @@ namespace CSharp_AUDALF
 				long timeStamp = reader.ReadInt64();
 				DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
 
-				if (wantedType == typeof(DateTimeOffset))
+				if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
 				{
 					return dateTimeOffset;
 				}
@@ -287,7 +287,7 @@ namespace CSharp_AUDALF
 				long timeStamp = reader.ReadInt64();
 				DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
 
-				if (wantedType == typeof(DateTimeOffset))
+				if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
 				{
 					return dateTimeOffset;
 				}
@@ -299,9 +299,9 @@ namespace CSharp_AUDALF
 				ulong stringLengthInBytes = reader.ReadUInt64();
 				string iso8601 = Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
 
-				if (wantedType == typeof(DateTimeOffset))
+				if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
 				{
-					return DateTimeOffset.Parse(iso8601);
+					return DateTimeOffset.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
 				}
 
 				return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
