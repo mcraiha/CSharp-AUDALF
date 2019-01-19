@@ -640,7 +640,45 @@ namespace Tests
 				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
 				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
 			}
+		}
 
+		[Test]
+		public void SerializeStringByteArrayDictionary()
+		{
+			// Arrange
+			Dictionary<string, byte[]> stringByteArrayDictionary = new Dictionary<string, byte[]>() 
+			{
+				{ "1", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, byte.MaxValue } },
+				{ "second", null },
+				{ "threes", new byte[] { 127, 128, 111 } },
+				{ "four", new byte[] {  } },
+				{ "fiv", new byte[] { 42 } },
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringByteArrayDictionary);
+			bool isAUDALF = AUDALF_Deserialize.IsAUDALF(result);
+			uint versionNumber = AUDALF_Deserialize.GetVersionNumber(result);
+			ulong byteSize = AUDALF_Deserialize.GetByteSize(result);
+			bool isDictionary = AUDALF_Deserialize.IsDictionary(result);
+			ulong indexCount = AUDALF_Deserialize.GetIndexCount(result);
+			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(result);
+
+			// Assert
+			Assert.IsNotNull(result, "Result should NOT be null");
+			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
+			Assert.IsTrue(isDictionary, "Result should contain a dictionary, not an array");
+			Assert.AreEqual((ulong)stringByteArrayDictionary.Count, indexCount, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
+			
+			foreach (ulong u in entryDefinitionOffsets)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
 		}
 	}
 }

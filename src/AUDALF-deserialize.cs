@@ -225,6 +225,11 @@ namespace CSharp_AUDALF
 			{
 				return reader.ReadByte();
 			}
+			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerArrayType))
+			{
+				ulong byteArrayLengthInBytes = reader.ReadUInt64();
+				return reader.ReadBytes((int)byteArrayLengthInBytes);
+			}
 			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerType))
 			{
 				return reader.ReadUInt16();

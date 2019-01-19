@@ -49,6 +49,21 @@ namespace CSharp_AUDALF
 
 		#endregion // Unsigned integer
 
+		#region Unsigned integer array
+
+		public static readonly byte[] unsigned_8_bit_integerArrayType = new byte[8] { 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+		public static readonly byte[] unsigned_16_bit_integerArrayType = new byte[8] { 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_32_bit_integerArrayType = new byte[8] { 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_64_bit_integerArrayType = new byte[8] { 0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_128_bit_integerArrayType = new byte[8] { 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_256_bit_integerArrayType = new byte[8] { 0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_512_bit_integerArrayType = new byte[8] { 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_1024_bit_integerArrayType = new byte[8] { 0x08, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+		public static readonly byte[] unsigned_2048_bit_integerArrayType = new byte[8] { 0x09, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+		public static readonly byte[] unsigned_4096_bit_integerArrayType = new byte[8] { 0x0A, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 }; 
+
+		#endregion // Unsigned integer
+
 		#region Signed integer
 
 		public static readonly byte[] signed_8_bit_integerType = new byte[8] { 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
@@ -131,6 +146,7 @@ namespace CSharp_AUDALF
 
 		static Definitions()
 		{
+			// Single values
 			dotnetTypeToAUDALF.Add(typeof(byte), unsigned_8_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(ushort), unsigned_16_bit_integerType);
 			dotnetTypeToAUDALF.Add(typeof(uint), unsigned_32_bit_integerType);
@@ -147,6 +163,9 @@ namespace CSharp_AUDALF
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
 
 			dotnetTypeToAUDALF.Add(typeof(bool), booleans);
+
+			// Arrays
+			dotnetTypeToAUDALF.Add(typeof(byte[]), unsigned_8_bit_integerArrayType);
 
 			// DateTimes are missing for reason, they have Settings for choosing wanted serialization
 		}

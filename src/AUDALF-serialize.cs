@@ -37,6 +37,19 @@ namespace CSharp_AUDALF
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
 		}
 
+		public static byte[] Serialize(Dictionary<string, byte[]> dictionary, Dictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+		{
+			if (valueTypes == null)
+			{
+				valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte[]));
+			}
+
+			// Generate Key and value pairs section
+			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
+		}
+
 		private static byte[] GenericSerialize(byte[] keyValuePairsBytes, List<ulong> keyValuePairsOffsets, byte[] keyTypeAsBytes)
 		{
 			using (MemoryStream stream = new MemoryStream())
@@ -182,6 +195,10 @@ namespace CSharp_AUDALF
 			{
 				WriteByte(writer, variableToWrite, originalType, isKey: isKey);
 			}
+			else if (typeof(byte[]) == originalType)
+			{
+				WriteByteArray(writer, variableToWrite, originalType, isKey: isKey);
+			}
 			else if (typeof(ushort) == originalType)
 			{
 				WriteUShort(writer, variableToWrite, originalType, isKey: isKey);
@@ -235,6 +252,8 @@ namespace CSharp_AUDALF
 				WriteDateTimeOffset(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
 			}
 		}
+
+		#region Single values
 
 		private static void WriteByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
 		{
@@ -527,6 +546,49 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		#endregion // Single values
+
+
+		#region Arrays
+
+		private static void WriteByteArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Byte array takes at least 8 bytes, most likely more
+			byte[] arrayToWrite = (byte[])valueToWrite;
+
+			if (arrayToWrite == null)
+			{
+				if (isKey)
+				{
+					throw new ArgumentNullException(KeyCannotBeNullError);
+				}
+
+				// Write special null, this is always 16 bytes
+				WriteSpecialNullType(writer, originalType);
+			}
+			else
+			{
+				if (!isKey)
+				{
+					// Write value type ID (8 bytes)
+					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+				}		
+				
+				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+
+				// Write how many bytes will follow as unsigned 64 bit integer
+				writer.Write(countOfBytes);
+
+				// Write actual bytes
+				writer.Write(arrayToWrite);
+
+				// Write needed amount of padding
+				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			}
+		}
+
+		#endregion // Arrays
+
 		private static void WriteSpecialNullType(BinaryWriter writer, Type typeToWrite)
 		{
 			writer.Write(Definitions.specialType);
@@ -548,8 +610,6 @@ namespace CSharp_AUDALF
 			{
 				writer.Write(zeroByte);
 			}
-		}
-
-		
+		}		
 	}
 }

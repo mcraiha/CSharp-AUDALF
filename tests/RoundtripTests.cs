@@ -330,5 +330,29 @@ namespace Tests
 
 			CollectionAssert.AreEqual(stringObjectDictionary, stringObjectDictionaryDeserialized);
 		}
+
+		[Test]
+		public void StringByteArrayDictionaryRoundtripTest()
+		{
+			// Arrange
+			Dictionary<string, byte[]> stringByteArrayDictionary = new Dictionary<string, byte[]>() 
+			{
+				{ "1", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, byte.MaxValue } },
+				{ "second", null },
+				{ "threes", new byte[] { 127, 128, 111 } },
+				{ "four", new byte[] {  } },
+				{ "fiv", new byte[] { 42 } },
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringByteArrayDictionary);
+			Dictionary<string, byte[]> stringByteArrayDictionaryDeserialized = AUDALF_Deserialize.Deserialize<string, byte[]>(result, doSafetyChecks: false);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(stringByteArrayDictionaryDeserialized);
+
+			CollectionAssert.AreEqual(stringByteArrayDictionary, stringByteArrayDictionaryDeserialized);
+		}
 	}
 }
