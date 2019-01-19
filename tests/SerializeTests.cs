@@ -13,7 +13,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeByteArray()
+		public void SerializeByteArrayToAUDALFList()
 		{
 			// Arrange
 			byte[] byteArray = new byte[] { 0, 1, 10, 100, 255 };
@@ -45,7 +45,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeUShortArray()
+		public void SerializeUShortArrayToAUDALFList()
 		{
 			// Arrange
 			ushort[] ushortArray = new ushort[] { 0, 1, 10, 100, 1000, ushort.MaxValue };
@@ -77,7 +77,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeUIntArray()
+		public void SerializeUIntArrayToAUDALFList()
 		{
 			// Arrange
 			uint[] uintArray = new uint[] { 0, 1, 10, 100, 1000, 1000000, uint.MaxValue };
@@ -109,7 +109,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeULongArray()
+		public void SerializeULongArrayToAUDALFList()
 		{
 			// Arrange
 			ulong[] ulongArray = new ulong[] { 0, 1, 10, 100, 1000, 1000000, 1000000000, ulong.MaxValue };
@@ -141,7 +141,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeSByteArray()
+		public void SerializeSByteArrayToAUDALFList()
 		{
 			// Arrange
 			sbyte[] sbyteArray = new sbyte[] { sbyte.MinValue, 0, 1, 10, 100, sbyte.MaxValue };
@@ -173,7 +173,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeShortArray()
+		public void SerializeShortArrayToAUDALFList()
 		{
 			// Arrange
 			short[] shortArray = new short[] { short.MinValue, 0, 1, 10, 100, 1000, short.MaxValue };
@@ -205,7 +205,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeIntArray()
+		public void SerializeIntArrayToAUDALFList()
 		{
 			// Arrange
 			int[] intArray = new int[] { 1, 10, 100, 1000 };
@@ -237,7 +237,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeLongArray()
+		public void SerializeLongArrayToAUDALFList()
 		{
 			// Arrange
 			long[] longArray = new long[] { long.MinValue, 0, 1, 10, 100, 1000, 1000000, 1000000000, long.MaxValue };
@@ -269,7 +269,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeFloatArray()
+		public void SerializeFloatArrayToAUDALFList()
 		{
 			// Arrange
 			float[] floatArray = new float[] { float.MinValue, -1, 3.14f, float.MaxValue };
@@ -301,7 +301,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeDoubleArray()
+		public void SerializeDoubleArrayToAUDALFList()
 		{
 			// Arrange
 			double[] doubleArray = new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue };
@@ -333,7 +333,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeStringArray()
+		public void SerializeStringArrayToAUDALFList()
 		{
 			// Arrange
 			string[] stringArray = new string[] { "something", null, "🐱" };
@@ -486,7 +486,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeBoolArray()
+		public void SerializeBoolArrayToAUDALFList()
 		{
 			// Arrange
 			bool[] boolArray = new bool[] { true, true, true, false, true, false, false, true, false };
@@ -518,7 +518,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SerializeDateTimeOffsetArray()
+		public void SerializeDateTimeOffsetArrayToAUDALFList()
 		{
 			// Arrange
 			DateTimeOffset[] dateTimeOffsetArray = new DateTimeOffset[] { new DateTimeOffset(new DateTime(1966, 1, 1)), new DateTimeOffset(new DateTime(2000, 2, 28)), new DateTimeOffset(new DateTime(2022, 6, 6)) };
