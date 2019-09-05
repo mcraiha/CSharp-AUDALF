@@ -313,6 +313,7 @@ namespace Tests
 				{ "emojis", "🐶🍦"},
 				{ "nicebool", true },
 				{ "ain", new DateTimeOffset(2011, 11, 17, 4, 45, 32, new TimeSpan(7, 0, 0))},
+				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 			};
 
 			DeserializationSettings deserializationSettings = new DeserializationSettings()
