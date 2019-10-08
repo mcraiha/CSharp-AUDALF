@@ -10,7 +10,7 @@ Because I needed this for my personal project
 
 ## How do I use this?
 
-Either copy the [AUDALF-deserialize.cs](src/AUDALF-deserialize.cs), [AUDALF-serialize.cs](src/AUDALF-serialize.cs) and [Common.cs](src/Common.cs) files to your project or use upcoming nuget package 
+Either copy the [AUDALF-deserialize.cs](src/AUDALF-deserialize.cs), [AUDALF-serialize.cs](src/AUDALF-serialize.cs) and [Common.cs](src/Common.cs) files to your project or use [nuget package](https://www.nuget.org/packages/LibAUDALF/) 
 
 Then do code like
 ```csharp
