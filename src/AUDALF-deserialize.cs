@@ -15,6 +15,9 @@ namespace CSharp_AUDALF
 		UnknownValueType
 	}
 
+	/// <summary>
+	/// Static class for deserializing AUDALF bytes into something more useful
+	/// </summary>
 	public static class AUDALF_Deserialize
 	{
 		public static T[] Deserialize<T>(byte[] payload, bool doSafetyChecks = true)
