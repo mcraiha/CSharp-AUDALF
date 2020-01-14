@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace CSharp_AUDALF
@@ -25,6 +26,12 @@ namespace CSharp_AUDALF
 
 	public static class Definitions
 	{
+		#region Errors
+
+		private static readonly string CannotParseTypeError = "Cannot parse type!";
+
+		#endregion // Errors
+
 		public static readonly byte[] fourCC = new byte[4] { 0x41, 0x55, 0x44, 0x41 };
 
 		public static readonly byte[] versionNumber = new byte[4] { 0x01, 0x00, 0x00, 0x00 };
@@ -192,8 +199,29 @@ namespace CSharp_AUDALF
 			return dotnetTypeToAUDALF[type];
 		}
 
+		public static Type GetDotnetTypeWithAUDALFtype(byte[] audalfBytes)
+		{
+			foreach (KeyValuePair<Type, byte[]> entry in dotnetTypeToAUDALF)
+			{
+				if (ByteArrayCompare(entry.Value, audalfBytes))
+				{
+					return entry.Key;
+				}
+			}
+
+			throw new ArgumentNullException(CannotParseTypeError);
+		}
+
 		#endregion // Types to types pairings
 
+		#region Common comparision
+
+		public static bool ByteArrayCompare(byte[] a1, byte[] a2) 
+		{
+			return StructuralComparisons.StructuralEqualityComparer.Equals(a1, a2);
+		}
+
+		#endregion
 
 		#region Common math
 

@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace CSharp_AUDALF
@@ -65,7 +64,7 @@ namespace CSharp_AUDALF
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 			{
 				byte[] fourCC = reader.ReadBytes(4);
-				return ByteArrayCompare(Definitions.fourCC, fourCC);
+				return Definitions.ByteArrayCompare(Definitions.fourCC, fourCC);
 			}
 		}
 
@@ -108,7 +107,7 @@ namespace CSharp_AUDALF
 			{
 				reader.BaseStream.Seek(Definitions.keyTypeOffset, SeekOrigin.Begin);
 				byte[] keyType = reader.ReadBytes(8);
-				return !ByteArrayCompare(Definitions.specialType, keyType);
+				return !Definitions.ByteArrayCompare(Definitions.specialType, keyType);
 			}
 		}
 
@@ -137,7 +136,7 @@ namespace CSharp_AUDALF
 			{
 				reader.BaseStream.Seek(Definitions.keyTypeOffset, SeekOrigin.Begin);
 				byte[] keyType = reader.ReadBytes(8);
-				return typeof(int);
+				return Definitions.GetDotnetTypeWithAUDALFtype(keyType);
 			}
 		}
 
@@ -221,40 +220,40 @@ namespace CSharp_AUDALF
 
 		private static object Read(BinaryReader reader, byte[] typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
 		{
-			if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
+			if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
 			{
 				return reader.ReadByte();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerArrayType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerArrayType))
 			{
 				ulong byteArrayLengthInBytes = reader.ReadUInt64();
 				return reader.ReadBytes((int)byteArrayLengthInBytes);
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerType))
 			{
 				return reader.ReadUInt16();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType))
 			{
 				return reader.ReadUInt32();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerType))
 			{
 				return reader.ReadUInt64();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerType))
 			{
 				return reader.ReadSByte();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerType))
 			{
 				return reader.ReadInt16();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType))
 			{
 				return reader.ReadInt32();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerArrayType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerArrayType))
 			{
 				ulong byteArrayLengthInBytes = reader.ReadUInt64();
 				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
@@ -262,28 +261,28 @@ namespace CSharp_AUDALF
 				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
 				return returnArray;
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerType))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerType))
 			{
 				return reader.ReadInt64();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
 			{
 				return reader.ReadSingle();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit))
 			{
 				return reader.ReadDouble();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8))
 			{
 				ulong stringLengthInBytes = reader.ReadUInt64();
 				return Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.booleans))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.booleans))
 			{
 				return reader.ReadBoolean();
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_seconds))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_seconds))
 			{
 				long timeStamp = reader.ReadInt64();
 				DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
@@ -295,7 +294,7 @@ namespace CSharp_AUDALF
 				
 				return dateTimeOffset.UtcDateTime;// .DateTime;
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_milliseconds))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_milliseconds))
 			{
 				long timeStamp = reader.ReadInt64();
 				DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
@@ -307,7 +306,7 @@ namespace CSharp_AUDALF
 
 				return dateTimeOffset.UtcDateTime;// .DateTime;
 			}
-			else if (ByteArrayCompare(typeIdAsBytes, Definitions.datetime_iso_8601))
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_iso_8601))
 			{
 				ulong stringLengthInBytes = reader.ReadUInt64();
 				string iso8601 = Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
@@ -323,9 +322,6 @@ namespace CSharp_AUDALF
 			return null;
 		}
 
-		private static bool ByteArrayCompare(byte[] a1, byte[] a2) 
-		{
-			return StructuralComparisons.StructuralEqualityComparer.Equals(a1, a2);
-		}
+		
 	}
 }
