@@ -212,11 +212,13 @@ namespace Tests
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringStringDictionary);
+			Type keyType = AUDALF_Deserialize.ParseKeyType(result);
 			Dictionary<string, string> stringStringDictionaryDeserialized = AUDALF_Deserialize.Deserialize<string, string>(result);
 
 			// Assert
 			Assert.IsNotNull(result);
 			Assert.IsNotNull(stringStringDictionaryDeserialized);
+			Assert.AreEqual(typeof(string), keyType);
 
 			CollectionAssert.AreEqual(stringStringDictionary, stringStringDictionaryDeserialized);
 		}
