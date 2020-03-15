@@ -243,5 +243,18 @@ namespace Tests
 			Assert.AreEqual(expectedUnixMilliseconds, resultUnixMilliseconds);
 			Assert.AreEqual(expectedISO8601, resultISO8601);
 		}
+
+		[Test]
+		public void ArbitrarilyLargeSignedIntegerTest()
+		{
+			// Arrange
+			ulong expectedBigInteger = 134217729;
+
+			// Act
+			ulong resultBigInteger = BitConverter.ToUInt64(Definitions.bigIntegerType, 0);
+
+			// Assert
+			Assert.AreEqual(expectedBigInteger, resultBigInteger);
+		}
 	}
 }

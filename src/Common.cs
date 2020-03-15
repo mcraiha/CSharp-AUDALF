@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace CSharp_AUDALF
 {
@@ -150,6 +151,12 @@ namespace CSharp_AUDALF
 
 		#endregion // Date / time 
 
+		#region Arbitrarily large signed integer
+
+		public static readonly byte[] bigIntegerType = new byte[8] { 0x01, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00 };
+
+		#endregion // Arbitrarily large signed integer
+
 		#region Known offsets
 
 		public static readonly int fourCCOffset = 0;
@@ -186,6 +193,8 @@ namespace CSharp_AUDALF
 			dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
 
 			dotnetTypeToAUDALF.Add(typeof(bool), booleans);
+
+			dotnetTypeToAUDALF.Add(typeof(BigInteger), bigIntegerType);
 
 			// Arrays
 			dotnetTypeToAUDALF.Add(typeof(byte[]), unsigned_8_bit_integerArrayType);

@@ -2,6 +2,7 @@ using NUnit.Framework;
 using CSharp_AUDALF;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Tests
 {
@@ -238,6 +239,26 @@ namespace Tests
 			Assert.IsNotNull(boolArrayDeserialized);
 
 			CollectionAssert.AreEqual(boolArray, boolArrayDeserialized);
+		}
+
+		[Test]
+		public void BigIntegerArrayRoundtripTest()
+		{
+			// Arrange
+			BigInteger[] bigIntegerArray = new BigInteger[] { BigInteger.MinusOne, BigInteger.One, 
+                               BigInteger.Zero, 120, 128, 255, 1024, 
+                               Int64.MinValue, Int64.MaxValue, 
+                               BigInteger.Parse("90123123981293054321") };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(bigIntegerArray);
+			BigInteger[] bigIntegerArrayDeserialized = AUDALF_Deserialize.Deserialize<BigInteger>(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(bigIntegerArrayDeserialized);
+
+			CollectionAssert.AreEqual(bigIntegerArray, bigIntegerArrayDeserialized);
 		}
 
 		[Test]

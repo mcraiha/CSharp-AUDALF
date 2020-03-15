@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using System.Numerics;
 
 namespace CSharp_AUDALF
 {
@@ -254,6 +255,10 @@ namespace CSharp_AUDALF
 			else if (typeof(DateTimeOffset) == originalType)
 			{
 				WriteDateTimeOffset(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+			}
+			else if (typeof(BigInteger) == originalType)
+			{
+				WriteBigInteger(writer, variableToWrite, originalType, isKey: isKey);
 			}
 		}
 
@@ -547,6 +552,42 @@ namespace CSharp_AUDALF
 					// Use existing string writing for this
 					WriteString(writer, iso8601Time, originalType, isKey: true);
 					break;
+			}
+		}
+
+		private static void WriteBigInteger(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Big integer takes at least 9 bytes, most likely more
+			byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();
+
+			if (arrayToWrite == null)
+			{
+				if (isKey)
+				{
+					throw new ArgumentNullException(KeyCannotBeNullError);
+				}
+
+				// Write special null, this is always 16 bytes
+				WriteSpecialNullType(writer, originalType);
+			}
+			else
+			{
+				if (!isKey)
+				{
+					// Write value type ID (8 bytes)
+					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+				}		
+				
+				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+
+				// Write how many bytes will follow as unsigned 64 bit integer
+				writer.Write(countOfBytes);
+
+				// Write actual bytes
+				writer.Write(arrayToWrite);
+
+				// Write needed amount of padding
+				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 			}
 		}
 

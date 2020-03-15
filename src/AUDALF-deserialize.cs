@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace CSharp_AUDALF
 {
@@ -320,6 +321,12 @@ namespace CSharp_AUDALF
 				}
 
 				return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+			}
+			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.bigIntegerType))
+			{
+				ulong bigIntegerLengthInBytes = reader.ReadUInt64();
+				byte[] tempBytes = reader.ReadBytes((int)bigIntegerLengthInBytes);
+				return new BigInteger(tempBytes);
 			}
 
 			return null;
