@@ -37,7 +37,7 @@ namespace CSharp_AUDALF
 		/// <param name="dictionary">String to string Dictionary to serialize</param>
 		/// <param name="serializationSettings">Optional serialization settings</param>
 		/// <returns>Byte array</returns>
-		public static byte[] Serialize(Dictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
+		public static byte[] Serialize(IDictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
 		{
 			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(string));
 			// Generate Key and value pairs section
@@ -53,7 +53,7 @@ namespace CSharp_AUDALF
 		/// <param name="valueTypes">What kind of values does the dictionary have</param>
 		/// <param name="serializationSettings">Optional serialization settings</param>
 		/// <returns>Byte array</returns>
-		public static byte[] Serialize(Dictionary<string, object> dictionary, Dictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+		public static byte[] Serialize(IDictionary<string, object> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			// Generate Key and value pairs section
 			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
@@ -68,7 +68,7 @@ namespace CSharp_AUDALF
 		/// <param name="valueTypes">What kind of values does the dictionary have</param>
 		/// <param name="serializationSettings">Optional serialization settings</param>
 		/// <returns>Byte array</returns>
-		public static byte[] Serialize(Dictionary<string, byte[]> dictionary, Dictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+		public static byte[] Serialize(IDictionary<string, byte[]> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			if (valueTypes == null)
 			{
@@ -137,7 +137,7 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(Dictionary<T, V> pairs, Dictionary<T, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+		private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(IDictionary<T, V> pairs, IDictionary<T, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			using (MemoryStream stream = new MemoryStream())
 			{
@@ -161,7 +161,7 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static Type FigureOutTypeOfValue<T>(T key, object value, Dictionary<T, Type> valueTypes = null)
+		private static Type FigureOutTypeOfValue<T>(T key, object value, IDictionary<T, Type> valueTypes = null)
 		{
 			// ValueTypes will override everything else
 			if (valueTypes != null && valueTypes.ContainsKey(key))
