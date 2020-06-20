@@ -7,12 +7,34 @@ using System.Numerics;
 
 namespace CSharp_AUDALF
 {
+	/// <summary>
+	/// AUDALF validation result
+	/// </summary>
 	public enum AUDALF_ValidationResult
 	{
+		/// <summary>
+		/// Ok
+		/// </summary>
 		Ok = 0,
+		
+		/// <summary>
+		/// Wrong FourCC
+		/// </summary>
 		WrongFourCC,
+
+		/// <summary>
+		/// Version number too big
+		/// </summary>
 		VersionTooBig,
+
+		/// <summary>
+		/// Unknown key type
+		/// </summary>
 		UnknownKeyType,
+
+		/// <summary>
+		/// Unknown value type
+		/// </summary>
 		UnknownValueType
 	}
 
@@ -21,11 +43,25 @@ namespace CSharp_AUDALF
 	/// </summary>
 	public static class AUDALF_Deserialize
 	{
+		/// <summary>
+		/// Deserialize AUDALF bytes to array
+		/// </summary>
+		/// <param name="payload">AUDALF bytes</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <typeparam name="T">Type of array variables</typeparam>
+		/// <returns>Array of variables</returns>
 		public static T[] Deserialize<T>(byte[] payload, bool doSafetyChecks = true)
 		{
 			return Deserialize<T>(new MemoryStream(payload, writable: false), doSafetyChecks);
 		}
 
+		/// <summary>
+		/// Deserialize AUDALF bytes from stream to array
+		/// </summary>
+		/// <param name="inputStream">Input stream that contains bytes</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <typeparam name="T">Type of array variables</typeparam>
+		/// <returns>Array of variables</returns>
 		public static T[] Deserialize<T>(Stream inputStream, bool doSafetyChecks = true)
 		{
 			ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
@@ -38,11 +74,29 @@ namespace CSharp_AUDALF
 			return returnValues;
 		}
 
+		/// <summary>
+		/// Deserialize AUDALF bytes to Dictionary
+		/// </summary>
+		/// <param name="payload">AUDALF bytes</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <param name="settings">Optional Deserialization Settings</param>
+		/// <typeparam name="T">Key type of Dictionary</typeparam>
+		/// <typeparam name="V">Value type of Dictionary</typeparam>
+		/// <returns>Dictionary</returns>
 		public static Dictionary<T, V> Deserialize<T, V>(byte[] payload, bool doSafetyChecks = true, DeserializationSettings settings = null)
 		{
 			return Deserialize<T,V>(new MemoryStream(payload, writable: false), doSafetyChecks, settings);
 		}
 
+		/// <summary>
+		/// Deserialize AUDALF bytes from stream to Dictionary
+		/// </summary>
+		/// <param name="inputStream">Input stream that contains bytes</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <param name="settings">Optional Deserialization Settings</param>
+		/// <typeparam name="T">Key type of Dictionary</typeparam>
+		/// <typeparam name="V">Value type of Dictionary</typeparam>
+		/// <returns>Dictionary</returns>
 		public static Dictionary<T, V> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true, DeserializationSettings settings = null)
 		{
 			byte[] typeIdOfKeys = ReadKeyType(inputStream);
@@ -58,11 +112,21 @@ namespace CSharp_AUDALF
 			return returnDictionary;
 		}
 
+		/// <summary>
+		/// Is byte array a AUDALF one. Only checks FourCC
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>True if it is; False otherwise</returns>
 		public static bool IsAUDALF(byte[] payload)
 		{
 			return IsAUDALF(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Does stream contain AUDALF byte array. Only checks FourCC
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>True if it is; False otherwise</returns>
 		public static bool IsAUDALF(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -72,11 +136,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Get AUDALF version number from byte array
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>Uint that contains version number</returns>
 		public static uint GetVersionNumber(byte[] payload)
 		{
 			return GetVersionNumber(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Get AUDALF version number from stream
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>Uint that contains version number</returns>
 		public static uint GetVersionNumber(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -86,11 +160,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Get the header stored payload size in bytes
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>Ulong</returns>
 		public static ulong GetByteSize(byte[] payload)
 		{
 			return GetByteSize(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Get the header stored payload size in bytes from input stream
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>Ulong</returns>
 		public static ulong GetByteSize(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -100,11 +184,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Is AUDALF byte array a dictionary (or a list)
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>True if Dictionary; False if list</returns>
 		public static bool IsDictionary(byte[] payload)
 		{
 			return IsDictionary(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Does AUDALF input stream contain a dictionary (or a list)
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>True if Dictionary; False if list</returns>
 		public static bool IsDictionary(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream))
@@ -115,11 +209,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Read a key type from AUDALF byte array
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>Byte array that contains AUDALF type ID</returns>
 		public static byte[] ReadKeyType(byte[] payload)
 		{
 			return ReadKeyType(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Read a key type from AUDALF input stream
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>Byte array that contains AUDALF type ID</returns>
 		public static byte[] ReadKeyType(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -129,11 +233,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Parse a key type from AUDALF byte array
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>Type</returns>
 		public static Type ParseKeyType(byte[] payload)
 		{
 			return ParseKeyType(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Parse a key type from AUDALF input stream
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>Type</returns>
 		public static Type ParseKeyType(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -144,11 +258,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Get index count from AUDALF byte array
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>Ulong count</returns>
 		public static ulong GetIndexCount(byte[] payload)
 		{
 			return GetIndexCount(new MemoryStream(payload, writable: false));
 		}
 
+		/// <summary>
+		/// Get index count from AUDALF input stream
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>Ulong count</returns>
 		public static ulong GetIndexCount(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -158,11 +282,21 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Get entry definition offsets from AUDALF byte array
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <returns>Array of ulong offsets</returns>
 		public static ulong[] GetEntryDefinitionOffsets(byte[] payload)
 		{
 			return GetEntryDefinitionOffsets(new MemoryStream(payload));
 		}
 
+		/// <summary>
+		/// Get entry definition offsets from AUDALF input stream
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <returns>Array of ulong offsets</returns>
 		public static ulong[] GetEntryDefinitionOffsets(Stream inputStream)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -182,11 +316,25 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Read list key and value from offset. Key means index.
+		/// </summary>
+		/// <param name="payload">Byte array</param>
+		/// <param name="offset">Offset bytes</param>
+		/// <param name="wantedType">Wanted type for object (in case there are multiple options for deserialization)</param>
+		/// <returns>Tuple that has key index and object for value</returns>
 		public static (ulong key, object value) ReadListKeyAndValueFromOffset(byte[] payload, ulong offset, Type wantedType)
 		{
 			return ReadListKeyAndValueFromOffset(new MemoryStream(payload, writable: false), offset, wantedType);
 		}
 
+		/// <summary>
+		/// Read list key and value from offset. Key means index.
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <param name="offset">Offset bytes</param>
+		/// <param name="wantedType">Wanted type for object (in case there are multiple options for deserialization)</param>
+		/// <returns>Tuple that has key index and object for value</returns>
 		public static (ulong key, object value) ReadListKeyAndValueFromOffset(Stream inputStream, ulong offset, Type wantedType)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
@@ -202,6 +350,16 @@ namespace CSharp_AUDALF
 			}
 		}
 
+		/// <summary>
+		/// Read dictionary key and value from offset.
+		/// </summary>
+		/// <param name="inputStream">Input stream</param>
+		/// <param name="offset">Offset bytes</param>
+		/// <param name="typeIdOfKeyAsBytes">AUDALF type Id of key as byte array</param>
+		/// <param name="keyType">Wanted type of key</param>
+		/// <param name="valueType">Wanted type of value</param>
+		/// <param name="settings">Optional deserialization settings</param>
+		/// <returns>Tuple that has key object and value object associated to it</returns>
 		public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(Stream inputStream, ulong offset, byte[] typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings settings = null)
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))

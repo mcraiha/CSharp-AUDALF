@@ -8,11 +8,21 @@ using System.Numerics;
 
 namespace CSharp_AUDALF
 {
+	/// <summary>
+	/// Static class for AUDALF serialization 
+	/// </summary>
 	public static class AUDALF_Serialize
 	{
 		private static readonly string KeyCannotBeNullError = "Key cannot be null!";
 		private static readonly string ValueCannotBeNullWithoutKnownValueTypeError = "You cannot use null value without known value type!";
 
+		/// <summary>
+		/// Serialize a IEnumerable structure to AUDALF bytes
+		/// </summary>
+		/// <param name="ienumerableStructure">IEnumerable structure</param>
+		/// <param name="serializationSettings">Optional serialization settings</param>
+		/// <typeparam name="T">Type to serialize</typeparam>
+		/// <returns>Byte array</returns>
 		public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings serializationSettings = null)
 		{
 			IEnumerable<object> objects = ienumerableStructure.Cast<object>();
@@ -21,6 +31,12 @@ namespace CSharp_AUDALF
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
 		}
 
+		/// <summary>
+		/// Serialize a string to string dictionary to AUDALF bytes
+		/// </summary>
+		/// <param name="dictionary">String to string Dictionary to serialize</param>
+		/// <param name="serializationSettings">Optional serialization settings</param>
+		/// <returns>Byte array</returns>
 		public static byte[] Serialize(Dictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
 		{
 			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(string));
@@ -30,6 +46,13 @@ namespace CSharp_AUDALF
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
 		}
 
+		/// <summary>
+		/// Serialize a string to object dictionary to AUDALF bytes
+		/// </summary>
+		/// <param name="dictionary">String to object dictionary to serialize</param>
+		/// <param name="valueTypes">What kind of values does the dictionary have</param>
+		/// <param name="serializationSettings">Optional serialization settings</param>
+		/// <returns>Byte array</returns>
 		public static byte[] Serialize(Dictionary<string, object> dictionary, Dictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			// Generate Key and value pairs section
@@ -38,6 +61,13 @@ namespace CSharp_AUDALF
 			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
 		}
 
+		/// <summary>
+		/// Serialize a string to byte[] dictionary to AUDALF bytes
+		/// </summary>
+		/// <param name="dictionary">String to byte[] dictionary to serialize</param>
+		/// <param name="valueTypes">What kind of values does the dictionary have</param>
+		/// <param name="serializationSettings">Optional serialization settings</param>
+		/// <returns>Byte array</returns>
 		public static byte[] Serialize(Dictionary<string, byte[]> dictionary, Dictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
 		{
 			if (valueTypes == null)

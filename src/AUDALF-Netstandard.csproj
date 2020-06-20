@@ -11,6 +11,7 @@
     <PackageProjectUrl>https://github.com/mcraiha/CSharp-AUDALF</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mcraiha/CSharp-AUDALF.git</RepositoryUrl>
     <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
 </Project>
