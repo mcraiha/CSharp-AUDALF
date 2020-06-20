@@ -16,4 +16,8 @@
     <ProjectReference Include="..\src\AUDALF-Netstandard.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="samples\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
