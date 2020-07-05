@@ -112,6 +112,38 @@ namespace Tests
 			CollectionAssert.AreEqual(expected, byteArray);
 		}
 
-		
+		[Test, Description("Deserialize int array from AUDALF file")]
+		public void DeserializeAUDALFFileToIntArray()
+		{
+			// Arrange
+			byte[] inputArray = File.ReadAllBytes("samples/ints_0_1_10_100_255_16777216_2147483647.audalf");
+			int[] expected = new int[] { 0, 1, 10, 100, 255, 16777216, 2147483647 };
+
+			// Act
+			bool isAUDALF = AUDALF_Deserialize.IsAUDALF(inputArray);
+			uint versionNumber = AUDALF_Deserialize.GetVersionNumber(inputArray);
+			ulong byteSize = AUDALF_Deserialize.GetByteSize(inputArray);
+			bool isDictionary = AUDALF_Deserialize.IsDictionary(inputArray);
+			ulong indexCount = AUDALF_Deserialize.GetIndexCount(inputArray);
+			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(inputArray);
+			int[] intArray = AUDALF_Deserialize.Deserialize<int>(inputArray);
+
+			// Assert
+			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
+			Assert.AreEqual((ulong)intArray.LongLength, indexCount, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
+			
+			foreach (ulong u in entryDefinitionOffsets)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+
+			Assert.AreEqual(byteSize, inputArray.LongLength);
+			CollectionAssert.AreEqual(expected, intArray);
+		}
 	}
 }
