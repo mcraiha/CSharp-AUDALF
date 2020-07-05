@@ -78,7 +78,7 @@ namespace Tests
 			CollectionAssert.AreEqual(expected, byteArray);
 		}
 
-		[Test]
+		[Test, Description("Deserialize byte array from AUDALF file")]
 		public void DeserializeAUDALFFileToByteArray()
 		{
 			// Arrange
@@ -111,5 +111,7 @@ namespace Tests
 			Assert.AreEqual(byteSize, inputArray.LongLength);
 			CollectionAssert.AreEqual(expected, byteArray);
 		}
+
+		
 	}
 }
