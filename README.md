@@ -2,6 +2,7 @@
 .Net Standard compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
 
 ## Build status
+![.NET Core](https://github.com/mcraiha/CSharp-AUDALF/workflows/.NET%20Core/badge.svg)
 
 ## Why?
 
