@@ -2,7 +2,6 @@
 .Net Standard compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
 
 ## Build status
-[![Build Status](https://travis-ci.org/mcraiha/CSharp-AUDALF.svg?branch=master)](https://travis-ci.org/mcraiha/CSharp-AUDALF)
 
 ## Why?
 
