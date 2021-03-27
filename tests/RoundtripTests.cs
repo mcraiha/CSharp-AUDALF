@@ -339,6 +339,7 @@ namespace Tests
 				{ "ushortarray", new ushort[] {0, 1, 1337, ushort.MaxValue } },
 				{ "uintarray", new uint[] {1, uint.MinValue, 7, uint.MaxValue} },
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
+				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
 			};
 
 			DeserializationSettings deserializationSettings = new DeserializationSettings()

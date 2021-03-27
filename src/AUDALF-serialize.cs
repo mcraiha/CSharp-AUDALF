@@ -270,6 +270,10 @@ namespace CSharp_AUDALF
 			{
 				WriteLong(writer, variableToWrite, originalType, isKey: isKey);
 			}
+			else if (typeof(long[]) == originalType)
+			{
+				WriteLongArray(writer, variableToWrite, originalType, isKey: isKey);
+			}
 			else if (typeof(float) == originalType)
 			{
 				WriteFloat(writer, variableToWrite, originalType, isKey: isKey);
@@ -751,6 +755,44 @@ namespace CSharp_AUDALF
 			// Int array takes at least 8 bytes, most likely more
 			int[] intArray = (int[])valueToWrite;
 			byte[] arrayToWrite = new byte[intArray.Length * 4];
+			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);
+
+			if (arrayToWrite == null)
+			{
+				if (isKey)
+				{
+					throw new ArgumentNullException(KeyCannotBeNullError);
+				}
+
+				// Write special null, this is always 16 bytes
+				WriteSpecialNullType(writer, originalType);
+			}
+			else
+			{
+				if (!isKey)
+				{
+					// Write value type ID (8 bytes)
+					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+				}		
+				
+				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+
+				// Write how many bytes will follow as unsigned 64 bit integer
+				writer.Write(countOfBytes);
+
+				// Write actual bytes
+				writer.Write(arrayToWrite);
+
+				// Write needed amount of padding
+				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			}
+		}
+
+		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		{
+			// Long array takes at least 8 bytes, most likely more
+			long[] intArray = (long[])valueToWrite;
+			byte[] arrayToWrite = new byte[intArray.Length * 8];
 			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);
 
 			if (arrayToWrite == null)
