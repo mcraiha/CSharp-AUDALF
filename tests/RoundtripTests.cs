@@ -336,6 +336,7 @@ namespace Tests
 				{ "emojis", "🐶🍦"},
 				{ "nicebool", true },
 				{ "ain", new DateTimeOffset(2011, 11, 17, 4, 45, 32, new TimeSpan(7, 0, 0))},
+				{ "ushortarray", new ushort[] {0, 1, 1337, ushort.MaxValue } },
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 			};
 

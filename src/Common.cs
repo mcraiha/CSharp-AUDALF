@@ -522,6 +522,7 @@ namespace CSharp_AUDALF
 
 			// Arrays
 			dotnetTypeToAUDALF.Add(typeof(byte[]), unsigned_8_bit_integerArrayType);
+			dotnetTypeToAUDALF.Add(typeof(ushort[]), unsigned_16_bit_integerArrayType);
 			dotnetTypeToAUDALF.Add(typeof(int[]), signed_32_bit_integerArrayType);
 
 			// DateTimes are missing for reason, they have Settings for choosing wanted serialization
