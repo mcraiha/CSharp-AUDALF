@@ -113,6 +113,49 @@ namespace CSharp_AUDALF
 		}
 
 		/// <summary>
+		/// Deserialize single value from AUDALF bytes with given dictionary key
+		/// </summary>
+		/// <param name="payload">AUDALF bytes</param>
+		/// <param name="keyToSeek">Key to seek</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <param name="settings">Optional Deserialization Settings</param>
+		/// <typeparam name="T">Key type of Dictionary</typeparam>
+		/// <typeparam name="V">Value type of Dictionary</typeparam>
+		/// <returns>Value of type V</returns>
+		public static V DeserializeSingleValue<T, V>(byte[] payload, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings settings = null)
+		{
+			return DeserializeSingleValue<T, V>(new MemoryStream(payload, writable: false), keyToSeek, doSafetyChecks, settings);
+		}
+
+		/// <summary>
+		/// Deserialize single value from AUDALF stream with given dictionary key
+		/// </summary>
+		/// <param name="inputStream">Input stream that contains bytes</param>
+		/// <param name="keyToSeek">Key to seek</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <param name="settings">Optional Deserialization Settings</param>
+		/// <typeparam name="T">Key type of Dictionary</typeparam>
+		/// <typeparam name="V">Value type of Dictionary</typeparam>
+		/// <returns>Value of type V</returns>
+		public static V DeserializeSingleValue<T, V>(Stream inputStream, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings settings = null)
+		{
+			byte[] typeIdOfKeys = ReadKeyType(inputStream);
+
+			ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
+
+			for (int i = 0; i < entryOffsets.Length; i++)
+			{
+				(object key, object value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+				if (key.Equals(keyToSeek))
+				{
+					return (V)value;
+				}
+			}
+
+			return default;
+		}
+
+		/// <summary>
 		/// Is byte array a AUDALF one. Only checks FourCC
 		/// </summary>
 		/// <param name="payload">Byte array</param>

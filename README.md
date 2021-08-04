@@ -28,6 +28,8 @@ byte[] serializedBytes = AUDALF_Serialize.Serialize(someDictionary);
 // Deserialize
 Dictionary<string, string> fromBytes = AUDALF_Deserialize.Deserialize<string, string>(serializedBytes);
 
+// Or deserialize single value
+string deserializedString = AUDALF_Deserialize.DeserializeSingleValue<string,string>(serializedBytes, "one");
 ```
 
 ## What types are currently supported

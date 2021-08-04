@@ -225,6 +225,30 @@ namespace Tests
 		}
 
 		[Test]
+		public void StringStringDictionaryRoundtripSingleValuesTest()
+		{
+			// Arrange
+			Dictionary<string, string> stringStringDictionary = new Dictionary<string, string>() 
+			{
+				{ "1", "is one" },
+				{ "second", null },
+				{ "emojis", "🐶🍦"}
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringStringDictionary);
+			Type keyType = AUDALF_Deserialize.ParseKeyType(result);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.AreEqual(typeof(string), keyType);
+
+			Assert.AreEqual("is one", AUDALF_Deserialize.DeserializeSingleValue<string,string>(result, "1"));
+			Assert.IsNull(AUDALF_Deserialize.DeserializeSingleValue<string,string>(result, "second"));
+			Assert.AreEqual("🐶🍦", AUDALF_Deserialize.DeserializeSingleValue<string,string>(result, "emojis"));
+		}
+
+		[Test]
 		public void BooleansArrayRoundtripTest()
 		{
 			// Arrange
@@ -356,6 +380,39 @@ namespace Tests
 			Assert.IsNotNull(stringObjectDictionaryDeserialized);
 
 			CollectionAssert.AreEqual(stringObjectDictionary, stringObjectDictionaryDeserialized);
+		}
+
+		[Test]
+		public void StringObjectDictionaryRoundtripSingleValuesTest()
+		{
+			// Arrange
+			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			{
+				{ "1", "is one" },
+				{ "second", 137f },
+				{ "emojis", "🐶🍦"},
+				{ "nicebool", true },
+				{ "ain", new DateTimeOffset(2011, 11, 17, 4, 45, 32, new TimeSpan(7, 0, 0))},
+				{ "ushortarray", new ushort[] {0, 1, 1337, ushort.MaxValue } },
+				{ "uintarray", new uint[] {1, uint.MinValue, 7, uint.MaxValue} },
+				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
+				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
+			};
+
+			DeserializationSettings deserializationSettings = new DeserializationSettings()
+			{
+				wantedDateTimeType = typeof(DateTimeOffset)
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringObjectDictionary);
+
+			// Assert
+			Assert.IsNotNull(result);
+
+			Assert.AreEqual("is one", (string)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "1"));
+			Assert.AreEqual(true, (bool)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "nicebool"));
+			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
 		}
 
 		[Test]
