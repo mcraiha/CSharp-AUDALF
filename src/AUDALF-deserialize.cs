@@ -75,6 +75,40 @@ namespace CSharp_AUDALF
 		}
 
 		/// <summary>
+		/// Deserialize single array element from AUDALF bytes with given array index
+		/// </summary>
+		/// <param name="payload">AUDALF bytes</param>
+		/// <param name="index">Zero based index to seek</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <param name="settings">Optional Deserialization Settings</param>
+		/// <typeparam name="T">Type of array variables</typeparam>
+		/// <returns>Value of type T</returns>
+		public static T DeserializeSingleElement<T>(byte[] payload, ulong index, bool doSafetyChecks = true, DeserializationSettings settings = null)
+		{
+			return DeserializeSingleElement<T>(new MemoryStream(payload, writable: false), index, doSafetyChecks, settings);
+		}
+
+		/// <summary>
+		/// Deserialize single array element from AUDALF stream with given array index
+		/// </summary>
+		/// <param name="inputStream">Input stream that contains bytes</param>
+		/// <param name="index">Zero based index to seek</param>
+		/// <param name="doSafetyChecks">Do safety checks</param>
+		/// <param name="settings">Optional Deserialization Settings</param>
+		/// <typeparam name="T">Type of array variables</typeparam>
+		/// <returns>Value of type T</returns>
+		public static T DeserializeSingleElement<T>(Stream inputStream, ulong index, bool doSafetyChecks = true, DeserializationSettings settings = null)
+		{
+			ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
+
+			ulong wantedOffset = entryOffsets[index];
+
+			(_, object value) = ReadListKeyAndValueFromOffset(inputStream, wantedOffset, typeof(T));
+
+			return (T)value;
+		}
+
+		/// <summary>
 		/// Deserialize AUDALF bytes to Dictionary
 		/// </summary>
 		/// <param name="payload">AUDALF bytes</param>
