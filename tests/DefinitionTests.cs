@@ -256,5 +256,34 @@ namespace Tests
 			// Assert
 			Assert.AreEqual(expectedBigInteger, resultBigInteger);
 		}
+
+		[Test]
+		public void NextDivisableBy8Test()
+		{
+			// Arrange
+			(ulong address, ulong next)[] pairs = new (ulong, ulong)[]
+			{
+				(0, 0),
+				(1, 8),
+				(2, 8),
+				(3, 8),
+				(4, 8),
+				(5, 8),
+				(6, 8),
+				(7, 8),
+				(8, 8),
+				(9, 16),
+				(799, 800),
+				(7995, 8000),
+			};
+
+			// Act
+
+			// Assert
+			foreach ((ulong address, ulong next) in pairs)
+			{
+				Assert.AreEqual(next, Definitions.NextDivisableBy8(address));
+			}
+		}
 	}
 }
