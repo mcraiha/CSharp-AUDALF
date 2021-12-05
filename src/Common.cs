@@ -578,7 +578,7 @@ namespace CSharp_AUDALF
 		#region Common math
 
 		/// <summary>
-		/// Find next offset that is divisable by 8.null E.g. 23 would return 24
+		/// Find next offset that is divisable by 8. E.g. 23 would return 24
 		/// </summary>
 		/// <param name="current">Current address/offset</param>
 		/// <returns>Ulong value</returns>
