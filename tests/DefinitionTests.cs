@@ -39,7 +39,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void UnsignedIntergersTest()
+		public void UnsignedIntegersTest()
 		{
 			// Arrange
 			ulong expected8bit = 1;
@@ -79,7 +79,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void UnsignedIntergersArrayTest()
+		public void UnsignedIntegersArrayTest()
 		{
 			// Arrange
 			ulong expected8bit = 65537;
@@ -119,7 +119,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void SignedIntergersTest()
+		public void SignedIntegersTest()
 		{
 			// Arrange
 			ulong expected8bit = 16777217;
