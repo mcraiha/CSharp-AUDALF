@@ -158,6 +158,46 @@ namespace Tests
 			Assert.AreEqual(expected4096bit, result4096bit);
 		}
 
+		[Test, Description("Test that signed integer array types have right values")]
+		public void SignedIntegersArrayTest()
+		{
+			// Arrange
+			ulong expected8bit = 16842753;
+			ulong expected16bit = 16842754;
+			ulong expected32bit = 16842755;
+			ulong expected64bit = 16842756;
+			ulong expected128bit = 16842757;
+			ulong expected256bit = 16842758;
+			ulong expected512bit = 16842759;
+			ulong expected1024bit = 16842760;
+			ulong expected2048bit = 16842761;
+			ulong expected4096bit = 16842762;
+
+			// Act
+			ulong result8bit = BitConverter.ToUInt64(Definitions.signed_8_bit_integerArrayType, 0);
+			ulong result16bit = BitConverter.ToUInt64(Definitions.signed_16_bit_integerArrayType, 0);
+			ulong result32bit = BitConverter.ToUInt64(Definitions.signed_32_bit_integerArrayType, 0);
+			ulong result64bit = BitConverter.ToUInt64(Definitions.signed_64_bit_integerArrayType, 0);
+			ulong result128bit = BitConverter.ToUInt64(Definitions.signed_128_bit_integerArrayType, 0);
+			ulong result256bit = BitConverter.ToUInt64(Definitions.signed_256_bit_integerArrayType, 0);
+			ulong result512bit = BitConverter.ToUInt64(Definitions.signed_512_bit_integerArrayType, 0);
+			ulong result1024bit = BitConverter.ToUInt64(Definitions.signed_1024_bit_integerArrayType, 0);
+			ulong result2048bit = BitConverter.ToUInt64(Definitions.signed_2048_bit_integerArrayType, 0);
+			ulong result4096bit = BitConverter.ToUInt64(Definitions.signed_4096_bit_integerArrayType, 0);
+
+			// Assert
+			Assert.AreEqual(expected8bit, result8bit);
+			Assert.AreEqual(expected16bit, result16bit);
+			Assert.AreEqual(expected32bit, result32bit);
+			Assert.AreEqual(expected64bit, result64bit);
+			Assert.AreEqual(expected128bit, result128bit);
+			Assert.AreEqual(expected256bit, result256bit);
+			Assert.AreEqual(expected512bit, result512bit);
+			Assert.AreEqual(expected1024bit, result1024bit);
+			Assert.AreEqual(expected2048bit, result2048bit);
+			Assert.AreEqual(expected4096bit, result4096bit);
+		}
+
 		[Test, Description("Test that float types have right values")]
 		public void FloatingPointsTest()
 		{
