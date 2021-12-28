@@ -12,7 +12,7 @@ namespace Tests
 		{
 		}
 
-		[Test]
+		[Test, Description("Test that we have proper FourCC")]
 		public void FourCCTest()
 		{
 			// Arrange
@@ -25,7 +25,7 @@ namespace Tests
 			CollectionAssert.AreEqual(Definitions.fourCC, fourCC);
 		}
 
-		[Test]
+		[Test, Description("Test that we have proper special type")]
 		public void SpecialTypeTest()
 		{
 			// Arrange
@@ -38,7 +38,7 @@ namespace Tests
 			Assert.AreEqual(expected, valueGotFromBytes);
 		}
 
-		[Test]
+		[Test, Description("Test that unsigned integer types have right values")]
 		public void UnsignedIntegersTest()
 		{
 			// Arrange
@@ -78,7 +78,7 @@ namespace Tests
 			Assert.AreEqual(expected4096bit, result4096bit);
 		}
 
-		[Test]
+		[Test, Description("Test that unsigned integer array types have right values")]
 		public void UnsignedIntegersArrayTest()
 		{
 			// Arrange
@@ -118,7 +118,7 @@ namespace Tests
 			Assert.AreEqual(expected4096bit, result4096bit);
 		}
 
-		[Test]
+		[Test, Description("Test that signed integer types have right values")]
 		public void SignedIntegersTest()
 		{
 			// Arrange
@@ -158,7 +158,7 @@ namespace Tests
 			Assert.AreEqual(expected4096bit, result4096bit);
 		}
 
-		[Test]
+		[Test, Description("Test that float types have right values")]
 		public void FloatingPointsTest()
 		{
 			// Arrange
@@ -190,7 +190,7 @@ namespace Tests
 			Assert.AreEqual(expected512bit, result512bit);
 		}
 
-		[Test]
+		[Test, Description("Test that string types have right values")]
 		public void StringsTest()
 		{
 			// Arrange
@@ -212,7 +212,7 @@ namespace Tests
 			Assert.AreEqual(expectedUtf32, resultUtf32);
 		}
 
-		[Test]
+		[Test, Description("Test that boolean types have right values")]
 		public void BooleanTest()
 		{
 			// Arrange
@@ -225,7 +225,7 @@ namespace Tests
 			Assert.AreEqual(expectedBoolean, resultBoolean);
 		}
 
-		[Test]
+		[Test, Description("Test that datetime types have right values")]
 		public void DateTimesTest()
 		{
 			// Arrange
@@ -244,7 +244,7 @@ namespace Tests
 			Assert.AreEqual(expectedISO8601, resultISO8601);
 		}
 
-		[Test]
+		[Test, Description("Test that big integer types have right values")]
 		public void ArbitrarilyLargeSignedIntegerTest()
 		{
 			// Arrange
@@ -257,7 +257,7 @@ namespace Tests
 			Assert.AreEqual(expectedBigInteger, resultBigInteger);
 		}
 
-		[Test]
+		[Test, Description("Test that next divisable by 8 works")]
 		public void NextDivisableBy8Test()
 		{
 			// Arrange
