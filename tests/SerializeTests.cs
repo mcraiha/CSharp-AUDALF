@@ -21,7 +21,6 @@ namespace Tests
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(byteArray);
-			string tempS = BitConverter.ToString(result);
 			bool isAUDALF = AUDALF_Deserialize.IsAUDALF(result);
 			uint versionNumber = AUDALF_Deserialize.GetVersionNumber(result);
 			ulong byteSize = AUDALF_Deserialize.GetByteSize(result);
