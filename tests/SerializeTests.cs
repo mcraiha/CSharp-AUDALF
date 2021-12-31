@@ -209,7 +209,7 @@ namespace Tests
 		public void SerializeIntArrayToAUDALFList()
 		{
 			// Arrange
-			int[] intArray = new int[] { 1, 10, 100, 1000 };
+			int[] intArray = new int[] { int.MinValue, 1, 10, 100, 1000, int.MaxValue };
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(intArray);
