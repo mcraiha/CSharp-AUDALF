@@ -13,7 +13,7 @@ namespace Tests
 		{
 		}
 
-		[Test]
+		[Test, Description("Serialize byte array to AUDALF list")]
 		public void SerializeByteArrayToAUDALFList()
 		{
 			// Arrange
@@ -45,7 +45,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize ushort array to AUDALF list")]
 		public void SerializeUShortArrayToAUDALFList()
 		{
 			// Arrange
@@ -77,7 +77,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize uint array to AUDALF list")]
 		public void SerializeUIntArrayToAUDALFList()
 		{
 			// Arrange
@@ -109,7 +109,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize ulong array to AUDALF list")]
 		public void SerializeULongArrayToAUDALFList()
 		{
 			// Arrange
@@ -141,7 +141,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize sbyte array to AUDALF list")]
 		public void SerializeSByteArrayToAUDALFList()
 		{
 			// Arrange
@@ -173,7 +173,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize short array to AUDALF list")]
 		public void SerializeShortArrayToAUDALFList()
 		{
 			// Arrange
@@ -205,7 +205,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize int array to AUDALF list")]
 		public void SerializeIntArrayToAUDALFList()
 		{
 			// Arrange
@@ -237,7 +237,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize long array to AUDALF list")]
 		public void SerializeLongArrayToAUDALFList()
 		{
 			// Arrange
@@ -269,7 +269,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize float array to AUDALF list")]
 		public void SerializeFloatArrayToAUDALFList()
 		{
 			// Arrange
@@ -301,7 +301,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize double array to AUDALF list")]
 		public void SerializeDoubleArrayToAUDALFList()
 		{
 			// Arrange
@@ -333,7 +333,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize string array to AUDALF list")]
 		public void SerializeStringArrayToAUDALFList()
 		{
 			// Arrange
@@ -365,7 +365,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize string-string dictionary to AUDALF dictionary")]
 		public void SerializeStringStringDictionary()
 		{
 			// Arrange
@@ -402,7 +402,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize datetime array to AUDALF list")]
 		public void SerializeDateTimeArray()
 		{
 			// Arrange
@@ -486,7 +486,7 @@ namespace Tests
 			CollectionAssert.AreNotEqual(result2, result3);
 		}
 
-		[Test]
+		[Test, Description("Serialize bool array to AUDALF list")]
 		public void SerializeBoolArrayToAUDALFList()
 		{
 			// Arrange
@@ -518,7 +518,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize big integer array to AUDALF list")]
 		public void SerializeBigIntegerArrayToAUDALFList()
 		{
 			// Arrange
@@ -553,7 +553,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize datetimeoffset array to AUDALF list")]
 		public void SerializeDateTimeOffsetArrayToAUDALFList()
 		{
 			// Arrange
@@ -637,7 +637,7 @@ namespace Tests
 			CollectionAssert.AreNotEqual(result2, result3);
 		}
 
-		[Test]
+		[Test, Description("Serialize string-object dictionary to AUDALF dictionary")]
 		public void SerializeStringObjectDictionary()
 		{
 			// Arrange
@@ -678,7 +678,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Serialize string-bytearray dictionary to AUDALF dictionary")]
 		public void SerializeStringByteArrayDictionary()
 		{
 			// Arrange
