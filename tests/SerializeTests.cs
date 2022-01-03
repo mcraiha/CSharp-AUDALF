@@ -337,7 +337,7 @@ namespace Tests
 		public void SerializeStringArrayToAUDALFList()
 		{
 			// Arrange
-			string[] stringArray = new string[] { "something", null, "🐱" };
+			string[] stringArray = new string[] { "something", null, "🐱", "null" };
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringArray);

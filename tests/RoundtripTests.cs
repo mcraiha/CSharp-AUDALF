@@ -247,7 +247,7 @@ namespace Tests
 		public void StringArrayRoundtripTest()
 		{
 			// Arrange
-			string[] stringArray = new string[] { "something", null, "🐱" };
+			string[] stringArray = new string[] { "something", null, "🐱", "null" };
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringArray);
