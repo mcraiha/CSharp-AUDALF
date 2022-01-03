@@ -13,7 +13,7 @@ namespace Tests
 		{
 		}
 
-		[Test]
+		[Test, Description("Deserialize byte array from AUDALF byte array")]
 		public void DeserializeAUDALFBytesToByteArray()
 		{
 			// Arrange

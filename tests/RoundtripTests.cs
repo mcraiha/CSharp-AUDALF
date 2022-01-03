@@ -13,7 +13,7 @@ namespace Tests
 		{
 		}
 
-		[Test]
+		[Test, Description("Byte array roundtrip test")]
 		public void ByteArrayRoundtripTest()
 		{
 			// Arrange
@@ -36,7 +36,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("UShort array roundtrip test")]
 		public void UShortArrayRoundtripTest()
 		{
 			// Arrange
@@ -59,7 +59,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("UInt array roundtrip test")]
 		public void UIntArrayRoundtripTest()
 		{
 			// Arrange
@@ -82,7 +82,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("ULong array roundtrip test")]
 		public void ULongArrayRoundtripTest()
 		{
 			// Arrange
@@ -105,7 +105,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("SByte array roundtrip test")]
 		public void SByteArrayRoundtripTest()
 		{
 			// Arrange
@@ -128,7 +128,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Short array roundtrip test")]
 		public void ShortArrayRoundtripTest()
 		{
 			// Arrange
@@ -151,7 +151,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Int array roundtrip test")]
 		public void IntArrayRoundtripTest()
 		{
 			// Arrange
@@ -174,7 +174,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Long array roundtrip test")]
 		public void LongArrayRoundtripTest()
 		{
 			// Arrange
@@ -197,7 +197,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Float array roundtrip test")]
 		public void FloatArrayRoundtripTest()
 		{
 			// Arrange
@@ -220,7 +220,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("Double array roundtrip test")]
 		public void DoubleArrayRoundtripTest()
 		{
 			// Arrange
@@ -243,7 +243,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("String array roundtrip test")]
 		public void StringArrayRoundtripTest()
 		{
 			// Arrange
@@ -266,7 +266,7 @@ namespace Tests
 			}
 		}
 
-		[Test]
+		[Test, Description("String-String dictionary roundtrip test")]
 		public void StringStringDictionaryRoundtripTest()
 		{
 			// Arrange
@@ -290,7 +290,7 @@ namespace Tests
 			CollectionAssert.AreEqual(stringStringDictionary, stringStringDictionaryDeserialized);
 		}
 
-		[Test]
+		[Test, Description("String-String dictionary roundtrip single values test")]
 		public void StringStringDictionaryRoundtripSingleValuesTest()
 		{
 			// Arrange
@@ -314,7 +314,7 @@ namespace Tests
 			Assert.AreEqual("🐶🍦", AUDALF_Deserialize.DeserializeSingleValue<string,string>(result, "emojis"));
 		}
 
-		[Test]
+		[Test, Description("Booleans array roundtrip test")]
 		public void BooleansArrayRoundtripTest()
 		{
 			// Arrange
@@ -331,7 +331,7 @@ namespace Tests
 			CollectionAssert.AreEqual(boolArray, boolArrayDeserialized);
 		}
 
-		[Test]
+		[Test, Description("Big integer array roundtrip test")]
 		public void BigIntegerArrayRoundtripTest()
 		{
 			// Arrange
@@ -351,7 +351,7 @@ namespace Tests
 			CollectionAssert.AreEqual(bigIntegerArray, bigIntegerArrayDeserialized);
 		}
 
-		[Test]
+		[Test, Description("Datetime array roundtrip test")]
 		public void DateTimeArrayRoundtripTest()
 		{
 			// Arrange
@@ -383,7 +383,7 @@ namespace Tests
 			CollectionAssert.AreEqual(dateTimeArray, dateTimeArrayDeserialized3);
 		}
 
-		[Test]
+		[Test, Description("Datetimeoffset array roundtrip test")]
 		public void DateTimeOffsetArrayRoundtripTest()
 		{
 			// Arrange
@@ -415,7 +415,7 @@ namespace Tests
 			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized3);
 		}
 
-		[Test]
+		[Test, Description("String-object dictionary roundtrip test")]
 		public void StringObjectDictionaryRoundtripTest()
 		{
 			// Arrange
@@ -448,7 +448,7 @@ namespace Tests
 			CollectionAssert.AreEqual(stringObjectDictionary, stringObjectDictionaryDeserialized);
 		}
 
-		[Test]
+		[Test, Description("String-object dictionary roundtrip single values test")]
 		public void StringObjectDictionaryRoundtripSingleValuesTest()
 		{
 			// Arrange
@@ -481,7 +481,7 @@ namespace Tests
 			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
 		}
 
-		[Test]
+		[Test, Description("String-byte array dictionary roundtrip test")]
 		public void StringByteArrayDictionaryRoundtripTest()
 		{
 			// Arrange

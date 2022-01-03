@@ -11,7 +11,7 @@ namespace Tests
 
 		}
 
-		[Test]
+		[Test, Description("Make sure tests are run in little endian system")]
 		public void CheckEndianness()
 		{
 			if (!BitConverter.IsLittleEndian)
