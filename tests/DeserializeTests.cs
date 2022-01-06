@@ -145,5 +145,44 @@ namespace Tests
 			Assert.AreEqual(byteSize, inputArray.LongLength);
 			CollectionAssert.AreEqual(expected, intArray);
 		}
+
+		[Test, Description("Deserialize string-string dictionary from AUDALF file")]
+		public void DeserializeAUDALFFileToStringStringDictionary()
+		{
+			// Arrange
+			byte[] inputArray = File.ReadAllBytes("samples/string_dictionary.audalf");
+			Dictionary<string, string> expected = new Dictionary<string, string>() 
+			{
+				{ "1", "is one" },
+				{ "second", null },
+				{ "emojis", "🐶🍦"}
+			};
+
+			// Act
+			bool isAUDALF = AUDALF_Deserialize.IsAUDALF(inputArray);
+			uint versionNumber = AUDALF_Deserialize.GetVersionNumber(inputArray);
+			ulong byteSize = AUDALF_Deserialize.GetByteSize(inputArray);
+			bool isDictionary = AUDALF_Deserialize.IsDictionary(inputArray);
+			ulong indexCount = AUDALF_Deserialize.GetIndexCount(inputArray);
+			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(inputArray);
+			Dictionary<string, string> stringStringDictionary = AUDALF_Deserialize.Deserialize<string, string>(inputArray);
+
+			// Assert
+			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.IsTrue(isDictionary, "Result should contain an array, not a dictionary");
+			Assert.AreEqual((ulong)expected.Count, indexCount, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
+			
+			foreach (ulong u in entryDefinitionOffsets)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+
+			Assert.AreEqual(byteSize, inputArray.LongLength);
+			CollectionAssert.AreEqual(expected, stringStringDictionary);
+		}
 	}
 }
