@@ -415,6 +415,29 @@ namespace Tests
 			CollectionAssert.AreEqual(dateTimeOffsetArray, dateTimeArrayDeserialized3);
 		}
 
+		[Test, Description("Byte-byte dictionary roundtrip test")]
+		public void ByteByteDictionaryRoundtripTest()
+		{
+			// Arrange
+			Dictionary<byte, byte> byteByteDictionary = new Dictionary<byte, byte>() 
+			{
+				{0, 1},
+				{10, 11},
+				{100, 101},
+				{254, 255},
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(byteByteDictionary);
+			Dictionary<byte, byte> byteByteDictionaryDeserialized = AUDALF_Deserialize.Deserialize<byte, byte>(result, doSafetyChecks: false);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(byteByteDictionaryDeserialized);
+
+			Assert.AreEqual(byteByteDictionary, byteByteDictionaryDeserialized);
+		}
+
 		[Test, Description("String-object dictionary roundtrip test")]
 		public void StringObjectDictionaryRoundtripTest()
 		{

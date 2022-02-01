@@ -32,6 +32,21 @@ namespace CSharp_AUDALF
 		}
 
 		/// <summary>
+		/// Serialize a byte to byte dictionary to AUDALF bytes
+		/// </summary>
+		/// <param name="dictionary">Byte to byte Dictionary to serialize</param>
+		/// <param name="serializationSettings">Optional serialization settings</param>
+		/// <returns>Byte array</returns>
+		public static byte[] Serialize(IDictionary<byte, byte> dictionary, SerializationSettings serializationSettings = null)
+		{
+			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte));
+			// Generate Key and value pairs section
+			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(byte)));
+		}
+
+		/// <summary>
 		/// Serialize a string to string dictionary to AUDALF bytes
 		/// </summary>
 		/// <param name="dictionary">String to string Dictionary to serialize</param>
