@@ -438,6 +438,31 @@ namespace Tests
 			Assert.AreEqual(byteByteDictionary, byteByteDictionaryDeserialized);
 		}
 
+		[Test, Description("Int-int dictionary roundtrip test")]
+		public void IntIntDictionaryRoundtripTest()
+		{
+			// Arrange
+			Dictionary<int, int> intIntDictionary = new Dictionary<int, int>() 
+			{
+				{int.MinValue, int.MinValue + 1},
+				{0, 1},
+				{10, 11},
+				{100, 101},
+				{10000, 10001},
+				{int.MaxValue - 1, int.MaxValue}
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(intIntDictionary);
+			Dictionary<int, int> intIntDictionaryDeserialized = AUDALF_Deserialize.Deserialize<int, int>(result, doSafetyChecks: false);
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(intIntDictionaryDeserialized);
+
+			Assert.AreEqual(intIntDictionary, intIntDictionaryDeserialized);
+		}
+
 		[Test, Description("String-object dictionary roundtrip test")]
 		public void StringObjectDictionaryRoundtripTest()
 		{
