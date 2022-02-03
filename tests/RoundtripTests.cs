@@ -525,7 +525,12 @@ namespace Tests
 			Assert.IsNotNull(result);
 
 			Assert.AreEqual("is one", (string)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "1"));
+			Assert.AreEqual(137f, (float)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "second"));
 			Assert.AreEqual(true, (bool)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "nicebool"));
+			Assert.AreEqual(stringObjectDictionary["ain"], (DateTimeOffset)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ain", settings: deserializationSettings));
+			CollectionAssert.AreEqual((ushort[])stringObjectDictionary["ushortarray"], (ushort[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ushortarray"));
+			CollectionAssert.AreEqual((uint[])stringObjectDictionary["uintarray"], (uint[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "uintarray"));
+			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"], (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "intarray"));
 			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
 		}
 
