@@ -60,10 +60,15 @@ namespace CSharp_AUDALF
 		#endregion // Errors
 
 		/// <summary>
+		/// How much space (in bytes) fourCC takes
+		/// </summary>
+		public const int fourCCSize = 4;
+
+		/// <summary>
 		/// FourCC identifier as byte array
 		/// </summary>
 		/// <value>AUDA aka 0x41, 0x55, 0x44, 0x41</value>
-		public static readonly byte[] fourCC = new byte[4] { 0x41, 0x55, 0x44, 0x41 };
+		public static readonly byte[] fourCC = new byte[fourCCSize] { 0x41, 0x55, 0x44, 0x41 };
 
 		/// <summary>
 		/// Version number of current AUDALF

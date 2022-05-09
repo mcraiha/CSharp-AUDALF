@@ -208,7 +208,7 @@ namespace CSharp_AUDALF
 		{
 			using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 			{
-				byte[] fourCC = reader.ReadBytes(4);
+				byte[] fourCC = reader.ReadBytes(Definitions.fourCCSize);
 				return Definitions.ByteArrayCompare(Definitions.fourCC, fourCC);
 			}
 		}
