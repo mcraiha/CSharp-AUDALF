@@ -13,6 +13,21 @@ namespace Tests
 		{
 		}
 
+		[Test, Description("Test out empty array serializations")]
+		public void SerializeEmptyArrays()
+		{
+			// Arrange
+			byte[] byteArrayEmpty = new byte[0];
+
+			// Act
+			byte[] resultByteArrayEmpty = AUDALF_Serialize.Serialize(byteArrayEmpty);
+			bool isAUDALFByteArrayEmpty = AUDALF_Deserialize.IsAUDALF(resultByteArrayEmpty);
+
+			// Assert
+			Assert.IsNotNull(resultByteArrayEmpty, "Result should NOT be null");
+			Assert.IsTrue(isAUDALFByteArrayEmpty, "Result should be AUDALF payload");
+		}
+
 		[Test, Description("Serialize byte array to AUDALF list")]
 		public void SerializeByteArrayToAUDALFList()
 		{
