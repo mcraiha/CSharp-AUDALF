@@ -94,6 +94,13 @@ namespace Tests
 			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(inputArray);
 			byte[] byteArray = AUDALF_Deserialize.Deserialize<byte>(inputArray);
 
+			byte[] byteArrayReadOneByOne = new byte[indexCount];
+			for (int i = 0; i < entryDefinitionOffsets.Length; i++)
+			{
+				(ulong index, object value) = AUDALF_Deserialize.ReadListKeyAndValueFromOffset(inputArray, entryDefinitionOffsets[i], typeof(byte));
+				byteArrayReadOneByOne[index] = (byte)value;
+			}
+
 			// Assert
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
 			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
@@ -110,6 +117,7 @@ namespace Tests
 
 			Assert.AreEqual(byteSize, inputArray.LongLength);
 			CollectionAssert.AreEqual(expected, byteArray);
+			CollectionAssert.AreEqual(expected, byteArrayReadOneByOne);
 		}
 
 		[Test, Description("Deserialize int array from AUDALF file")]
