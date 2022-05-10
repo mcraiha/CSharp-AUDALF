@@ -164,6 +164,7 @@ namespace Tests
 			ulong byteSize = AUDALF_Deserialize.GetByteSize(inputArray);
 			bool isDictionary = AUDALF_Deserialize.IsDictionary(inputArray);
 			ulong indexCount = AUDALF_Deserialize.GetIndexCount(inputArray);
+			byte[] keyType = AUDALF_Deserialize.ReadKeyType(inputArray);
 			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(inputArray);
 			Dictionary<string, string> stringStringDictionary = AUDALF_Deserialize.Deserialize<string, string>(inputArray);
 
@@ -171,6 +172,7 @@ namespace Tests
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
 			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
 			Assert.IsTrue(isDictionary, "Result should contain an array, not a dictionary");
+			CollectionAssert.AreEqual(Definitions.string_utf8, keyType, "KeyType should be string UTF-8");
 			Assert.AreEqual((ulong)expected.Count, indexCount, "Result should contain certain number of items");
 			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
 			
