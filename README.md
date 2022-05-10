@@ -3,6 +3,7 @@
 
 ## Build status
 ![.NET Core](https://github.com/mcraiha/CSharp-AUDALF/workflows/.NET%20Core/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/0c9c327249964ce2a2fd9bc66a69b3eb)](https://www.codacy.com/gh/mcraiha/CSharp-AUDALF/dashboard?utm_source=github.com&utm_medium=referral&utm_content=mcraiha/CSharp-AUDALF&utm_campaign=Badge_Coverage)
 
 ## Why?
 
