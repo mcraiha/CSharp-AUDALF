@@ -560,7 +560,7 @@ namespace CSharp_AUDALF
 				}
 			}
 
-			throw new ArgumentNullException(CannotParseTypeError);
+			throw new ArgumentException(CannotParseTypeError);
 		}
 
 		#endregion // Types to types pairings
