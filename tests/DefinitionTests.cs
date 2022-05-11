@@ -325,5 +325,21 @@ namespace Tests
 				Assert.AreEqual(next, Definitions.NextDivisableBy8(address));
 			}
 		}
+
+		[Test, Description("Test that get Dotnet type with AUDALF type works")]
+		public void GetDotnetTypeWithAUDALFtypeTest()
+		{
+			// Arrange
+			byte[] invalid1 = null;
+			byte[] invalid2 = new byte[0];
+
+			// Act
+
+			// Assert
+			Assert.AreEqual(typeof(byte), Definitions.GetDotnetTypeWithAUDALFtype(Definitions.unsigned_8_bit_integerType));
+
+			Assert.Throws<ArgumentException>(() => Definitions.GetDotnetTypeWithAUDALFtype(invalid1));
+			Assert.Throws<ArgumentException>(() => Definitions.GetDotnetTypeWithAUDALFtype(invalid2));
+		}
 	}
 }
