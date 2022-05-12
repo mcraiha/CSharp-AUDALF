@@ -252,6 +252,18 @@ namespace CSharp_AUDALF
 
 		private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
 		{
+			if (variableToWrite == null)
+			{
+				if (isKey)
+				{
+					throw new ArgumentNullException(KeyCannotBeNullError);
+				}
+
+				// Write special null, this is always 16 bytes
+				WriteSpecialNullType(writer, originalType);
+				return;
+			}
+
 			if (typeof(byte) == originalType)
 			{
 				WriteByte(writer, variableToWrite, originalType, isKey: isKey);
@@ -632,35 +644,22 @@ namespace CSharp_AUDALF
 			// Big integer takes at least 9 bytes, most likely more
 			byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();
 
-			if (arrayToWrite == null)
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}		
+			
+			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}		
-				
-				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			// Write how many bytes will follow as unsigned 64 bit integer
+			writer.Write(countOfBytes);
 
-				// Write how many bytes will follow as unsigned 64 bit integer
-				writer.Write(countOfBytes);
+			// Write actual bytes
+			writer.Write(arrayToWrite);
 
-				// Write actual bytes
-				writer.Write(arrayToWrite);
-
-				// Write needed amount of padding
-				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-			}
+			// Write needed amount of padding
+			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
 
 		#endregion // Single values
@@ -673,35 +672,22 @@ namespace CSharp_AUDALF
 			// Byte array takes at least 8 bytes, most likely more
 			byte[] arrayToWrite = (byte[])valueToWrite;
 
-			if (arrayToWrite == null)
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}		
+			
+			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}		
-				
-				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			// Write how many bytes will follow as unsigned 64 bit integer
+			writer.Write(countOfBytes);
 
-				// Write how many bytes will follow as unsigned 64 bit integer
-				writer.Write(countOfBytes);
+			// Write actual bytes
+			writer.Write(arrayToWrite);
 
-				// Write actual bytes
-				writer.Write(arrayToWrite);
-
-				// Write needed amount of padding
-				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-			}
+			// Write needed amount of padding
+			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
 
 		private static void WriteUShortArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -711,35 +697,22 @@ namespace CSharp_AUDALF
 			byte[] arrayToWrite = new byte[ushortArray.Length * 2];
 			Buffer.BlockCopy(ushortArray, 0, arrayToWrite, 0, arrayToWrite.Length);
 
-			if (arrayToWrite == null)
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}		
+			
+			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}		
-				
-				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			// Write how many bytes will follow as unsigned 64 bit integer
+			writer.Write(countOfBytes);
 
-				// Write how many bytes will follow as unsigned 64 bit integer
-				writer.Write(countOfBytes);
+			// Write actual bytes
+			writer.Write(arrayToWrite);
 
-				// Write actual bytes
-				writer.Write(arrayToWrite);
-
-				// Write needed amount of padding
-				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-			}
+			// Write needed amount of padding
+			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
 
 		private static void WriteUIntArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -749,35 +722,22 @@ namespace CSharp_AUDALF
 			byte[] arrayToWrite = new byte[uintArray.Length * 4];
 			Buffer.BlockCopy(uintArray, 0, arrayToWrite, 0, arrayToWrite.Length);
 
-			if (arrayToWrite == null)
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}		
+			
+			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}		
-				
-				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			// Write how many bytes will follow as unsigned 64 bit integer
+			writer.Write(countOfBytes);
 
-				// Write how many bytes will follow as unsigned 64 bit integer
-				writer.Write(countOfBytes);
+			// Write actual bytes
+			writer.Write(arrayToWrite);
 
-				// Write actual bytes
-				writer.Write(arrayToWrite);
-
-				// Write needed amount of padding
-				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-			}
+			// Write needed amount of padding
+			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
 
 		private static void WriteIntArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -787,35 +747,22 @@ namespace CSharp_AUDALF
 			byte[] arrayToWrite = new byte[intArray.Length * 4];
 			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);
 
-			if (arrayToWrite == null)
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}		
+			
+			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}		
-				
-				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			// Write how many bytes will follow as unsigned 64 bit integer
+			writer.Write(countOfBytes);
 
-				// Write how many bytes will follow as unsigned 64 bit integer
-				writer.Write(countOfBytes);
+			// Write actual bytes
+			writer.Write(arrayToWrite);
 
-				// Write actual bytes
-				writer.Write(arrayToWrite);
-
-				// Write needed amount of padding
-				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-			}
+			// Write needed amount of padding
+			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
 
 		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -825,35 +772,22 @@ namespace CSharp_AUDALF
 			byte[] arrayToWrite = new byte[intArray.Length * 8];
 			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);
 
-			if (arrayToWrite == null)
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+			}		
+			
+			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}		
-				
-				ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			// Write how many bytes will follow as unsigned 64 bit integer
+			writer.Write(countOfBytes);
 
-				// Write how many bytes will follow as unsigned 64 bit integer
-				writer.Write(countOfBytes);
+			// Write actual bytes
+			writer.Write(arrayToWrite);
 
-				// Write actual bytes
-				writer.Write(arrayToWrite);
-
-				// Write needed amount of padding
-				PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-			}
+			// Write needed amount of padding
+			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
 
 		#endregion // Arrays
