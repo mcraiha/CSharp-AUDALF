@@ -499,39 +499,27 @@ namespace CSharp_AUDALF
 		{
 			// Single string has variable length
 			string stringToWrite = (string)valueToWrite;
-			if (stringToWrite == null)
+	
+			if (!isKey)
 			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
-
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
+				// Write value type ID (8 bytes)
+				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}
-			else
-			{
-				if (!isKey)
-				{
-					// Write value type ID (8 bytes)
-					writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-				}
 
-				// Get bytes that will be written, (UTF-8 as default)
-				byte[] bytesToWrite = Encoding.UTF8.GetBytes(stringToWrite);
+			// Get bytes that will be written, (UTF-8 as default)
+			byte[] bytesToWrite = Encoding.UTF8.GetBytes(stringToWrite);
 
-				// Write length as 8 bytes
-				ulong stringLengthAsBytes = (ulong)bytesToWrite.LongLength;
-				writer.Write(stringLengthAsBytes);
+			// Write length as 8 bytes
+			ulong stringLengthAsBytes = (ulong)bytesToWrite.LongLength;
+			writer.Write(stringLengthAsBytes);
 
-				// Write string content 
-				writer.Write(bytesToWrite);
-				
-				// Pad with zeroes if needed
-				ulong currentPos = (ulong)writer.BaseStream.Position;
-				ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
-				PadWithZeros(writer, nextDivisableBy8 - currentPos);
-			}
+			// Write string content 
+			writer.Write(bytesToWrite);
+			
+			// Pad with zeroes if needed
+			ulong currentPos = (ulong)writer.BaseStream.Position;
+			ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
+			PadWithZeros(writer, nextDivisableBy8 - currentPos);		
 		}
 
 		private static void WriteBoolean(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
