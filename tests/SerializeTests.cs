@@ -693,6 +693,46 @@ namespace Tests
 			}
 		}
 
+		[Test, Description("Serialize string-object dictionary with array values to AUDALF dictionary")]
+		public void SerializeStringObjectDictionaryWithArrayValuesTest()
+		{
+			// Arrange
+			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			{
+				{ "1", new byte[] { byte.MinValue, 1, byte.MaxValue } },
+				{ "2", new ushort[] { ushort.MinValue, 1337, ushort.MaxValue } },
+				{ "3", new uint[] { uint.MinValue, 123515, 14151616, uint.MaxValue} },
+				{ "4", new ulong[] {ulong.MinValue, 1421512, 124156161616266, ulong.MaxValue} },
+			};
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(stringObjectDictionary);
+			bool isAUDALF = AUDALF_Deserialize.IsAUDALF(result);
+			uint versionNumber = AUDALF_Deserialize.GetVersionNumber(result);
+			ulong byteSize = AUDALF_Deserialize.GetByteSize(result);
+			bool isDictionary = AUDALF_Deserialize.IsDictionary(result);
+			ulong indexCount = AUDALF_Deserialize.GetIndexCount(result);
+			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(result);
+
+			// Assert
+			Assert.IsNotNull(result, "Result should NOT be null");
+			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
+			Assert.IsTrue(isDictionary, "Result should contain a dictionary, not an array");
+			Assert.AreEqual((ulong)stringObjectDictionary.Count, indexCount, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
+			
+			CollectionAssert.AllItemsAreUnique(entryDefinitionOffsets);
+
+			foreach (ulong u in entryDefinitionOffsets)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+		}
+
 		[Test, Description("Serialize string-bytearray dictionary to AUDALF dictionary")]
 		public void SerializeStringByteArrayDictionary()
 		{
