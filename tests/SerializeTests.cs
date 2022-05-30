@@ -702,7 +702,12 @@ namespace Tests
 				{ "1", new byte[] { byte.MinValue, 1, byte.MaxValue } },
 				{ "2", new ushort[] { ushort.MinValue, 1337, ushort.MaxValue } },
 				{ "3", new uint[] { uint.MinValue, 123515, 14151616, uint.MaxValue} },
-				{ "4", new ulong[] {ulong.MinValue, 1421512, 124156161616266, ulong.MaxValue} },
+				{ "4", new ulong[] { ulong.MinValue, 1421512, 124156161616266, ulong.MaxValue } },
+
+				{ "1s", new sbyte[] { sbyte.MinValue, 1, sbyte.MaxValue } },
+				{ "2s", new short[] { short.MinValue, 1337, short.MaxValue } },
+				{ "3s", new int[] { int.MinValue, 123515, 14151616, int.MaxValue} },
+				{ "4s", new long[] { long.MinValue, 1421512, 124156161616266, long.MaxValue} },
 			};
 
 			// Act
