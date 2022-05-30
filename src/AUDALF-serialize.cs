@@ -785,9 +785,9 @@ namespace CSharp_AUDALF
 		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
 		{
 			// Long array takes at least 8 bytes, most likely more
-			long[] intArray = (long[])valueToWrite;
-			byte[] arrayToWrite = new byte[intArray.Length * 8];
-			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);
+			long[] longArray = (long[])valueToWrite;
+			byte[] arrayToWrite = new byte[longArray.Length * 8];
+			Buffer.BlockCopy(longArray, 0, arrayToWrite, 0, arrayToWrite.Length);
 
 			if (!isKey)
 			{
