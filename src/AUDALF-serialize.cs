@@ -674,16 +674,8 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
 		}
 
 		private static void WriteUShortArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -699,16 +691,8 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
 		}
 
 		private static void WriteUIntArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -724,16 +708,8 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
 		}
 
 		private static void WriteULongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -749,16 +725,8 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
 		}
 
 		private static void WriteShortArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -774,16 +742,8 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
 		}
 
 		private static void WriteIntArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -799,16 +759,8 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
 		}
 
 		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
@@ -824,6 +776,14 @@ namespace CSharp_AUDALF
 				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 			}		
 			
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
+		}
+
+		#endregion // Arrays
+
+		private static void ArrayWriter(BinaryWriter writer, byte[] arrayToWrite)
+		{
 			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
 			// Write how many bytes will follow as unsigned 64 bit integer
@@ -835,8 +795,6 @@ namespace CSharp_AUDALF
 			// Write needed amount of padding
 			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
 		}
-
-		#endregion // Arrays
 
 		private static void WriteSpecialNullType(BinaryWriter writer, Type typeToWrite)
 		{
