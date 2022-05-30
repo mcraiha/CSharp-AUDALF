@@ -1,3 +1,6 @@
+## Version 0.9.2 (not released yet)
+- Support some new array types (**FEATURE**)
+
 ## Version 0.9.1 (released 2021-12-05)
 - Support BigInteger (**FEATURE**)
 - Support some array types (**FEATURE**)
