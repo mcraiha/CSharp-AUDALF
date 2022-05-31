@@ -250,6 +250,19 @@ namespace CSharp_AUDALF
 			return returnValue;
 		}
 
+		private static readonly HashSet<Type> needCustomValueTypeWriting = new HashSet<Type>()
+		{
+			typeof(DateTime),
+			typeof(DateTimeOffset),
+		};
+
+		// Most types should use this
+		private static void CommonValueTypeWriter(BinaryWriter writer, Type originalType)
+		{
+			// Write value type ID (8 bytes)
+			writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+		}
+
 		private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
 		{
 			if (variableToWrite == null)
@@ -264,81 +277,95 @@ namespace CSharp_AUDALF
 				return;
 			}
 
+			// Write value type if needed and it is possible (some types have custom writers)
+			if (!isKey)
+			{
+				if (needCustomValueTypeWriting.Contains(originalType))
+				{
+					// Special cases
+				}
+				else
+				{
+					// Common case
+					CommonValueTypeWriter(writer, originalType);
+				}
+			}
+
 			if (typeof(byte) == originalType)
 			{
-				WriteByte(writer, variableToWrite, originalType, isKey: isKey);
+				WriteByte(writer, variableToWrite);
 			}
 			else if (typeof(byte[]) == originalType)
 			{
-				WriteByteArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteByteArray(writer, variableToWrite);
 			}
 			else if (typeof(ushort) == originalType)
 			{
-				WriteUShort(writer, variableToWrite, originalType, isKey: isKey);
+				WriteUShort(writer, variableToWrite);
 			}
 			else if (typeof(ushort[]) == originalType)
 			{
-				WriteUShortArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteUShortArray(writer, variableToWrite);
 			}
 			else if (typeof(uint) == originalType)
 			{
-				WriteUInt(writer, variableToWrite, originalType, isKey: isKey);
+				WriteUInt(writer, variableToWrite);
 			}
 			else if (typeof(uint[]) == originalType)
 			{
-				WriteUIntArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteUIntArray(writer, variableToWrite);
 			}
 			else if (typeof(ulong) == originalType)
 			{
-				WriteULong(writer, variableToWrite, originalType, isKey: isKey);
+				WriteULong(writer, variableToWrite);
 			}
 			else if (typeof(ulong[]) == originalType)
 			{
-				WriteULongArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteULongArray(writer, variableToWrite);
 			}
 			else if (typeof(sbyte) == originalType)
 			{
-				WriteSByte(writer, variableToWrite, originalType, isKey: isKey);
+				WriteSByte(writer, variableToWrite);
 			}
 			else if (typeof(short) == originalType)
 			{
-				WriteShort(writer, variableToWrite, originalType, isKey: isKey);
+				WriteShort(writer, variableToWrite);
 			}
 			else if (typeof(short[]) == originalType)
 			{
-				WriteShortArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteShortArray(writer, variableToWrite);
 			}
 			else if (typeof(int) == originalType)
 			{
-				WriteInt(writer, variableToWrite, originalType, isKey: isKey);
+				WriteInt(writer, variableToWrite);
 			}
 			else if (typeof(int[]) == originalType)
 			{
-				WriteIntArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteIntArray(writer, variableToWrite);
 			}
 			else if (typeof(long) == originalType)
 			{
-				WriteLong(writer, variableToWrite, originalType, isKey: isKey);
+				WriteLong(writer, variableToWrite);
 			}
 			else if (typeof(long[]) == originalType)
 			{
-				WriteLongArray(writer, variableToWrite, originalType, isKey: isKey);
+				WriteLongArray(writer, variableToWrite);
 			}
 			else if (typeof(float) == originalType)
 			{
-				WriteFloat(writer, variableToWrite, originalType, isKey: isKey);
+				WriteFloat(writer, variableToWrite);
 			}
 			else if (typeof(double) == originalType)
 			{
-				WriteDouble(writer, variableToWrite, originalType, isKey: isKey);
+				WriteDouble(writer, variableToWrite);
 			}
 			else if (typeof(string) == originalType)
 			{
-				WriteString(writer, variableToWrite, originalType, isKey: isKey);
+				WriteString(writer, variableToWrite);
 			}
 			else if (typeof(bool) == originalType)
 			{
-				WriteBoolean(writer, variableToWrite, originalType, isKey: isKey);
+				WriteBoolean(writer, variableToWrite);
 			}
 			else if (typeof(DateTime) == originalType)
 			{
@@ -350,20 +377,15 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(BigInteger) == originalType)
 			{
-				WriteBigInteger(writer, variableToWrite, originalType, isKey: isKey);
+				WriteBigInteger(writer, variableToWrite);
 			}
 		}
 
 		#region Single values
 
-		private static void WriteByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteByte(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single byte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write byte as 1 byte
 			writer.Write((byte)valueToWrite);
@@ -371,14 +393,9 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 7);
 		}
 
-		private static void WriteUShort(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteUShort(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single ushort takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write ushort as 2 bytes
 			writer.Write((ushort)valueToWrite);
@@ -386,14 +403,9 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 6);
 		}
 
-		private static void WriteUInt(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteUInt(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single uint takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write ushort as 4 bytes
 			writer.Write((uint)valueToWrite);
@@ -401,28 +413,18 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 4);
 		}
 
-		private static void WriteULong(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteULong(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single ulong takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write ulong as 8 bytes
 			writer.Write((ulong)valueToWrite);
 			// No padding needed
 		}
 
-		private static void WriteSByte(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteSByte(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single sbyte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write sbyte as 1 byte
 			writer.Write((sbyte)valueToWrite);
@@ -430,14 +432,9 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 7);
 		}
 
-		private static void WriteShort(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteShort(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single short takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write short as 2 bytes
 			writer.Write((short)valueToWrite);
@@ -445,14 +442,9 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 6);
 		}
 
-		private static void WriteInt(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteInt(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single int takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write int as 4 bytes
 			writer.Write((int)valueToWrite);
@@ -460,28 +452,18 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 4);
 		}
 
-		private static void WriteLong(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteLong(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single long takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write ulong as 8 bytes
 			writer.Write((long)valueToWrite);
 			// No padding needed
 		}
 
-		private static void WriteFloat(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteFloat(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single float takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write float as 4 bytes
 			writer.Write((float)valueToWrite);
@@ -489,30 +471,19 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 4);
 		}
 
-		private static void WriteDouble(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteDouble(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single double takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write double as 8 bytes
 			writer.Write((double)valueToWrite);
 			// No padding needed
 		}
 
-		private static void WriteString(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteString(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single string has variable length
 			string stringToWrite = (string)valueToWrite;
-	
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 
 			// Get bytes that will be written, (UTF-8 as default)
 			byte[] bytesToWrite = Encoding.UTF8.GetBytes(stringToWrite);
@@ -530,14 +501,9 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, nextDivisableBy8 - currentPos);		
 		}
 
-		private static void WriteBoolean(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteBoolean(BinaryWriter writer, Object valueToWrite)
 		{
 			// Single boolean takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}
 			
 			// Write boolean as 1 byte
 			writer.Write((bool)valueToWrite);
@@ -585,7 +551,7 @@ namespace CSharp_AUDALF
 				case DateTimeFormat.ISO8601:
 					string iso8601Time = dt.ToString("o", CultureInfo.InvariantCulture);
 					// Use existing string writing for this
-					WriteString(writer, iso8601Time, originalType, isKey: true);
+					WriteString(writer, iso8601Time);
 					break;
 			}
 		}
@@ -630,21 +596,15 @@ namespace CSharp_AUDALF
 				case DateTimeFormat.ISO8601:
 					string iso8601Time = dto.ToString("o", CultureInfo.InvariantCulture);
 					// Use existing string writing for this
-					WriteString(writer, iso8601Time, originalType, isKey: true);
+					WriteString(writer, iso8601Time);
 					break;
 			}
 		}
 
-		private static void WriteBigInteger(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteBigInteger(BinaryWriter writer, Object valueToWrite)
 		{
 			// Big integer takes at least 9 bytes, most likely more
-			byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();	
 			
 			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
 
@@ -663,118 +623,76 @@ namespace CSharp_AUDALF
 
 		#region Arrays
 
-		private static void WriteByteArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteByteArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// Byte array takes at least 8 bytes, most likely more
-			byte[] arrayToWrite = (byte[])valueToWrite;
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			byte[] arrayToWrite = (byte[])valueToWrite;	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
 
-		private static void WriteUShortArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteUShortArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// Ushort array takes at least 8 bytes, most likely more
 			ushort[] ushortArray = (ushort[])valueToWrite;
 			byte[] arrayToWrite = new byte[ushortArray.Length * 2];
-			Buffer.BlockCopy(ushortArray, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			Buffer.BlockCopy(ushortArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
 
-		private static void WriteUIntArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteUIntArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// UInt array takes at least 8 bytes, most likely more
 			uint[] uintArray = (uint[])valueToWrite;
 			byte[] arrayToWrite = new byte[uintArray.Length * 4];
-			Buffer.BlockCopy(uintArray, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			Buffer.BlockCopy(uintArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
 
-		private static void WriteULongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteULongArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// ULong array takes at least 8 bytes, most likely more
 			ulong[] ulongArray = (ulong[])valueToWrite;
 			byte[] arrayToWrite = new byte[ulongArray.Length * 8];
-			Buffer.BlockCopy(ulongArray, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			Buffer.BlockCopy(ulongArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
 
-		private static void WriteShortArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteShortArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// Short array takes at least 8 bytes, most likely more
 			short[] shortArray = (short[])valueToWrite;
 			byte[] arrayToWrite = new byte[shortArray.Length * 2];
-			Buffer.BlockCopy(shortArray, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			Buffer.BlockCopy(shortArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
 
-		private static void WriteIntArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteIntArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// Int array takes at least 8 bytes, most likely more
 			int[] intArray = (int[])valueToWrite;
 			byte[] arrayToWrite = new byte[intArray.Length * 4];
-			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
 
-		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey)
+		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite)
 		{
 			// Long array takes at least 8 bytes, most likely more
 			long[] longArray = (long[])valueToWrite;
 			byte[] arrayToWrite = new byte[longArray.Length * 8];
-			Buffer.BlockCopy(longArray, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-			}		
+			Buffer.BlockCopy(longArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
