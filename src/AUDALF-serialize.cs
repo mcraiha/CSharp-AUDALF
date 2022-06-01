@@ -369,11 +369,11 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(DateTime) == originalType)
 			{
-				WriteDateTime(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+				WriteDateTime(writer, variableToWrite, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
 			}
 			else if (typeof(DateTimeOffset) == originalType)
 			{
-				WriteDateTimeOffset(writer, variableToWrite, originalType, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+				WriteDateTimeOffset(writer, variableToWrite, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
 			}
 			else if (typeof(BigInteger) == originalType)
 			{
@@ -511,7 +511,7 @@ namespace CSharp_AUDALF
 			PadWithZeros(writer, 7);
 		}
 
-		private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey, DateTimeFormat dateTimeFormat)
+		private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
 		{
 			// Single datetime might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
 			if (!isKey)
@@ -556,7 +556,7 @@ namespace CSharp_AUDALF
 			}
 		}
 
-		private static void WriteDateTimeOffset(BinaryWriter writer, Object valueToWrite, Type originalType, bool isKey, DateTimeFormat dateTimeFormat)
+		private static void WriteDateTimeOffset(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
 		{
 			// Single datetimeoffset might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
 			if (!isKey)
