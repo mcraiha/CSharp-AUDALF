@@ -482,27 +482,15 @@ namespace CSharp_AUDALF
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerArrayType))
 			{
-				ulong byteArrayLengthInBytes = reader.ReadUInt64();
-				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
-				ushort[] returnArray = new ushort[byteArrayLengthInBytes / 2];
-				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
-				return returnArray;
+				return ReadArray<ushort>(reader, sizeof(ushort));
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerArrayType))
 			{
-				ulong byteArrayLengthInBytes = reader.ReadUInt64();
-				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
-				uint[] returnArray = new uint[byteArrayLengthInBytes / 4];
-				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
-				return returnArray;
+				return ReadArray<uint>(reader, sizeof(uint));
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerArrayType))
 			{
-				ulong byteArrayLengthInBytes = reader.ReadUInt64();
-				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
-				ulong[] returnArray = new ulong[byteArrayLengthInBytes / 8];
-				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
-				return returnArray;
+				return ReadArray<ulong>(reader, sizeof(ulong));
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerType))
 			{
@@ -514,11 +502,7 @@ namespace CSharp_AUDALF
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerArrayType))
 			{
-				ulong byteArrayLengthInBytes = reader.ReadUInt64();
-				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
-				short[] returnArray = new short[byteArrayLengthInBytes / 2];
-				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
-				return returnArray;
+				return ReadArray<short>(reader, sizeof(short));
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType))
 			{
@@ -526,11 +510,7 @@ namespace CSharp_AUDALF
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerArrayType))
 			{
-				ulong byteArrayLengthInBytes = reader.ReadUInt64();
-				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
-				int[] returnArray = new int[byteArrayLengthInBytes / 4];
-				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
-				return returnArray;
+				return ReadArray<int>(reader, sizeof(int));
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerType))
 			{
@@ -538,11 +518,7 @@ namespace CSharp_AUDALF
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerArrayType))
 			{
-				ulong byteArrayLengthInBytes = reader.ReadUInt64();
-				byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
-				long[] returnArray = new long[byteArrayLengthInBytes / 8];
-				Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
-				return returnArray;
+				return ReadArray<long>(reader, sizeof(long));
 			}
 			else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
 			{
@@ -607,6 +583,13 @@ namespace CSharp_AUDALF
 			return null;
 		}
 
-		
+		private static T[] ReadArray<T>(BinaryReader reader, ulong bytesPerItem)
+		{
+			ulong byteArrayLengthInBytes = reader.ReadUInt64();
+			byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
+			T[] returnArray = new T[byteArrayLengthInBytes / bytesPerItem];
+			Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
+			return returnArray;
+		}
 	}
 }
