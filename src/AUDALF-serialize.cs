@@ -327,6 +327,10 @@ namespace CSharp_AUDALF
 			{
 				WriteSByte(writer, variableToWrite);
 			}
+			else if (typeof(sbyte[]) == originalType)
+			{
+				WriteSByteArray(writer, variableToWrite);
+			}
 			else if (typeof(short) == originalType)
 			{
 				WriteShort(writer, variableToWrite);
@@ -660,6 +664,17 @@ namespace CSharp_AUDALF
 			ulong[] ulongArray = (ulong[])valueToWrite;
 			byte[] arrayToWrite = new byte[ulongArray.Length * 8];
 			Buffer.BlockCopy(ulongArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
+			
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
+		}
+
+		private static void WriteSByteArray(BinaryWriter writer, Object valueToWrite)
+		{
+			// Sbyte array takes at least 8 bytes, most likely more
+			sbyte[] sbyteArray = (sbyte[])valueToWrite;
+			byte[] arrayToWrite = new byte[sbyteArray.Length];
+			Buffer.BlockCopy(sbyteArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
 			
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);

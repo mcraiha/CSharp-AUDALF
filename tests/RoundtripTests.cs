@@ -508,10 +508,12 @@ namespace Tests
 				{ "nicebool", true },
 				{ "ain", new DateTimeOffset(2011, 11, 17, 4, 45, 32, new TimeSpan(7, 0, 0))},
 
+				{ "bytearray", new byte[] {0, 1, byte.MaxValue } },
 				{ "ushortarray", new ushort[] {0, 1, 1337, ushort.MaxValue } },
 				{ "uintarray", new uint[] {1, uint.MinValue, 7, uint.MaxValue} },
 				{ "ulongtarray", new ulong[] {ulong.MinValue, 1, 489484987, ulong.MaxValue} },
 
+				{ "sbytearray", new sbyte[] {sbyte.MinValue, 0, 1, sbyte.MaxValue } },
 				{ "shortarray", new short[] {0, 1, 1337, short.MaxValue, short.MinValue } },
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
@@ -533,10 +535,12 @@ namespace Tests
 			Assert.AreEqual(true, (bool)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "nicebool"));
 			Assert.AreEqual(stringObjectDictionary["ain"], (DateTimeOffset)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ain", settings: deserializationSettings));
 
+			CollectionAssert.AreEqual((byte[])stringObjectDictionary["bytearray"], (byte[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "bytearray"));
 			CollectionAssert.AreEqual((ushort[])stringObjectDictionary["ushortarray"], (ushort[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ushortarray"));
 			CollectionAssert.AreEqual((uint[])stringObjectDictionary["uintarray"], (uint[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "uintarray"));
 			CollectionAssert.AreEqual((ulong[])stringObjectDictionary["ulongtarray"], (ulong[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ulongtarray"));
 
+			CollectionAssert.AreEqual((sbyte[])stringObjectDictionary["sbytearray"], (sbyte[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "sbytearray"));
 			CollectionAssert.AreEqual((short[])stringObjectDictionary["shortarray"], (short[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "shortarray"));
 			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"], (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "intarray"));
 			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
