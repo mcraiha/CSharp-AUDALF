@@ -297,7 +297,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(byte[]) == originalType)
 			{
-				WriteByteArray(writer, variableToWrite);
+				WriteArray<byte>(writer, variableToWrite, sizeof(byte));
 			}
 			else if (typeof(ushort) == originalType)
 			{
@@ -305,7 +305,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(ushort[]) == originalType)
 			{
-				WriteUShortArray(writer, variableToWrite);
+				WriteArray<ushort>(writer, variableToWrite, sizeof(ushort));
 			}
 			else if (typeof(uint) == originalType)
 			{
@@ -313,7 +313,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(uint[]) == originalType)
 			{
-				WriteUIntArray(writer, variableToWrite);
+				WriteArray<uint>(writer, variableToWrite, sizeof(uint));
 			}
 			else if (typeof(ulong) == originalType)
 			{
@@ -321,7 +321,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(ulong[]) == originalType)
 			{
-				WriteULongArray(writer, variableToWrite);
+				WriteArray<ulong>(writer, variableToWrite, sizeof(ulong));
 			}
 			else if (typeof(sbyte) == originalType)
 			{
@@ -329,7 +329,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(sbyte[]) == originalType)
 			{
-				WriteSByteArray(writer, variableToWrite);
+				WriteArray<sbyte>(writer, variableToWrite, sizeof(sbyte));
 			}
 			else if (typeof(short) == originalType)
 			{
@@ -337,7 +337,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(short[]) == originalType)
 			{
-				WriteShortArray(writer, variableToWrite);
+				WriteArray<short>(writer, variableToWrite, sizeof(short));
 			}
 			else if (typeof(int) == originalType)
 			{
@@ -345,7 +345,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(int[]) == originalType)
 			{
-				WriteIntArray(writer, variableToWrite);
+				WriteArray<int>(writer, variableToWrite, sizeof(int));
 			}
 			else if (typeof(long) == originalType)
 			{
@@ -353,7 +353,7 @@ namespace CSharp_AUDALF
 			}
 			else if (typeof(long[]) == originalType)
 			{
-				WriteLongArray(writer, variableToWrite);
+				WriteArray<long>(writer, variableToWrite, sizeof(long));
 			}
 			else if (typeof(float) == originalType)
 			{
@@ -624,96 +624,15 @@ namespace CSharp_AUDALF
 
 		#endregion // Single values
 
-
-		#region Arrays
-
-		private static void WriteByteArray(BinaryWriter writer, Object valueToWrite)
+		private static void WriteArray<T>(BinaryWriter writer, Object valueToWrite, int bytesPerItem)
 		{
-			// Byte array takes at least 8 bytes, most likely more
-			byte[] arrayToWrite = (byte[])valueToWrite;	
-			
+			T[] array = (T[])valueToWrite;
+			byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
+			Buffer.BlockCopy(array, 0, arrayToWrite, 0, arrayToWrite.Length);
+
 			// Write actual array
 			ArrayWriter(writer, arrayToWrite);
 		}
-
-		private static void WriteUShortArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// Ushort array takes at least 8 bytes, most likely more
-			ushort[] ushortArray = (ushort[])valueToWrite;
-			byte[] arrayToWrite = new byte[ushortArray.Length * 2];
-			Buffer.BlockCopy(ushortArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void WriteUIntArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// UInt array takes at least 8 bytes, most likely more
-			uint[] uintArray = (uint[])valueToWrite;
-			byte[] arrayToWrite = new byte[uintArray.Length * 4];
-			Buffer.BlockCopy(uintArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void WriteULongArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// ULong array takes at least 8 bytes, most likely more
-			ulong[] ulongArray = (ulong[])valueToWrite;
-			byte[] arrayToWrite = new byte[ulongArray.Length * 8];
-			Buffer.BlockCopy(ulongArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void WriteSByteArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// Sbyte array takes at least 8 bytes, most likely more
-			sbyte[] sbyteArray = (sbyte[])valueToWrite;
-			byte[] arrayToWrite = new byte[sbyteArray.Length];
-			Buffer.BlockCopy(sbyteArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void WriteShortArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// Short array takes at least 8 bytes, most likely more
-			short[] shortArray = (short[])valueToWrite;
-			byte[] arrayToWrite = new byte[shortArray.Length * 2];
-			Buffer.BlockCopy(shortArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void WriteIntArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// Int array takes at least 8 bytes, most likely more
-			int[] intArray = (int[])valueToWrite;
-			byte[] arrayToWrite = new byte[intArray.Length * 4];
-			Buffer.BlockCopy(intArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void WriteLongArray(BinaryWriter writer, Object valueToWrite)
-		{
-			// Long array takes at least 8 bytes, most likely more
-			long[] longArray = (long[])valueToWrite;
-			byte[] arrayToWrite = new byte[longArray.Length * 8];
-			Buffer.BlockCopy(longArray, 0, arrayToWrite, 0, arrayToWrite.Length);	
-			
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		#endregion // Arrays
 
 		private static void ArrayWriter(BinaryWriter writer, byte[] arrayToWrite)
 		{
