@@ -3,6 +3,9 @@ using System;
 using System.Text;
 using CSharp_AUDALF;
 
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
+using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
+
 namespace Tests
 {
 	public class DefinitionTests
@@ -22,7 +25,7 @@ namespace Tests
 			byte[] fourCCAsBytes = Encoding.ASCII.GetBytes(fourCC);
 
 			// Assert
-			CollectionAssert.AreEqual(Definitions.fourCC, fourCC);
+			CollectionAssert.AreEqual(Definitions.fourCC, fourCCAsBytes);
 		}
 
 		[Test, Description("Test that we have proper special type")]

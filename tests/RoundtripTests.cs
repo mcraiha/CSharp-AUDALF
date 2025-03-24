@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
+using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
+
 namespace Tests
 {
 	public class RoundtripTests

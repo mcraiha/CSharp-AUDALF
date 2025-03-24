@@ -4,6 +4,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
+using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
+
 namespace Tests
 {
 	public class DeserializeTests
