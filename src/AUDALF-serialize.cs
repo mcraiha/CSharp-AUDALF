@@ -6,669 +6,668 @@ using System.Linq;
 using System.Globalization;
 using System.Numerics;
 
-namespace CSharp_AUDALF
+namespace CSharp_AUDALF;
+
+/// <summary>
+/// Static class for AUDALF serialization 
+/// </summary>
+public static class AUDALF_Serialize
 {
+	private static readonly string KeyCannotBeNullError = "Key cannot be null!";
+	private static readonly string ValueCannotBeNullWithoutKnownValueTypeError = "You cannot use null value without known value type!";
+
 	/// <summary>
-	/// Static class for AUDALF serialization 
+	/// Serialize a IEnumerable structure to AUDALF bytes
 	/// </summary>
-	public static class AUDALF_Serialize
+	/// <param name="ienumerableStructure">IEnumerable structure</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <typeparam name="T">Type to serialize</typeparam>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings serializationSettings = null)
 	{
-		private static readonly string KeyCannotBeNullError = "Key cannot be null!";
-		private static readonly string ValueCannotBeNullWithoutKnownValueTypeError = "You cannot use null value without known value type!";
+		IEnumerable<object> objects = ienumerableStructure.Cast<object>();
+		// Generate Key and value pairs section
+		var generateResult = GenerateListKeyValuePairs(objects, typeof(T), serializationSettings);
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
+	}
 
-		/// <summary>
-		/// Serialize a IEnumerable structure to AUDALF bytes
-		/// </summary>
-		/// <param name="ienumerableStructure">IEnumerable structure</param>
-		/// <param name="serializationSettings">Optional serialization settings</param>
-		/// <typeparam name="T">Type to serialize</typeparam>
-		/// <returns>Byte array</returns>
-		public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings serializationSettings = null)
+	/// <summary>
+	/// Serialize a byte to byte dictionary to AUDALF bytes
+	/// </summary>
+	/// <param name="dictionary">Byte to byte Dictionary to serialize</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize(IDictionary<byte, byte> dictionary, SerializationSettings serializationSettings = null)
+	{
+		var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte));
+		// Generate Key and value pairs section
+		var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(byte)));
+	}
+
+	/// <summary>
+	/// Serialize a int to int dictionary to AUDALF bytes
+	/// </summary>
+	/// <param name="dictionary">Int to int Dictionary to serialize</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize(IDictionary<int, int> dictionary, SerializationSettings serializationSettings = null)
+	{
+		var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(int));
+		// Generate Key and value pairs section
+		var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(int)));
+	}
+
+	/// <summary>
+	/// Serialize a string to string dictionary to AUDALF bytes
+	/// </summary>
+	/// <param name="dictionary">String to string Dictionary to serialize</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize(IDictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
+	{
+		var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(string));
+		// Generate Key and value pairs section
+		var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
+	}
+
+	/// <summary>
+	/// Serialize a string to object dictionary to AUDALF bytes
+	/// </summary>
+	/// <param name="dictionary">String to object dictionary to serialize</param>
+	/// <param name="valueTypes">What kind of values does the dictionary have</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize(IDictionary<string, object> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+	{
+		// Generate Key and value pairs section
+		var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
+	}
+
+	/// <summary>
+	/// Serialize a string to byte[] dictionary to AUDALF bytes
+	/// </summary>
+	/// <param name="dictionary">String to byte[] dictionary to serialize</param>
+	/// <param name="valueTypes">What kind of values does the dictionary have</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize(IDictionary<string, byte[]> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+	{
+		if (valueTypes == null)
 		{
-			IEnumerable<object> objects = ienumerableStructure.Cast<object>();
-			// Generate Key and value pairs section
-			var generateResult = GenerateListKeyValuePairs(objects, typeof(T), serializationSettings);
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
+			valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte[]));
 		}
 
-		/// <summary>
-		/// Serialize a byte to byte dictionary to AUDALF bytes
-		/// </summary>
-		/// <param name="dictionary">Byte to byte Dictionary to serialize</param>
-		/// <param name="serializationSettings">Optional serialization settings</param>
-		/// <returns>Byte array</returns>
-		public static byte[] Serialize(IDictionary<byte, byte> dictionary, SerializationSettings serializationSettings = null)
+		// Generate Key and value pairs section
+		var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
+
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
+	}
+
+	private static byte[] GenericSerialize(byte[] keyValuePairsBytes, List<ulong> keyValuePairsOffsets, byte[] keyTypeAsBytes)
+	{
+		using (MemoryStream stream = new MemoryStream())
 		{
-			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte));
-			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
-
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(byte)));
-		}
-
-		/// <summary>
-		/// Serialize a int to int dictionary to AUDALF bytes
-		/// </summary>
-		/// <param name="dictionary">Int to int Dictionary to serialize</param>
-		/// <param name="serializationSettings">Optional serialization settings</param>
-		/// <returns>Byte array</returns>
-		public static byte[] Serialize(IDictionary<int, int> dictionary, SerializationSettings serializationSettings = null)
-		{
-			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(int));
-			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
-
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(int)));
-		}
-
-		/// <summary>
-		/// Serialize a string to string dictionary to AUDALF bytes
-		/// </summary>
-		/// <param name="dictionary">String to string Dictionary to serialize</param>
-		/// <param name="serializationSettings">Optional serialization settings</param>
-		/// <returns>Byte array</returns>
-		public static byte[] Serialize(IDictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
-		{
-			var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(string));
-			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
-
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
-		}
-
-		/// <summary>
-		/// Serialize a string to object dictionary to AUDALF bytes
-		/// </summary>
-		/// <param name="dictionary">String to object dictionary to serialize</param>
-		/// <param name="valueTypes">What kind of values does the dictionary have</param>
-		/// <param name="serializationSettings">Optional serialization settings</param>
-		/// <returns>Byte array</returns>
-		public static byte[] Serialize(IDictionary<string, object> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
-		{
-			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
-
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
-		}
-
-		/// <summary>
-		/// Serialize a string to byte[] dictionary to AUDALF bytes
-		/// </summary>
-		/// <param name="dictionary">String to byte[] dictionary to serialize</param>
-		/// <param name="valueTypes">What kind of values does the dictionary have</param>
-		/// <param name="serializationSettings">Optional serialization settings</param>
-		/// <returns>Byte array</returns>
-		public static byte[] Serialize(IDictionary<string, byte[]> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
-		{
-			if (valueTypes == null)
+			using (BinaryWriter writer = new BinaryWriter(stream))
 			{
-				valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte[]));
+				// Write header
+				WriteHeader(writer);
+
+				// Write index section
+				WriteIndexSection(writer, keyTypeAsBytes, keyValuePairsOffsets);
+
+				// Write Key and value pairs section
+				writer.Write(keyValuePairsBytes);
+
+				// Get total length
+				ulong totalLengthInBytes = (ulong)writer.BaseStream.Length;
+				writer.Seek(Definitions.payloadSizeOffset, SeekOrigin.Begin);
+				writer.Write(totalLengthInBytes);
 			}
 
-			// Generate Key and value pairs section
-			var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
-
-			return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
+			return stream.ToArray();
 		}
+	}
 
-		private static byte[] GenericSerialize(byte[] keyValuePairsBytes, List<ulong> keyValuePairsOffsets, byte[] keyTypeAsBytes)
+	private static void WriteHeader(BinaryWriter writer)
+	{
+		// First write FourCC
+		writer.Write(Definitions.fourCC);
+
+		// Then version number
+		writer.Write(Definitions.versionNumber);
+
+		// Then some zeroes for payload size since this will be fixed later
+		writer.Write(Definitions.payloadSizePlaceholder);
+	}
+
+	private static void WriteIndexSection(BinaryWriter writer, byte[] keyTypeAsBytes, List<ulong> positions)
+	{
+		ulong indexCount = (ulong)positions.Count;
+
+		ulong totalByteCountOfHeaderAndIndexSection = indexCount * 8 + 16 + 16;
+
+		// Write index count as 8 bytes
+		writer.Write(indexCount);
+
+		// Write Key type as 8 bytes
+		writer.Write(keyTypeAsBytes);
+
+		// Write each position separately (index count * 8 bytes)
+		foreach (ulong pos in positions)
 		{
-			using (MemoryStream stream = new MemoryStream())
+			writer.Write(pos + totalByteCountOfHeaderAndIndexSection);
+		}
+	}
+
+	private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(IDictionary<T, V> pairs, IDictionary<T, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+	{
+		using (MemoryStream stream = new MemoryStream())
+		{
+			// Use UTF-8 because it has best support in different environments
+			using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
 			{
-				using (BinaryWriter writer = new BinaryWriter(stream))
+				List<ulong> offsets = new List<ulong>();
+				foreach (var pair in pairs)
 				{
-					// Write header
-					WriteHeader(writer);
+					Type typeOfValue = FigureOutTypeOfValue(pair.Key, pair.Value, valueTypes);
 
-					// Write index section
-					WriteIndexSection(writer, keyTypeAsBytes, keyValuePairsOffsets);
-
-					// Write Key and value pairs section
-					writer.Write(keyValuePairsBytes);
-
-					// Get total length
-					ulong totalLengthInBytes = (ulong)writer.BaseStream.Length;
-					writer.Seek(Definitions.payloadSizeOffset, SeekOrigin.Begin);
-					writer.Write(totalLengthInBytes);
-				}
-
-				return stream.ToArray();
-			}
-		}
-
-		private static void WriteHeader(BinaryWriter writer)
-		{
-			// First write FourCC
-			writer.Write(Definitions.fourCC);
-
-			// Then version number
-			writer.Write(Definitions.versionNumber);
-
-			// Then some zeroes for payload size since this will be fixed later
-			writer.Write(Definitions.payloadSizePlaceholder);
-		}
-
-		private static void WriteIndexSection(BinaryWriter writer, byte[] keyTypeAsBytes, List<ulong> positions)
-		{
-			ulong indexCount = (ulong)positions.Count;
-
-			ulong totalByteCountOfHeaderAndIndexSection = indexCount * 8 + 16 + 16;
-
-			// Write index count as 8 bytes
-			writer.Write(indexCount);
-
-			// Write Key type as 8 bytes
-			writer.Write(keyTypeAsBytes);
-
-			// Write each position separately (index count * 8 bytes)
-			foreach (ulong pos in positions)
-			{
-				writer.Write(pos + totalByteCountOfHeaderAndIndexSection);
-			}
-		}
-
-		private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(IDictionary<T, V> pairs, IDictionary<T, Type> valueTypes = null, SerializationSettings serializationSettings = null)
-		{
-			using (MemoryStream stream = new MemoryStream())
-			{
-				// Use UTF-8 because it has best support in different environments
-				using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
-				{
-					List<ulong> offsets = new List<ulong>();
-					foreach (var pair in pairs)
+					if (typeOfValue == null)
 					{
-						Type typeOfValue = FigureOutTypeOfValue(pair.Key, pair.Value, valueTypes);
-
-						if (typeOfValue == null)
-						{
-							throw new ArgumentNullException(ValueCannotBeNullWithoutKnownValueTypeError);
-						}
-
-						offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeof(T), typeOfValue, serializationSettings));
+						throw new ArgumentNullException(ValueCannotBeNullWithoutKnownValueTypeError);
 					}
-					return (stream.ToArray(), offsets);
+
+					offsets.Add(WriteOneDictionaryKeyValuePair(writer, pair.Key, pair.Value, typeof(T), typeOfValue, serializationSettings));
 				}
+				return (stream.ToArray(), offsets);
 			}
 		}
+	}
 
-		private static Type FigureOutTypeOfValue<T>(T key, object value, IDictionary<T, Type> valueTypes = null)
+	private static Type FigureOutTypeOfValue<T>(T key, object value, IDictionary<T, Type> valueTypes = null)
+	{
+		// ValueTypes will override everything else
+		if (valueTypes != null && valueTypes.ContainsKey(key))
 		{
-			// ValueTypes will override everything else
-			if (valueTypes != null && valueTypes.ContainsKey(key))
-			{
-				return valueTypes[key];
-			}
-			else if (value != null)
-			{
-				return value.GetType();
-			}
-
-			// Not good, return null
-			return null;
+			return valueTypes[key];
+		}
+		else if (value != null)
+		{
+			return value.GetType();
 		}
 
-		private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType, SerializationSettings serializationSettings)
+		// Not good, return null
+		return null;
+	}
+
+	private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType, SerializationSettings serializationSettings)
+	{
+		using (MemoryStream stream = new MemoryStream())
 		{
-			using (MemoryStream stream = new MemoryStream())
+			// Use UTF-8 because it has best support in different environments
+			using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
 			{
-				// Use UTF-8 because it has best support in different environments
-				using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
+				List<ulong> offsets = new List<ulong>();
+				ulong index = 0;
+				foreach (object o in values)
 				{
-					List<ulong> offsets = new List<ulong>();
-					ulong index = 0;
-					foreach (object o in values)
-					{
-						offsets.Add(WriteOneListKeyValuePair(writer, index, o, originalType, serializationSettings));
-						index++;
-					}
-					return (stream.ToArray(), offsets);
+					offsets.Add(WriteOneListKeyValuePair(writer, index, o, originalType, serializationSettings));
+					index++;
 				}
+				return (stream.ToArray(), offsets);
+			}
+		}
+	}
+
+	private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type keyType, Type valueType, SerializationSettings serializationSettings)
+	{
+		// Store current offset, because different types can take different amount of space
+		ulong returnValue = (ulong)writer.BaseStream.Position;
+
+		GenericWrite(writer, key, keyType, isKey: true, serializationSettings: serializationSettings);
+		GenericWrite(writer, value, valueType, isKey: false, serializationSettings: serializationSettings);
+
+		return returnValue;
+	}
+
+	private static ulong WriteOneListKeyValuePair(BinaryWriter writer, ulong index, object value, Type originalType, SerializationSettings serializationSettings)
+	{
+		// Store current offset, because different types can take different amount of space
+		ulong returnValue = (ulong)writer.BaseStream.Position;
+
+		// Write Index number which is always 8 bytes
+		writer.Write(index);
+
+		GenericWrite(writer, value, originalType, isKey: false, serializationSettings: serializationSettings);
+
+		return returnValue;
+	}
+
+	private static readonly HashSet<Type> needCustomValueTypeWriting = new HashSet<Type>()
+	{
+		typeof(DateTime),
+		typeof(DateTimeOffset),
+	};
+
+	// Most types should use this
+	private static void CommonValueTypeWriter(BinaryWriter writer, Type originalType)
+	{
+		// Write value type ID (8 bytes)
+		writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
+	}
+
+	private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
+	{
+		if (variableToWrite == null)
+		{
+			if (isKey)
+			{
+				throw new ArgumentNullException(KeyCannotBeNullError);
+			}
+
+			// Write special null, this is always 16 bytes
+			WriteSpecialNullType(writer, originalType);
+			return;
+		}
+
+		// Write value type if needed and it is possible (some types have custom writers)
+		if (!isKey)
+		{
+			if (needCustomValueTypeWriting.Contains(originalType))
+			{
+				// Special cases
+			}
+			else
+			{
+				// Common case
+				CommonValueTypeWriter(writer, originalType);
 			}
 		}
 
-		private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type keyType, Type valueType, SerializationSettings serializationSettings)
+		if (typeof(byte) == originalType)
 		{
-			// Store current offset, because different types can take different amount of space
-			ulong returnValue = (ulong)writer.BaseStream.Position;
-
-			GenericWrite(writer, key, keyType, isKey: true, serializationSettings: serializationSettings);
-			GenericWrite(writer, value, valueType, isKey: false, serializationSettings: serializationSettings);
-
-			return returnValue;
+			WriteByte(writer, variableToWrite);
 		}
-
-		private static ulong WriteOneListKeyValuePair(BinaryWriter writer, ulong index, object value, Type originalType, SerializationSettings serializationSettings)
+		else if (typeof(byte[]) == originalType)
 		{
-			// Store current offset, because different types can take different amount of space
-			ulong returnValue = (ulong)writer.BaseStream.Position;
-
-			// Write Index number which is always 8 bytes
-			writer.Write(index);
-
-			GenericWrite(writer, value, originalType, isKey: false, serializationSettings: serializationSettings);
-
-			return returnValue;
+			WriteArray<byte>(writer, variableToWrite, sizeof(byte));
 		}
-
-		private static readonly HashSet<Type> needCustomValueTypeWriting = new HashSet<Type>()
+		else if (typeof(ushort) == originalType)
 		{
-			typeof(DateTime),
-			typeof(DateTimeOffset),
-		};
+			WriteUShort(writer, variableToWrite);
+		}
+		else if (typeof(ushort[]) == originalType)
+		{
+			WriteArray<ushort>(writer, variableToWrite, sizeof(ushort));
+		}
+		else if (typeof(uint) == originalType)
+		{
+			WriteUInt(writer, variableToWrite);
+		}
+		else if (typeof(uint[]) == originalType)
+		{
+			WriteArray<uint>(writer, variableToWrite, sizeof(uint));
+		}
+		else if (typeof(ulong) == originalType)
+		{
+			WriteULong(writer, variableToWrite);
+		}
+		else if (typeof(ulong[]) == originalType)
+		{
+			WriteArray<ulong>(writer, variableToWrite, sizeof(ulong));
+		}
+		else if (typeof(sbyte) == originalType)
+		{
+			WriteSByte(writer, variableToWrite);
+		}
+		else if (typeof(sbyte[]) == originalType)
+		{
+			WriteArray<sbyte>(writer, variableToWrite, sizeof(sbyte));
+		}
+		else if (typeof(short) == originalType)
+		{
+			WriteShort(writer, variableToWrite);
+		}
+		else if (typeof(short[]) == originalType)
+		{
+			WriteArray<short>(writer, variableToWrite, sizeof(short));
+		}
+		else if (typeof(int) == originalType)
+		{
+			WriteInt(writer, variableToWrite);
+		}
+		else if (typeof(int[]) == originalType)
+		{
+			WriteArray<int>(writer, variableToWrite, sizeof(int));
+		}
+		else if (typeof(long) == originalType)
+		{
+			WriteLong(writer, variableToWrite);
+		}
+		else if (typeof(long[]) == originalType)
+		{
+			WriteArray<long>(writer, variableToWrite, sizeof(long));
+		}
+		else if (typeof(float) == originalType)
+		{
+			WriteFloat(writer, variableToWrite);
+		}
+		else if (typeof(double) == originalType)
+		{
+			WriteDouble(writer, variableToWrite);
+		}
+		else if (typeof(string) == originalType)
+		{
+			WriteString(writer, variableToWrite);
+		}
+		else if (typeof(bool) == originalType)
+		{
+			WriteBoolean(writer, variableToWrite);
+		}
+		else if (typeof(DateTime) == originalType)
+		{
+			WriteDateTime(writer, variableToWrite, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+		}
+		else if (typeof(DateTimeOffset) == originalType)
+		{
+			WriteDateTimeOffset(writer, variableToWrite, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
+		}
+		else if (typeof(BigInteger) == originalType)
+		{
+			WriteBigInteger(writer, variableToWrite);
+		}
+	}
 
-		// Most types should use this
-		private static void CommonValueTypeWriter(BinaryWriter writer, Type originalType)
+	#region Single values
+
+	private static void WriteByte(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single byte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write byte as 1 byte
+		writer.Write((byte)valueToWrite);
+		// Write 7 bytes of padding
+		PadWithZeros(writer, 7);
+	}
+
+	private static void WriteUShort(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single ushort takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write ushort as 2 bytes
+		writer.Write((ushort)valueToWrite);
+		// Write 6 bytes of padding
+		PadWithZeros(writer, 6);
+	}
+
+	private static void WriteUInt(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single uint takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write ushort as 4 bytes
+		writer.Write((uint)valueToWrite);
+		// Write 4 bytes of padding
+		PadWithZeros(writer, 4);
+	}
+
+	private static void WriteULong(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single ulong takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write ulong as 8 bytes
+		writer.Write((ulong)valueToWrite);
+		// No padding needed
+	}
+
+	private static void WriteSByte(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single sbyte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write sbyte as 1 byte
+		writer.Write((sbyte)valueToWrite);
+		// Write 7 bytes of padding
+		PadWithZeros(writer, 7);
+	}
+
+	private static void WriteShort(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single short takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write short as 2 bytes
+		writer.Write((short)valueToWrite);
+		// Write 6 bytes of padding
+		PadWithZeros(writer, 6);
+	}
+
+	private static void WriteInt(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single int takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write int as 4 bytes
+		writer.Write((int)valueToWrite);
+		// Write 4 bytes of padding
+		PadWithZeros(writer, 4);
+	}
+
+	private static void WriteLong(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single long takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write ulong as 8 bytes
+		writer.Write((long)valueToWrite);
+		// No padding needed
+	}
+
+	private static void WriteFloat(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single float takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write float as 4 bytes
+		writer.Write((float)valueToWrite);
+		// Write 4 bytes of padding
+		PadWithZeros(writer, 4);
+	}
+
+	private static void WriteDouble(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single double takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write double as 8 bytes
+		writer.Write((double)valueToWrite);
+		// No padding needed
+	}
+
+	private static void WriteString(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single string has variable length
+		string stringToWrite = (string)valueToWrite;
+
+		// Get bytes that will be written, (UTF-8 as default)
+		byte[] bytesToWrite = Encoding.UTF8.GetBytes(stringToWrite);
+
+		// Write length as 8 bytes
+		ulong stringLengthAsBytes = (ulong)bytesToWrite.LongLength;
+		writer.Write(stringLengthAsBytes);
+
+		// Write string content 
+		writer.Write(bytesToWrite);
+		
+		// Pad with zeroes if needed
+		ulong currentPos = (ulong)writer.BaseStream.Position;
+		ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
+		PadWithZeros(writer, nextDivisableBy8 - currentPos);		
+	}
+
+	private static void WriteBoolean(BinaryWriter writer, Object valueToWrite)
+	{
+		// Single boolean takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write boolean as 1 byte
+		writer.Write((bool)valueToWrite);
+		// Write 7 bytes of padding
+		PadWithZeros(writer, 7);
+	}
+
+	private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
+	{
+		// Single datetime might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
+		if (!isKey)
 		{
 			// Write value type ID (8 bytes)
-			writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
-		}
-
-		private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
-		{
-			if (variableToWrite == null)
-			{
-				if (isKey)
-				{
-					throw new ArgumentNullException(KeyCannotBeNullError);
-				}
-
-				// Write special null, this is always 16 bytes
-				WriteSpecialNullType(writer, originalType);
-				return;
-			}
-
-			// Write value type if needed and it is possible (some types have custom writers)
-			if (!isKey)
-			{
-				if (needCustomValueTypeWriting.Contains(originalType))
-				{
-					// Special cases
-				}
-				else
-				{
-					// Common case
-					CommonValueTypeWriter(writer, originalType);
-				}
-			}
-
-			if (typeof(byte) == originalType)
-			{
-				WriteByte(writer, variableToWrite);
-			}
-			else if (typeof(byte[]) == originalType)
-			{
-				WriteArray<byte>(writer, variableToWrite, sizeof(byte));
-			}
-			else if (typeof(ushort) == originalType)
-			{
-				WriteUShort(writer, variableToWrite);
-			}
-			else if (typeof(ushort[]) == originalType)
-			{
-				WriteArray<ushort>(writer, variableToWrite, sizeof(ushort));
-			}
-			else if (typeof(uint) == originalType)
-			{
-				WriteUInt(writer, variableToWrite);
-			}
-			else if (typeof(uint[]) == originalType)
-			{
-				WriteArray<uint>(writer, variableToWrite, sizeof(uint));
-			}
-			else if (typeof(ulong) == originalType)
-			{
-				WriteULong(writer, variableToWrite);
-			}
-			else if (typeof(ulong[]) == originalType)
-			{
-				WriteArray<ulong>(writer, variableToWrite, sizeof(ulong));
-			}
-			else if (typeof(sbyte) == originalType)
-			{
-				WriteSByte(writer, variableToWrite);
-			}
-			else if (typeof(sbyte[]) == originalType)
-			{
-				WriteArray<sbyte>(writer, variableToWrite, sizeof(sbyte));
-			}
-			else if (typeof(short) == originalType)
-			{
-				WriteShort(writer, variableToWrite);
-			}
-			else if (typeof(short[]) == originalType)
-			{
-				WriteArray<short>(writer, variableToWrite, sizeof(short));
-			}
-			else if (typeof(int) == originalType)
-			{
-				WriteInt(writer, variableToWrite);
-			}
-			else if (typeof(int[]) == originalType)
-			{
-				WriteArray<int>(writer, variableToWrite, sizeof(int));
-			}
-			else if (typeof(long) == originalType)
-			{
-				WriteLong(writer, variableToWrite);
-			}
-			else if (typeof(long[]) == originalType)
-			{
-				WriteArray<long>(writer, variableToWrite, sizeof(long));
-			}
-			else if (typeof(float) == originalType)
-			{
-				WriteFloat(writer, variableToWrite);
-			}
-			else if (typeof(double) == originalType)
-			{
-				WriteDouble(writer, variableToWrite);
-			}
-			else if (typeof(string) == originalType)
-			{
-				WriteString(writer, variableToWrite);
-			}
-			else if (typeof(bool) == originalType)
-			{
-				WriteBoolean(writer, variableToWrite);
-			}
-			else if (typeof(DateTime) == originalType)
-			{
-				WriteDateTime(writer, variableToWrite, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
-			}
-			else if (typeof(DateTimeOffset) == originalType)
-			{
-				WriteDateTimeOffset(writer, variableToWrite, isKey: isKey, dateTimeFormat: serializationSettings != null ? serializationSettings.dateTimeFormat : default(DateTimeFormat));
-			}
-			else if (typeof(BigInteger) == originalType)
-			{
-				WriteBigInteger(writer, variableToWrite);
-			}
-		}
-
-		#region Single values
-
-		private static void WriteByte(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single byte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write byte as 1 byte
-			writer.Write((byte)valueToWrite);
-			// Write 7 bytes of padding
-			PadWithZeros(writer, 7);
-		}
-
-		private static void WriteUShort(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single ushort takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write ushort as 2 bytes
-			writer.Write((ushort)valueToWrite);
-			// Write 6 bytes of padding
-			PadWithZeros(writer, 6);
-		}
-
-		private static void WriteUInt(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single uint takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write ushort as 4 bytes
-			writer.Write((uint)valueToWrite);
-			// Write 4 bytes of padding
-			PadWithZeros(writer, 4);
-		}
-
-		private static void WriteULong(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single ulong takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write ulong as 8 bytes
-			writer.Write((ulong)valueToWrite);
-			// No padding needed
-		}
-
-		private static void WriteSByte(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single sbyte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write sbyte as 1 byte
-			writer.Write((sbyte)valueToWrite);
-			// Write 7 bytes of padding
-			PadWithZeros(writer, 7);
-		}
-
-		private static void WriteShort(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single short takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write short as 2 bytes
-			writer.Write((short)valueToWrite);
-			// Write 6 bytes of padding
-			PadWithZeros(writer, 6);
-		}
-
-		private static void WriteInt(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single int takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write int as 4 bytes
-			writer.Write((int)valueToWrite);
-			// Write 4 bytes of padding
-			PadWithZeros(writer, 4);
-		}
-
-		private static void WriteLong(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single long takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write ulong as 8 bytes
-			writer.Write((long)valueToWrite);
-			// No padding needed
-		}
-
-		private static void WriteFloat(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single float takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write float as 4 bytes
-			writer.Write((float)valueToWrite);
-			// Write 4 bytes of padding
-			PadWithZeros(writer, 4);
-		}
-
-		private static void WriteDouble(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single double takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write double as 8 bytes
-			writer.Write((double)valueToWrite);
-			// No padding needed
-		}
-
-		private static void WriteString(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single string has variable length
-			string stringToWrite = (string)valueToWrite;
-
-			// Get bytes that will be written, (UTF-8 as default)
-			byte[] bytesToWrite = Encoding.UTF8.GetBytes(stringToWrite);
-
-			// Write length as 8 bytes
-			ulong stringLengthAsBytes = (ulong)bytesToWrite.LongLength;
-			writer.Write(stringLengthAsBytes);
-
-			// Write string content 
-			writer.Write(bytesToWrite);
-			
-			// Pad with zeroes if needed
-			ulong currentPos = (ulong)writer.BaseStream.Position;
-			ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
-			PadWithZeros(writer, nextDivisableBy8 - currentPos);		
-		}
-
-		private static void WriteBoolean(BinaryWriter writer, Object valueToWrite)
-		{
-			// Single boolean takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-			
-			// Write boolean as 1 byte
-			writer.Write((bool)valueToWrite);
-			// Write 7 bytes of padding
-			PadWithZeros(writer, 7);
-		}
-
-		private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
-		{
-			// Single datetime might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				switch (dateTimeFormat)
-				{
-					case DateTimeFormat.UnixInSeconds:
-						writer.Write(Definitions.datetime_unix_seconds);
-						break;
-
-					case DateTimeFormat.UnixInMilliseconds:
-						writer.Write(Definitions.datetime_unix_milliseconds);
-						break;
-
-					case DateTimeFormat.ISO8601:
-						writer.Write(Definitions.datetime_iso_8601);
-						break;
-
-				}
-			}
-
-			DateTime dt = (DateTime)valueToWrite;
-
-			switch (dateTimeFormat)
-			{
-				case DateTimeFormat.UnixInSeconds:				
-					long unixTimeSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeSeconds();
-					writer.Write(unixTimeSeconds);
-					break;
-				
-				case DateTimeFormat.UnixInMilliseconds:
-					long unixTimeMilliSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeMilliseconds();
-					writer.Write(unixTimeMilliSeconds);
-					break;
-
-				case DateTimeFormat.ISO8601:
-					string iso8601Time = dt.ToString("o", CultureInfo.InvariantCulture);
-					// Use existing string writing for this
-					WriteString(writer, iso8601Time);
-					break;
-			}
-		}
-
-		private static void WriteDateTimeOffset(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
-		{
-			// Single datetimeoffset might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
-			if (!isKey)
-			{
-				// Write value type ID (8 bytes)
-				switch (dateTimeFormat)
-				{
-					case DateTimeFormat.UnixInSeconds:
-						writer.Write(Definitions.datetime_unix_seconds);
-						break;
-
-					case DateTimeFormat.UnixInMilliseconds:
-						writer.Write(Definitions.datetime_unix_milliseconds);
-						break;
-
-					case DateTimeFormat.ISO8601:
-						writer.Write(Definitions.datetime_iso_8601);
-						break;
-
-				}
-			}
-
-			DateTimeOffset dto = (DateTimeOffset)valueToWrite;
-
 			switch (dateTimeFormat)
 			{
 				case DateTimeFormat.UnixInSeconds:
-					long unixTimeSeconds = dto.ToUnixTimeSeconds();
-					writer.Write(unixTimeSeconds);
+					writer.Write(Definitions.datetime_unix_seconds);
 					break;
-				
+
 				case DateTimeFormat.UnixInMilliseconds:
-					long unixTimeMilliSeconds = dto.ToUnixTimeMilliseconds();
-					writer.Write(unixTimeMilliSeconds);
+					writer.Write(Definitions.datetime_unix_milliseconds);
 					break;
 
 				case DateTimeFormat.ISO8601:
-					string iso8601Time = dto.ToString("o", CultureInfo.InvariantCulture);
-					// Use existing string writing for this
-					WriteString(writer, iso8601Time);
+					writer.Write(Definitions.datetime_iso_8601);
 					break;
+
 			}
 		}
 
-		private static void WriteBigInteger(BinaryWriter writer, Object valueToWrite)
+		DateTime dt = (DateTime)valueToWrite;
+
+		switch (dateTimeFormat)
 		{
-			// Big integer takes at least 9 bytes, most likely more
-			byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();	
+			case DateTimeFormat.UnixInSeconds:				
+				long unixTimeSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeSeconds();
+				writer.Write(unixTimeSeconds);
+				break;
 			
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+			case DateTimeFormat.UnixInMilliseconds:
+				long unixTimeMilliSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeMilliseconds();
+				writer.Write(unixTimeMilliSeconds);
+				break;
 
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+			case DateTimeFormat.ISO8601:
+				string iso8601Time = dt.ToString("o", CultureInfo.InvariantCulture);
+				// Use existing string writing for this
+				WriteString(writer, iso8601Time);
+				break;
 		}
-
-		#endregion // Single values
-
-		private static void WriteArray<T>(BinaryWriter writer, Object valueToWrite, int bytesPerItem)
-		{
-			T[] array = (T[])valueToWrite;
-			byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
-			Buffer.BlockCopy(array, 0, arrayToWrite, 0, arrayToWrite.Length);
-
-			// Write actual array
-			ArrayWriter(writer, arrayToWrite);
-		}
-
-		private static void ArrayWriter(BinaryWriter writer, byte[] arrayToWrite)
-		{
-			ulong countOfBytes = (ulong)arrayToWrite.LongLength;
-
-			// Write how many bytes will follow as unsigned 64 bit integer
-			writer.Write(countOfBytes);
-
-			// Write actual bytes
-			writer.Write(arrayToWrite);
-
-			// Write needed amount of padding
-			PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
-		}
-
-		private static void WriteSpecialNullType(BinaryWriter writer, Type typeToWrite)
-		{
-			writer.Write(Definitions.specialType);
-			writer.Write(Definitions.GetAUDALFtypeWithDotnetType(typeToWrite));
-		}
-
-		private static readonly byte zeroByte = 0;
-		private static void PadWithZeros(BinaryWriter writer, int howManyZeros)
-		{
-			for (int i = 0; i < howManyZeros; i++)
-			{
-				writer.Write(zeroByte);
-			}
-		}
-
-		private static void PadWithZeros(BinaryWriter writer, ulong howManyZeros)
-		{
-			for (ulong u = 0; u < howManyZeros; u++)
-			{
-				writer.Write(zeroByte);
-			}
-		}		
 	}
+
+	private static void WriteDateTimeOffset(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
+	{
+		// Single datetimeoffset might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
+		if (!isKey)
+		{
+			// Write value type ID (8 bytes)
+			switch (dateTimeFormat)
+			{
+				case DateTimeFormat.UnixInSeconds:
+					writer.Write(Definitions.datetime_unix_seconds);
+					break;
+
+				case DateTimeFormat.UnixInMilliseconds:
+					writer.Write(Definitions.datetime_unix_milliseconds);
+					break;
+
+				case DateTimeFormat.ISO8601:
+					writer.Write(Definitions.datetime_iso_8601);
+					break;
+
+			}
+		}
+
+		DateTimeOffset dto = (DateTimeOffset)valueToWrite;
+
+		switch (dateTimeFormat)
+		{
+			case DateTimeFormat.UnixInSeconds:
+				long unixTimeSeconds = dto.ToUnixTimeSeconds();
+				writer.Write(unixTimeSeconds);
+				break;
+			
+			case DateTimeFormat.UnixInMilliseconds:
+				long unixTimeMilliSeconds = dto.ToUnixTimeMilliseconds();
+				writer.Write(unixTimeMilliSeconds);
+				break;
+
+			case DateTimeFormat.ISO8601:
+				string iso8601Time = dto.ToString("o", CultureInfo.InvariantCulture);
+				// Use existing string writing for this
+				WriteString(writer, iso8601Time);
+				break;
+		}
+	}
+
+	private static void WriteBigInteger(BinaryWriter writer, Object valueToWrite)
+	{
+		// Big integer takes at least 9 bytes, most likely more
+		byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();	
+		
+		ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+
+		// Write how many bytes will follow as unsigned 64 bit integer
+		writer.Write(countOfBytes);
+
+		// Write actual bytes
+		writer.Write(arrayToWrite);
+
+		// Write needed amount of padding
+		PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+	}
+
+	#endregion // Single values
+
+	private static void WriteArray<T>(BinaryWriter writer, Object valueToWrite, int bytesPerItem)
+	{
+		T[] array = (T[])valueToWrite;
+		byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
+		Buffer.BlockCopy(array, 0, arrayToWrite, 0, arrayToWrite.Length);
+
+		// Write actual array
+		ArrayWriter(writer, arrayToWrite);
+	}
+
+	private static void ArrayWriter(BinaryWriter writer, byte[] arrayToWrite)
+	{
+		ulong countOfBytes = (ulong)arrayToWrite.LongLength;
+
+		// Write how many bytes will follow as unsigned 64 bit integer
+		writer.Write(countOfBytes);
+
+		// Write actual bytes
+		writer.Write(arrayToWrite);
+
+		// Write needed amount of padding
+		PadWithZeros(writer, Definitions.NextDivisableBy8(countOfBytes) - countOfBytes);
+	}
+
+	private static void WriteSpecialNullType(BinaryWriter writer, Type typeToWrite)
+	{
+		writer.Write(Definitions.specialType);
+		writer.Write(Definitions.GetAUDALFtypeWithDotnetType(typeToWrite));
+	}
+
+	private static readonly byte zeroByte = 0;
+	private static void PadWithZeros(BinaryWriter writer, int howManyZeros)
+	{
+		for (int i = 0; i < howManyZeros; i++)
+		{
+			writer.Write(zeroByte);
+		}
+	}
+
+	private static void PadWithZeros(BinaryWriter writer, ulong howManyZeros)
+	{
+		for (ulong u = 0; u < howManyZeros; u++)
+		{
+			writer.Write(zeroByte);
+		}
+	}		
 }
