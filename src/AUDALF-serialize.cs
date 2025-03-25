@@ -111,7 +111,7 @@ public static class AUDALF_Serialize
 		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.GetAUDALFtypeWithDotnetType(typeof(string)));
 	}
 
-	private static byte[] GenericSerialize(byte[] keyValuePairsBytes, List<ulong> keyValuePairsOffsets, byte[] keyTypeAsBytes)
+	private static byte[] GenericSerialize(ReadOnlySpan<byte> keyValuePairsBytes, List<ulong> keyValuePairsOffsets, ReadOnlySpan<byte> keyTypeAsBytes)
 	{
 		using (MemoryStream stream = new MemoryStream())
 		{
@@ -148,7 +148,7 @@ public static class AUDALF_Serialize
 		writer.Write(Definitions.payloadSizePlaceholder);
 	}
 
-	private static void WriteIndexSection(BinaryWriter writer, byte[] keyTypeAsBytes, List<ulong> positions)
+	private static void WriteIndexSection(BinaryWriter writer, ReadOnlySpan<byte> keyTypeAsBytes, List<ulong> positions)
 	{
 		ulong indexCount = (ulong)positions.Count;
 
