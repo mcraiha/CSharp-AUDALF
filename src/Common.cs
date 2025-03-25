@@ -577,9 +577,9 @@ public static class Definitions
 	/// <param name="a1">First byte array</param>
 	/// <param name="a2">Second byte array</param>
 	/// <returns>True if they are equal; False otherwise</returns>
-	public static bool ByteArrayCompare(byte[] a1, byte[] a2) 
+	public static bool ByteArrayCompare(ReadOnlySpan<byte> a1, ReadOnlySpan<byte> a2) 
 	{
-		return StructuralComparisons.StructuralEqualityComparer.Equals(a1, a2);
+		return MemoryExtensions.SequenceEqual(a1, a2);
 	}
 
 	#endregion
