@@ -554,7 +554,7 @@ public static class Definitions
 	/// </summary>
 	/// <param name="audalfBytes">Byte array with 8 AUDALF type bytes</param>
 	/// <returns>Type</returns>
-	public static Type GetDotnetTypeWithAUDALFtype(byte[] audalfBytes)
+	public static Type GetDotnetTypeWithAUDALFtype(ReadOnlySpan<byte> audalfBytes)
 	{
 		foreach (KeyValuePair<Type, byte[]> entry in dotnetTypeToAUDALF)
 		{
