@@ -34,6 +34,23 @@ class Program
 
 				bool isDictionary = AUDALF_Deserialize.IsDictionary(fs);
 				Console.WriteLine($"Is dictionary: {isDictionary}");
+
+				if (isDictionary)
+				{
+					ReadOnlySpan<byte> keyTypeBytes = AUDALF_Deserialize.ReadKeyType(fs);
+					Type keyType = Definitions.GetDotnetTypeWithAUDALFtype(keyTypeBytes);
+					Console.WriteLine($"Dictionary key type: {keyType}");
+
+					ulong indexCount = AUDALF_Deserialize.GetIndexCount(fs);
+					Console.WriteLine($"Dictionary item count: {indexCount}");
+
+					ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(fs);
+					foreach (ulong u in entryDefinitionOffsets)
+					{
+						(object key, object value) = AUDALF_Deserialize.ReadDictionaryKeyAndValueFromOffset(fs, u, keyTypeBytes, typeof(object), typeof(object));
+						Console.WriteLine($"Key: {key} value: {value}");
+					}
+				}
 			}
 		}
 	}
