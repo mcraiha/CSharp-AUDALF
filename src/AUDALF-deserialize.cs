@@ -278,7 +278,7 @@ public static class AUDALF_Deserialize
 	/// <returns>True if Dictionary; False if list</returns>
 	public static bool IsDictionary(Stream inputStream)
 	{
-		using (BinaryReader reader = new BinaryReader(inputStream))
+		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 		{
 			reader.BaseStream.Seek(Definitions.keyTypeOffset, SeekOrigin.Begin);
 			byte[] keyType = reader.ReadBytes(8);
