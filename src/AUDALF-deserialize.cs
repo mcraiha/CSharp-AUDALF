@@ -133,7 +133,7 @@ public static class AUDALF_Deserialize
 	/// <returns>Dictionary</returns>
 	public static Dictionary<T, V> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true, DeserializationSettings settings = null)
 	{
-		byte[] typeIdOfKeys = ReadKeyType(inputStream);
+		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(inputStream);
 
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
 		Dictionary<T, V> returnDictionary = new Dictionary<T, V>(entryOffsets.Length);
@@ -173,7 +173,7 @@ public static class AUDALF_Deserialize
 	/// <returns>Value of type V</returns>
 	public static V DeserializeSingleValue<T, V>(Stream inputStream, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings settings = null)
 	{
-		byte[] typeIdOfKeys = ReadKeyType(inputStream);
+		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(inputStream);
 
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
 
@@ -291,7 +291,7 @@ public static class AUDALF_Deserialize
 	/// </summary>
 	/// <param name="payload">Byte array</param>
 	/// <returns>Byte array that contains AUDALF type ID</returns>
-	public static byte[] ReadKeyType(ReadOnlySpan<byte> payload)
+	public static ReadOnlySpan<byte> ReadKeyType(ReadOnlySpan<byte> payload)
 	{
 		return ReadKeyType(new MemoryStream(payload.ToArray(), writable: false));
 	}
@@ -301,7 +301,7 @@ public static class AUDALF_Deserialize
 	/// </summary>
 	/// <param name="inputStream">Input stream</param>
 	/// <returns>Byte array that contains AUDALF type ID</returns>
-	public static byte[] ReadKeyType(Stream inputStream)
+	public static ReadOnlySpan<byte> ReadKeyType(Stream inputStream)
 	{
 		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 		{
