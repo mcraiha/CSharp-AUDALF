@@ -51,6 +51,19 @@ class Program
 						Console.WriteLine($"Key: {key} value: {value}");
 					}
 				}
+				else
+				{
+					// List
+					ulong indexCount = AUDALF_Deserialize.GetIndexCount(fs);
+					Console.WriteLine($"List item count: {indexCount}");
+
+					ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(fs);
+					foreach (ulong u in entryDefinitionOffsets)
+					{
+						(ulong key, object value) = AUDALF_Deserialize.ReadListKeyAndValueFromOffset(fs, u, typeof(object));
+						Console.WriteLine($"Key: {key} value: {value}");
+					}
+				}
 			}
 		}
 	}
