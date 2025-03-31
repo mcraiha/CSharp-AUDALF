@@ -4,6 +4,7 @@ using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Buffers.Binary;
 
 namespace CSharp_AUDALF;
 
@@ -196,7 +197,7 @@ public static class AUDALF_Deserialize
 	/// <returns>True if it is; False otherwise</returns>
 	public static bool IsAUDALF(ReadOnlySpan<byte> payload)
 	{
-		return IsAUDALF(new MemoryStream(payload.ToArray(), writable: false));
+		return Definitions.ByteArrayCompare(Definitions.fourCC, payload.Slice(0, 4));
 	}
 
 	/// <summary>
@@ -214,13 +215,13 @@ public static class AUDALF_Deserialize
 	}
 
 	/// <summary>
-	/// Get AUDALF version number from byte array
+	/// Get AUDALF version number from AUDALF byte array
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>Uint that contains version number</returns>
 	public static uint GetVersionNumber(ReadOnlySpan<byte> payload)
 	{
-		return GetVersionNumber(new MemoryStream(payload.ToArray(), writable: false));
+		return BinaryPrimitives.ReadUInt32LittleEndian(payload.Slice(Definitions.versionOffset, 4));
 	}
 
 	/// <summary>
@@ -240,11 +241,11 @@ public static class AUDALF_Deserialize
 	/// <summary>
 	/// Get the header stored payload size in bytes
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>Ulong</returns>
 	public static ulong GetByteSize(ReadOnlySpan<byte> payload)
 	{
-		return GetByteSize(new MemoryStream(payload.ToArray(), writable: false));
+		return BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice(Definitions.payloadSizeOffset, 8));
 	}
 
 	/// <summary>
@@ -264,11 +265,11 @@ public static class AUDALF_Deserialize
 	/// <summary>
 	/// Is AUDALF byte array a dictionary (or a list)
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>True if Dictionary; False if list</returns>
 	public static bool IsDictionary(ReadOnlySpan<byte> payload)
 	{
-		return IsDictionary(new MemoryStream(payload.ToArray(), writable: false));
+		return !Definitions.ByteArrayCompare(Definitions.specialType, payload.Slice(Definitions.keyTypeOffset, 8));
 	}
 
 	/// <summary>
@@ -289,11 +290,11 @@ public static class AUDALF_Deserialize
 	/// <summary>
 	/// Read a key type from AUDALF byte array
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>Byte array that contains AUDALF type ID</returns>
 	public static ReadOnlySpan<byte> ReadKeyType(ReadOnlySpan<byte> payload)
 	{
-		return ReadKeyType(new MemoryStream(payload.ToArray(), writable: false));
+		return payload.Slice(Definitions.keyTypeOffset, 8);
 	}
 
 	/// <summary>
@@ -313,11 +314,11 @@ public static class AUDALF_Deserialize
 	/// <summary>
 	/// Parse a key type from AUDALF byte array
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>Type</returns>
 	public static Type ParseKeyType(ReadOnlySpan<byte> payload)
 	{
-		return ParseKeyType(new MemoryStream(payload.ToArray(), writable: false));
+		return Definitions.GetDotnetTypeWithAUDALFtype(payload.Slice(Definitions.keyTypeOffset, 8));
 	}
 
 	/// <summary>
@@ -338,11 +339,11 @@ public static class AUDALF_Deserialize
 	/// <summary>
 	/// Get index count from AUDALF byte array
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>Ulong count</returns>
 	public static ulong GetIndexCount(ReadOnlySpan<byte> payload)
 	{
-		return GetIndexCount(new MemoryStream(payload.ToArray(), writable: false));
+		return BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice(Definitions.indexCountOffset, 8));
 	}
 
 	/// <summary>
@@ -362,11 +363,20 @@ public static class AUDALF_Deserialize
 	/// <summary>
 	/// Get entry definition offsets from AUDALF byte array
 	/// </summary>
-	/// <param name="payload">Byte array</param>
+	/// <param name="payload">AUDALF byte array</param>
 	/// <returns>Array of ulong offsets</returns>
 	public static ulong[] GetEntryDefinitionOffsets(ReadOnlySpan<byte> payload)
 	{
-		return GetEntryDefinitionOffsets(new MemoryStream(payload.ToArray()));
+		ulong indexCount = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice(Definitions.indexCountOffset, 8));
+
+		ulong[] returnValues = new ulong[indexCount];
+		for (ulong u = 0; u < indexCount; u++)
+		{
+			int offset = Definitions.entryDefinitionsOffset + (int)(u * 8);
+			returnValues[u] = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice(offset, 8));
+		}
+
+		return returnValues;
 	}
 
 	/// <summary>
