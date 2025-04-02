@@ -35,7 +35,7 @@ namespace Tests
 			ulong expected = 0;
 
 			// Act
-			ulong valueGotFromBytes = BitConverter.ToUInt64(Definitions.specialType, 0);
+			ulong valueGotFromBytes = BitConverter.ToUInt64(Definitions.specialType.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expected, valueGotFromBytes);

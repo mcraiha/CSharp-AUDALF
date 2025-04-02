@@ -28,7 +28,7 @@ public static class AUDALF_Serialize
 		IEnumerable<object> objects = ienumerableStructure.Cast<object>();
 		// Generate Key and value pairs section
 		var generateResult = GenerateListKeyValuePairs(objects, typeof(T), serializationSettings);
-		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType);
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType.AsSpan());
 	}
 
 	/// <summary>
@@ -139,13 +139,13 @@ public static class AUDALF_Serialize
 	private static void WriteHeader(BinaryWriter writer)
 	{
 		// First write FourCC
-		writer.Write(Definitions.fourCC);
+		writer.Write(Definitions.fourCC.AsSpan());
 
 		// Then version number
-		writer.Write(Definitions.versionNumber);
+		writer.Write(Definitions.versionNumber.AsSpan());
 
 		// Then some zeroes for payload size since this will be fixed later
-		writer.Write(Definitions.payloadSizePlaceholder);
+		writer.Write(Definitions.payloadSizePlaceholder.AsSpan());
 	}
 
 	private static void WriteIndexSection(BinaryWriter writer, ReadOnlySpan<byte> keyTypeAsBytes, List<ulong> positions)
@@ -650,7 +650,7 @@ public static class AUDALF_Serialize
 
 	private static void WriteSpecialNullType(BinaryWriter writer, Type typeToWrite)
 	{
-		writer.Write(Definitions.specialType);
+		writer.Write(Definitions.specialType.AsSpan());
 		writer.Write(Definitions.GetAUDALFtypeWithDotnetType(typeToWrite));
 	}
 

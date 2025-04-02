@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Numerics;
 
 namespace CSharp_AUDALF;
@@ -68,25 +69,25 @@ public static class Definitions
 	/// FourCC identifier as byte array
 	/// </summary>
 	/// <value>AUDA aka 0x41, 0x55, 0x44, 0x41</value>
-	public static readonly byte[] fourCC = new byte[fourCCSize] { 0x41, 0x55, 0x44, 0x41 };
+	public static readonly ImmutableArray<byte> fourCC = [0x41, 0x55, 0x44, 0x41];
 
 	/// <summary>
 	/// Version number of current AUDALF
 	/// </summary>
 	/// <value>1 aka 0x01, 0x00, 0x00, 0x00</value>
-	public static readonly byte[] versionNumber = new byte[4] { 0x01, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> versionNumber = [0x01, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Payload size placeholder
 	/// </summary>
 	/// <value>0</value>
-	public static readonly byte[] payloadSizePlaceholder = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> payloadSizePlaceholder = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Special type byte array. Reserved for special cases
 	/// </summary>
 	/// <value>0</value>
-	public static readonly byte[] specialType = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> specialType = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 
 	#region Unsigned integer

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
 using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
+using System.Linq;
 
 namespace Tests
 {
@@ -65,7 +66,7 @@ namespace Tests
 
 			// Assert
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.ToArray(), 0), versionNumber, "Result should have correct version number");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)byteArray.LongLength, indexCount, "Result should contain certain number of items");
 			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
@@ -106,7 +107,7 @@ namespace Tests
 
 			// Assert
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.ToArray(), 0), versionNumber, "Result should have correct version number");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)byteArray.LongLength, indexCount, "Result should contain certain number of items");
 			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
@@ -141,7 +142,7 @@ namespace Tests
 
 			// Assert
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.ToArray(), 0), versionNumber, "Result should have correct version number");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)intArray.LongLength, indexCount, "Result should contain certain number of items");
 			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
@@ -181,7 +182,7 @@ namespace Tests
 
 			// Assert
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.ToArray(), 0), versionNumber, "Result should have correct version number");
 			Assert.IsTrue(isDictionary, "Result should contain an array, not a dictionary");
 			CollectionAssert.AreEqual(Definitions.string_utf8, keyType.ToArray(), "KeyType should be string UTF-8");
 			Assert.AreEqual((ulong)expected.Count, indexCount, "Result should contain certain number of items");

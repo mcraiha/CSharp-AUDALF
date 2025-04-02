@@ -197,7 +197,7 @@ public static class AUDALF_Deserialize
 	/// <returns>True if it is; False otherwise</returns>
 	public static bool IsAUDALF(ReadOnlySpan<byte> payload)
 	{
-		return Definitions.ByteArrayCompare(Definitions.fourCC, payload.Slice(0, 4));
+		return Definitions.ByteArrayCompare(Definitions.fourCC.AsSpan(), payload.Slice(0, 4));
 	}
 
 	/// <summary>
@@ -210,7 +210,7 @@ public static class AUDALF_Deserialize
 		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 		{
 			byte[] fourCC = reader.ReadBytes(Definitions.fourCCSize);
-			return Definitions.ByteArrayCompare(Definitions.fourCC, fourCC);
+			return Definitions.ByteArrayCompare(Definitions.fourCC.AsSpan(), fourCC);
 		}
 	}
 
@@ -269,7 +269,7 @@ public static class AUDALF_Deserialize
 	/// <returns>True if Dictionary; False if list</returns>
 	public static bool IsDictionary(ReadOnlySpan<byte> payload)
 	{
-		return !Definitions.ByteArrayCompare(Definitions.specialType, payload.Slice(Definitions.keyTypeOffset, 8));
+		return !Definitions.ByteArrayCompare(Definitions.specialType.AsSpan(), payload.Slice(Definitions.keyTypeOffset, 8));
 	}
 
 	/// <summary>
@@ -283,7 +283,7 @@ public static class AUDALF_Deserialize
 		{
 			reader.BaseStream.Seek(Definitions.keyTypeOffset, SeekOrigin.Begin);
 			byte[] keyType = reader.ReadBytes(8);
-			return !Definitions.ByteArrayCompare(Definitions.specialType, keyType);
+			return !Definitions.ByteArrayCompare(Definitions.specialType.AsSpan(), keyType);
 		}
 	}
 

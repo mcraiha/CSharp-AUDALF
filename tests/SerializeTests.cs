@@ -49,7 +49,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)byteArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -81,7 +81,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)ushortArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -113,7 +113,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)uintArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -145,7 +145,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)ulongArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -177,7 +177,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)sbyteArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -209,7 +209,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)shortArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -241,7 +241,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)intArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -273,7 +273,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)longArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -305,7 +305,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)floatArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -337,7 +337,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)doubleArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -369,7 +369,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)stringArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -406,7 +406,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsTrue(isDictionary, "Result should contain a dictionary, not an array");
 			Assert.AreEqual((ulong)stringStringDictionary.Count, indexCount, "Result should contain certain number of items");
@@ -457,7 +457,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result1, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF1, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber1, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber1, "Result should have correct version number");
 			Assert.AreEqual(result1.LongLength, byteSize1, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary1, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)dateTimeArray.LongLength, indexCount1, "Result should contain certain number of items");
@@ -465,7 +465,7 @@ namespace Tests
 
 			Assert.IsNotNull(result2, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF2, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber2, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber2, "Result should have correct version number");
 			Assert.AreEqual(result2.LongLength, byteSize2, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary2, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)dateTimeArray.LongLength, indexCount2, "Result should contain certain number of items");
@@ -473,7 +473,7 @@ namespace Tests
 
 			Assert.IsNotNull(result3, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF3, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber3, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber3, "Result should have correct version number");
 			Assert.AreEqual(result3.LongLength, byteSize3, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary3, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)dateTimeArray.LongLength, indexCount3, "Result should contain certain number of items");
@@ -522,7 +522,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)boolArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -557,7 +557,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)bigIntegerArray.LongLength, indexCount, "Result should contain certain number of items");
@@ -608,7 +608,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result1, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF1, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber1, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber1, "Result should have correct version number");
 			Assert.AreEqual(result1.LongLength, byteSize1, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary1, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)dateTimeOffsetArray.LongLength, indexCount1, "Result should contain certain number of items");
@@ -616,7 +616,7 @@ namespace Tests
 
 			Assert.IsNotNull(result2, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF2, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber2, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber2, "Result should have correct version number");
 			Assert.AreEqual(result2.LongLength, byteSize2, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary2, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)dateTimeOffsetArray.LongLength, indexCount2, "Result should contain certain number of items");
@@ -624,7 +624,7 @@ namespace Tests
 
 			Assert.IsNotNull(result3, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF3, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber3, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber3, "Result should have correct version number");
 			Assert.AreEqual(result3.LongLength, byteSize3, "Result payload should have correct amount lenght info");
 			Assert.IsFalse(isDictionary3, "Result should contain an array, not a dictionary");
 			Assert.AreEqual((ulong)dateTimeOffsetArray.LongLength, indexCount3, "Result should contain certain number of items");
@@ -680,7 +680,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsTrue(isDictionary, "Result should contain a dictionary, not an array");
 			Assert.AreEqual((ulong)stringObjectDictionary.Count, indexCount, "Result should contain certain number of items");
@@ -725,7 +725,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsTrue(isDictionary, "Result should contain a dictionary, not an array");
 			Assert.AreEqual((ulong)stringObjectDictionary.Count, indexCount, "Result should contain certain number of items");
@@ -766,7 +766,7 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result, "Result should NOT be null");
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
-			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber, 0), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
 			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
 			Assert.IsTrue(isDictionary, "Result should contain a dictionary, not an array");
 			Assert.AreEqual((ulong)stringByteArrayDictionary.Count, indexCount, "Result should contain certain number of items");
