@@ -412,6 +412,9 @@ public static class AUDALF_Deserialize
 	/// <returns>Tuple that has key index and object for value</returns>
 	public static (ulong key, object value) ReadListKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, Type wantedType)
 	{
+		ulong key = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset, 8));
+		ReadOnlySpan<byte> typeIdAsBytes = payload.Slice(8, 8);
+		object value = Read(payload.Slice(16), typeIdAsBytes, wantedType);
 		return ReadListKeyAndValueFromOffset(new MemoryStream(payload.ToArray(), writable: false), offset, wantedType);
 	}
 
@@ -428,10 +431,9 @@ public static class AUDALF_Deserialize
 		{
 			reader.BaseStream.Seek((long)offset, SeekOrigin.Begin);
 			ulong key = reader.ReadUInt64();
-			object value = null;
 			byte[] typeIdAsBytes = reader.ReadBytes(8);
 
-			value = Read(reader, typeIdAsBytes, wantedType);
+			object value = Read(reader, typeIdAsBytes, wantedType);
 
 			return (key, value);
 		}
@@ -465,6 +467,135 @@ public static class AUDALF_Deserialize
 
 			return (key, value);
 		}
+	}
+
+	private static object Read(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType))
+		{
+			return bytesToProcess[0];
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerArrayType))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+			return bytesToProcess.Slice(8, (int)byteArrayLengthInBytes).ToArray();
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerType))
+		{
+			return BinaryPrimitives.ReadUInt16LittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType))
+		{
+			return BinaryPrimitives.ReadUInt32LittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerType))
+		{
+			return BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerArrayType))
+		{
+			return ReadArray<ushort>(bytesToProcess, sizeof(ushort));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerArrayType))
+		{
+			return ReadArray<uint>(bytesToProcess, sizeof(uint));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerArrayType))
+		{
+			return ReadArray<ulong>(bytesToProcess, sizeof(ulong));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerType))
+		{
+			return (sbyte)bytesToProcess[0];
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerArrayType))
+		{
+			return ReadArray<sbyte>(bytesToProcess, sizeof(sbyte));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerType))
+		{
+			return BinaryPrimitives.ReadInt16LittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerArrayType))
+		{
+			return ReadArray<short>(bytesToProcess, sizeof(short));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType))
+		{
+			return BinaryPrimitives.ReadInt32LittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerArrayType))
+		{
+			return ReadArray<int>(bytesToProcess, sizeof(int));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerType))
+		{
+			return BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerArrayType))
+		{
+			return ReadArray<long>(bytesToProcess, sizeof(long));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit))
+		{
+			return BinaryPrimitives.ReadSingleLittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit))
+		{
+			return BinaryPrimitives.ReadDoubleLittleEndian(bytesToProcess);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8))
+		{
+			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);;
+			return Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.booleans))
+		{
+			return bytesToProcess[0] != 0;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_seconds))
+		{
+			long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
+
+			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+			{
+				return dateTimeOffset;
+			}
+			
+			return dateTimeOffset.UtcDateTime;// .DateTime;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_milliseconds))
+		{
+			long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
+
+			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+			{
+				return dateTimeOffset;
+			}
+
+			return dateTimeOffset.UtcDateTime;// .DateTime;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_iso_8601))
+		{
+			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+			string iso8601 = Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
+
+			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+			{
+				return DateTimeOffset.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+			}
+
+			return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.bigIntegerType))
+		{
+			ulong bigIntegerLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+			return new BigInteger(bytesToProcess.Slice(8, (int)bigIntegerLengthInBytes));
+		}
+
+		return null;
 	}
 
 	private static object Read(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
@@ -603,6 +734,15 @@ public static class AUDALF_Deserialize
 		byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
 		T[] returnArray = new T[byteArrayLengthInBytes / bytesPerItem];
 		Buffer.BlockCopy(bytes, 0, returnArray, 0, (int)byteArrayLengthInBytes);
+		return returnArray;
+	}
+
+	private static T[] ReadArray<T>(ReadOnlySpan<byte> bytesToProcess, ulong bytesPerItem)
+	{
+		ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		ReadOnlySpan<byte> source = bytesToProcess.Slice(8, (int)byteArrayLengthInBytes);
+		T[] returnArray = new T[byteArrayLengthInBytes / bytesPerItem];
+		Buffer.BlockCopy(source.ToArray(), 0, returnArray, 0, (int)byteArrayLengthInBytes);
 		return returnArray;
 	}
 }
