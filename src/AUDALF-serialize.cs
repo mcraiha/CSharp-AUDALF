@@ -654,7 +654,7 @@ public static class AUDALF_Serialize
 		writer.Write(Definitions.GetAUDALFtypeWithDotnetType(typeToWrite));
 	}
 
-	private static readonly byte zeroByte = 0;
+	private const byte zeroByte = 0;
 	private static void PadWithZeros(BinaryWriter writer, int howManyZeros)
 	{
 		for (int i = 0; i < howManyZeros; i++)
