@@ -57,16 +57,16 @@ namespace Tests
 			ulong expected4096bit = 10;
 
 			// Act
-			ulong result8bit = BitConverter.ToUInt64(Definitions.unsigned_8_bit_integerType, 0);
-			ulong result16bit = BitConverter.ToUInt64(Definitions.unsigned_16_bit_integerType, 0);
-			ulong result32bit = BitConverter.ToUInt64(Definitions.unsigned_32_bit_integerType, 0);
-			ulong result64bit = BitConverter.ToUInt64(Definitions.unsigned_64_bit_integerType, 0);
-			ulong result128bit = BitConverter.ToUInt64(Definitions.unsigned_128_bit_integerType, 0);
-			ulong result256bit = BitConverter.ToUInt64(Definitions.unsigned_256_bit_integerType, 0);
-			ulong result512bit = BitConverter.ToUInt64(Definitions.unsigned_512_bit_integerType, 0);
-			ulong result1024bit = BitConverter.ToUInt64(Definitions.unsigned_1024_bit_integerType, 0);
-			ulong result2048bit = BitConverter.ToUInt64(Definitions.unsigned_2048_bit_integerType, 0);
-			ulong result4096bit = BitConverter.ToUInt64(Definitions.unsigned_4096_bit_integerType, 0);
+			ulong result8bit = BitConverter.ToUInt64(Definitions.unsigned_8_bit_integerType.AsSpan());
+			ulong result16bit = BitConverter.ToUInt64(Definitions.unsigned_16_bit_integerType.AsSpan());
+			ulong result32bit = BitConverter.ToUInt64(Definitions.unsigned_32_bit_integerType.AsSpan());
+			ulong result64bit = BitConverter.ToUInt64(Definitions.unsigned_64_bit_integerType.AsSpan());
+			ulong result128bit = BitConverter.ToUInt64(Definitions.unsigned_128_bit_integerType.AsSpan());
+			ulong result256bit = BitConverter.ToUInt64(Definitions.unsigned_256_bit_integerType.AsSpan());
+			ulong result512bit = BitConverter.ToUInt64(Definitions.unsigned_512_bit_integerType.AsSpan());
+			ulong result1024bit = BitConverter.ToUInt64(Definitions.unsigned_1024_bit_integerType.AsSpan());
+			ulong result2048bit = BitConverter.ToUInt64(Definitions.unsigned_2048_bit_integerType.AsSpan());
+			ulong result4096bit = BitConverter.ToUInt64(Definitions.unsigned_4096_bit_integerType.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expected8bit, result8bit);
@@ -97,16 +97,16 @@ namespace Tests
 			ulong expected4096bit = 65546;
 
 			// Act
-			ulong result8bit = BitConverter.ToUInt64(Definitions.unsigned_8_bit_integerArrayType, 0);
-			ulong result16bit = BitConverter.ToUInt64(Definitions.unsigned_16_bit_integerArrayType, 0);
-			ulong result32bit = BitConverter.ToUInt64(Definitions.unsigned_32_bit_integerArrayType, 0);
-			ulong result64bit = BitConverter.ToUInt64(Definitions.unsigned_64_bit_integerArrayType, 0);
-			ulong result128bit = BitConverter.ToUInt64(Definitions.unsigned_128_bit_integerArrayType, 0);
-			ulong result256bit = BitConverter.ToUInt64(Definitions.unsigned_256_bit_integerArrayType, 0);
-			ulong result512bit = BitConverter.ToUInt64(Definitions.unsigned_512_bit_integerArrayType, 0);
-			ulong result1024bit = BitConverter.ToUInt64(Definitions.unsigned_1024_bit_integerArrayType, 0);
-			ulong result2048bit = BitConverter.ToUInt64(Definitions.unsigned_2048_bit_integerArrayType, 0);
-			ulong result4096bit = BitConverter.ToUInt64(Definitions.unsigned_4096_bit_integerArrayType, 0);
+			ulong result8bit = BitConverter.ToUInt64(Definitions.unsigned_8_bit_integerArrayType.AsSpan());
+			ulong result16bit = BitConverter.ToUInt64(Definitions.unsigned_16_bit_integerArrayType.AsSpan());
+			ulong result32bit = BitConverter.ToUInt64(Definitions.unsigned_32_bit_integerArrayType.AsSpan());
+			ulong result64bit = BitConverter.ToUInt64(Definitions.unsigned_64_bit_integerArrayType.AsSpan());
+			ulong result128bit = BitConverter.ToUInt64(Definitions.unsigned_128_bit_integerArrayType.AsSpan());
+			ulong result256bit = BitConverter.ToUInt64(Definitions.unsigned_256_bit_integerArrayType.AsSpan());
+			ulong result512bit = BitConverter.ToUInt64(Definitions.unsigned_512_bit_integerArrayType.AsSpan());
+			ulong result1024bit = BitConverter.ToUInt64(Definitions.unsigned_1024_bit_integerArrayType.AsSpan());
+			ulong result2048bit = BitConverter.ToUInt64(Definitions.unsigned_2048_bit_integerArrayType.AsSpan());
+			ulong result4096bit = BitConverter.ToUInt64(Definitions.unsigned_4096_bit_integerArrayType.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expected8bit, result8bit);
@@ -137,16 +137,16 @@ namespace Tests
 			ulong expected4096bit = 16777226;
 
 			// Act
-			ulong result8bit = BitConverter.ToUInt64(Definitions.signed_8_bit_integerType, 0);
-			ulong result16bit = BitConverter.ToUInt64(Definitions.signed_16_bit_integerType, 0);
-			ulong result32bit = BitConverter.ToUInt64(Definitions.signed_32_bit_integerType, 0);
-			ulong result64bit = BitConverter.ToUInt64(Definitions.signed_64_bit_integerType, 0);
-			ulong result128bit = BitConverter.ToUInt64(Definitions.signed_128_bit_integerType, 0);
-			ulong result256bit = BitConverter.ToUInt64(Definitions.signed_256_bit_integerType, 0);
-			ulong result512bit = BitConverter.ToUInt64(Definitions.signed_512_bit_integerType, 0);
-			ulong result1024bit = BitConverter.ToUInt64(Definitions.signed_1024_bit_integerType, 0);
-			ulong result2048bit = BitConverter.ToUInt64(Definitions.signed_2048_bit_integerType, 0);
-			ulong result4096bit = BitConverter.ToUInt64(Definitions.signed_4096_bit_integerType, 0);
+			ulong result8bit = BitConverter.ToUInt64(Definitions.signed_8_bit_integerType.AsSpan());
+			ulong result16bit = BitConverter.ToUInt64(Definitions.signed_16_bit_integerType.AsSpan());
+			ulong result32bit = BitConverter.ToUInt64(Definitions.signed_32_bit_integerType.AsSpan());
+			ulong result64bit = BitConverter.ToUInt64(Definitions.signed_64_bit_integerType.AsSpan());
+			ulong result128bit = BitConverter.ToUInt64(Definitions.signed_128_bit_integerType.AsSpan());
+			ulong result256bit = BitConverter.ToUInt64(Definitions.signed_256_bit_integerType.AsSpan());
+			ulong result512bit = BitConverter.ToUInt64(Definitions.signed_512_bit_integerType.AsSpan());
+			ulong result1024bit = BitConverter.ToUInt64(Definitions.signed_1024_bit_integerType.AsSpan());
+			ulong result2048bit = BitConverter.ToUInt64(Definitions.signed_2048_bit_integerType.AsSpan());
+			ulong result4096bit = BitConverter.ToUInt64(Definitions.signed_4096_bit_integerType.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expected8bit, result8bit);
@@ -177,16 +177,16 @@ namespace Tests
 			ulong expected4096bit = 16842762;
 
 			// Act
-			ulong result8bit = BitConverter.ToUInt64(Definitions.signed_8_bit_integerArrayType, 0);
-			ulong result16bit = BitConverter.ToUInt64(Definitions.signed_16_bit_integerArrayType, 0);
-			ulong result32bit = BitConverter.ToUInt64(Definitions.signed_32_bit_integerArrayType, 0);
-			ulong result64bit = BitConverter.ToUInt64(Definitions.signed_64_bit_integerArrayType, 0);
-			ulong result128bit = BitConverter.ToUInt64(Definitions.signed_128_bit_integerArrayType, 0);
-			ulong result256bit = BitConverter.ToUInt64(Definitions.signed_256_bit_integerArrayType, 0);
-			ulong result512bit = BitConverter.ToUInt64(Definitions.signed_512_bit_integerArrayType, 0);
-			ulong result1024bit = BitConverter.ToUInt64(Definitions.signed_1024_bit_integerArrayType, 0);
-			ulong result2048bit = BitConverter.ToUInt64(Definitions.signed_2048_bit_integerArrayType, 0);
-			ulong result4096bit = BitConverter.ToUInt64(Definitions.signed_4096_bit_integerArrayType, 0);
+			ulong result8bit = BitConverter.ToUInt64(Definitions.signed_8_bit_integerArrayType.AsSpan());
+			ulong result16bit = BitConverter.ToUInt64(Definitions.signed_16_bit_integerArrayType.AsSpan());
+			ulong result32bit = BitConverter.ToUInt64(Definitions.signed_32_bit_integerArrayType.AsSpan());
+			ulong result64bit = BitConverter.ToUInt64(Definitions.signed_64_bit_integerArrayType.AsSpan());
+			ulong result128bit = BitConverter.ToUInt64(Definitions.signed_128_bit_integerArrayType.AsSpan());
+			ulong result256bit = BitConverter.ToUInt64(Definitions.signed_256_bit_integerArrayType.AsSpan());
+			ulong result512bit = BitConverter.ToUInt64(Definitions.signed_512_bit_integerArrayType.AsSpan());
+			ulong result1024bit = BitConverter.ToUInt64(Definitions.signed_1024_bit_integerArrayType.AsSpan());
+			ulong result2048bit = BitConverter.ToUInt64(Definitions.signed_2048_bit_integerArrayType.AsSpan());
+			ulong result4096bit = BitConverter.ToUInt64(Definitions.signed_4096_bit_integerArrayType.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expected8bit, result8bit);
@@ -214,13 +214,13 @@ namespace Tests
 			ulong expected512bit = 33554439;
 
 			// Act
-			ulong result8bit = BitConverter.ToUInt64(Definitions.floating_point_8_bit, 0);
-			ulong result16bit = BitConverter.ToUInt64(Definitions.floating_point_16_bit, 0);
-			ulong result32bit = BitConverter.ToUInt64(Definitions.floating_point_32_bit, 0);
-			ulong result64bit = BitConverter.ToUInt64(Definitions.floating_point_64_bit, 0);
-			ulong result128bit = BitConverter.ToUInt64(Definitions.floating_point_128_bit, 0);
-			ulong result256bit = BitConverter.ToUInt64(Definitions.floating_point_256_bit, 0);
-			ulong result512bit = BitConverter.ToUInt64(Definitions.floating_point_512_bit, 0);
+			ulong result8bit = BitConverter.ToUInt64(Definitions.floating_point_8_bit.AsSpan());
+			ulong result16bit = BitConverter.ToUInt64(Definitions.floating_point_16_bit.AsSpan());
+			ulong result32bit = BitConverter.ToUInt64(Definitions.floating_point_32_bit.AsSpan());
+			ulong result64bit = BitConverter.ToUInt64(Definitions.floating_point_64_bit.AsSpan());
+			ulong result128bit = BitConverter.ToUInt64(Definitions.floating_point_128_bit.AsSpan());
+			ulong result256bit = BitConverter.ToUInt64(Definitions.floating_point_256_bit.AsSpan());
+			ulong result512bit = BitConverter.ToUInt64(Definitions.floating_point_512_bit.AsSpan());
 
 
 			// Assert
@@ -243,10 +243,10 @@ namespace Tests
 			ulong expectedUtf32 = 83886084;
 
 			// Act
-			ulong resultAscii = BitConverter.ToUInt64(Definitions.string_ascii, 0);
-			ulong resultUtf8 = BitConverter.ToUInt64(Definitions.string_utf8, 0);
-			ulong resultUtf16 = BitConverter.ToUInt64(Definitions.string_utf16, 0);
-			ulong resultUtf32 = BitConverter.ToUInt64(Definitions.string_utf32, 0);
+			ulong resultAscii = BitConverter.ToUInt64(Definitions.string_ascii.AsSpan());
+			ulong resultUtf8 = BitConverter.ToUInt64(Definitions.string_utf8.AsSpan());
+			ulong resultUtf16 = BitConverter.ToUInt64(Definitions.string_utf16.AsSpan());
+			ulong resultUtf32 = BitConverter.ToUInt64(Definitions.string_utf32.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expectedAscii, resultAscii);
@@ -262,7 +262,7 @@ namespace Tests
 			ulong expectedBoolean = 100663297;
 
 			// Act
-			ulong resultBoolean = BitConverter.ToUInt64(Definitions.booleans, 0);
+			ulong resultBoolean = BitConverter.ToUInt64(Definitions.booleans.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expectedBoolean, resultBoolean);
@@ -277,9 +277,9 @@ namespace Tests
 			ulong expectedISO8601 = 117440515;
 
 			// Act
-			ulong resultUnixSeconds = BitConverter.ToUInt64(Definitions.datetime_unix_seconds, 0);
-			ulong resultUnixMilliseconds = BitConverter.ToUInt64(Definitions.datetime_unix_milliseconds, 0);
-			ulong resultISO8601 = BitConverter.ToUInt64(Definitions.datetime_iso_8601, 0);
+			ulong resultUnixSeconds = BitConverter.ToUInt64(Definitions.datetime_unix_seconds.AsSpan());
+			ulong resultUnixMilliseconds = BitConverter.ToUInt64(Definitions.datetime_unix_milliseconds.AsSpan());
+			ulong resultISO8601 = BitConverter.ToUInt64(Definitions.datetime_iso_8601.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expectedUnixSeconds, resultUnixSeconds);
@@ -294,7 +294,7 @@ namespace Tests
 			ulong expectedBigInteger = 134217729;
 
 			// Act
-			ulong resultBigInteger = BitConverter.ToUInt64(Definitions.bigIntegerType, 0);
+			ulong resultBigInteger = BitConverter.ToUInt64(Definitions.bigIntegerType.AsSpan());
 
 			// Assert
 			Assert.AreEqual(expectedBigInteger, resultBigInteger);
@@ -339,7 +339,7 @@ namespace Tests
 			// Act
 
 			// Assert
-			Assert.AreEqual(typeof(byte), Definitions.GetDotnetTypeWithAUDALFtype(Definitions.unsigned_8_bit_integerType));
+			Assert.AreEqual(typeof(byte), Definitions.GetDotnetTypeWithAUDALFtype(Definitions.unsigned_8_bit_integerType.AsSpan()));
 
 			Assert.Throws<ArgumentException>(() => Definitions.GetDotnetTypeWithAUDALFtype(invalid1));
 			Assert.Throws<ArgumentException>(() => Definitions.GetDotnetTypeWithAUDALFtype(invalid2));

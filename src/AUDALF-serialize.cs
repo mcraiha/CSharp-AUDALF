@@ -525,15 +525,15 @@ public static class AUDALF_Serialize
 			switch (dateTimeFormat)
 			{
 				case DateTimeFormat.UnixInSeconds:
-					writer.Write(Definitions.datetime_unix_seconds);
+					writer.Write(Definitions.datetime_unix_seconds.AsSpan());
 					break;
 
 				case DateTimeFormat.UnixInMilliseconds:
-					writer.Write(Definitions.datetime_unix_milliseconds);
+					writer.Write(Definitions.datetime_unix_milliseconds.AsSpan());
 					break;
 
 				case DateTimeFormat.ISO8601:
-					writer.Write(Definitions.datetime_iso_8601);
+					writer.Write(Definitions.datetime_iso_8601.AsSpan());
 					break;
 
 			}
@@ -570,15 +570,15 @@ public static class AUDALF_Serialize
 			switch (dateTimeFormat)
 			{
 				case DateTimeFormat.UnixInSeconds:
-					writer.Write(Definitions.datetime_unix_seconds);
+					writer.Write(Definitions.datetime_unix_seconds.AsSpan());
 					break;
 
 				case DateTimeFormat.UnixInMilliseconds:
-					writer.Write(Definitions.datetime_unix_milliseconds);
+					writer.Write(Definitions.datetime_unix_milliseconds.AsSpan());
 					break;
 
 				case DateTimeFormat.ISO8601:
-					writer.Write(Definitions.datetime_iso_8601);
+					writer.Write(Definitions.datetime_iso_8601.AsSpan());
 					break;
 
 			}

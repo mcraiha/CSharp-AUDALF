@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Numerics;
+using System.Linq;
 
 namespace CSharp_AUDALF;
 
@@ -97,61 +98,61 @@ public static class Definitions
 	/// Unsigned 8 bit integer, equals byte, range [0 .. 255]
 	/// </summary>
 	/// <value>1</value>
-	public static readonly byte[] unsigned_8_bit_integerType = new byte[8] { 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_8_bit_integerType = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 16 bit integer, range [0 .. 65535]
 	/// </summary>
 	/// <value>2</value>
-	public static readonly byte[] unsigned_16_bit_integerType = new byte[8] { 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_16_bit_integerType = [0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 32 bit integer, range [0 .. 4294967295]
 	/// </summary>
 	/// <value>3</value>
-	public static readonly byte[] unsigned_32_bit_integerType = new byte[8] { 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_32_bit_integerType = [0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 64 bit integer, range [0 .. 18446744073709551615]
 	/// </summary>
 	/// <value>4</value>
-	public static readonly byte[] unsigned_64_bit_integerType = new byte[8] { 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_64_bit_integerType = [0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 128 bit integer, range [0 .. 2^128 − 1]
 	/// </summary>
 	/// <value>5</value>
-	public static readonly byte[] unsigned_128_bit_integerType = new byte[8] { 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_128_bit_integerType = [0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 256 bit integer, range [0 .. 2^256 − 1]
 	/// </summary>
 	/// <value>6</value>
-	public static readonly byte[] unsigned_256_bit_integerType = new byte[8] { 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_256_bit_integerType = [0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 512 bit integer, range [0 .. 2^512 − 1]
 	/// </summary>
 	/// <value>7</value>
-	public static readonly byte[] unsigned_512_bit_integerType = new byte[8] { 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_512_bit_integerType = [0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 1024 bit integer, range [0 .. 2^1024 − 1]
 	/// </summary>
 	/// <value>8</value>
-	public static readonly byte[] unsigned_1024_bit_integerType = new byte[8] { 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_1024_bit_integerType = [0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 2048 bit integer, range [0 .. 2^2048 − 1]
 	/// </summary>
 	/// <value>9</value>
-	public static readonly byte[] unsigned_2048_bit_integerType = new byte[8] { 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_2048_bit_integerType = [0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Unsigned 4096 bit integer, range [0 .. 2^4096 − 1]
 	/// </summary>
 	/// <value>10</value>
-	public static readonly byte[] unsigned_4096_bit_integerType = new byte[8] { 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_4096_bit_integerType = [0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Unsigned integer
 
@@ -161,61 +162,61 @@ public static class Definitions
 	/// Array of unsigned 8 bit integers
 	/// </summary>
 	/// <value>65537</value>
-	public static readonly byte[] unsigned_8_bit_integerArrayType = new byte[8] { 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_8_bit_integerArrayType = [0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 16 bit integers
 	/// </summary>
 	/// <value>65538</value>
-	public static readonly byte[] unsigned_16_bit_integerArrayType = new byte[8] { 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_16_bit_integerArrayType = [0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 32 bit integers
 	/// </summary>
 	/// <value>65539</value>
-	public static readonly byte[] unsigned_32_bit_integerArrayType = new byte[8] { 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_32_bit_integerArrayType = [0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 64 bit integers
 	/// </summary>
 	/// <value>65540</value>
-	public static readonly byte[] unsigned_64_bit_integerArrayType = new byte[8] { 0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_64_bit_integerArrayType = [0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 128 bit integers
 	/// </summary>
 	/// <value>65541</value>
-	public static readonly byte[] unsigned_128_bit_integerArrayType = new byte[8] { 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_128_bit_integerArrayType = [0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 256 bit integers
 	/// </summary>
 	/// <value>65542</value>
-	public static readonly byte[] unsigned_256_bit_integerArrayType = new byte[8] { 0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_256_bit_integerArrayType = [0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 512 bit integers
 	/// </summary>
 	/// <value>65543</value>
-	public static readonly byte[] unsigned_512_bit_integerArrayType = new byte[8] { 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_512_bit_integerArrayType = [0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 1024 bit integers
 	/// </summary>
 	/// <value>65544</value>
-	public static readonly byte[] unsigned_1024_bit_integerArrayType = new byte[8] { 0x08, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_1024_bit_integerArrayType = [0x08, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 2048 bit integers
 	/// </summary>
 	/// <value>65545</value>
-	public static readonly byte[] unsigned_2048_bit_integerArrayType = new byte[8] { 0x09, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_2048_bit_integerArrayType = [0x09, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of unsigned 4096 bit integers
 	/// </summary>
 	/// <value>65546</value>
-	public static readonly byte[] unsigned_4096_bit_integerArrayType = new byte[8] { 0x0A, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> unsigned_4096_bit_integerArrayType = [0x0A, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Unsigned integer array
 
@@ -225,61 +226,61 @@ public static class Definitions
 	/// Signed 8 bit integer, range [-128 .. 127]
 	/// </summary>
 	/// <value>16777217</value>
-	public static readonly byte[] signed_8_bit_integerType = new byte[8] { 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_8_bit_integerType = [0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 16 bit integer, range [-32768 .. 32767]
 	/// </summary>
 	/// <value>16777218</value>
-	public static readonly byte[] signed_16_bit_integerType = new byte[8] { 0x02, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_16_bit_integerType = [0x02, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 32 bit integer, range [-2147483648 .. 2 147 483 647]
 	/// </summary>
 	/// <value>16777219</value>
-	public static readonly byte[] signed_32_bit_integerType = new byte[8] { 0x03, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_32_bit_integerType = [0x03, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 64 bit integer, range [-9 223 372 036 854 775 808 .. 9 223 372 036 854 775 807]
 	/// </summary>
 	/// <value>16777220</value>
-	public static readonly byte[] signed_64_bit_integerType = new byte[8] { 0x04, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_64_bit_integerType = [0x04, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 128 bit integer, range [-2^127 .. 2^127 − 1]
 	/// </summary>
 	/// <value>16777221</value>
-	public static readonly byte[] signed_128_bit_integerType = new byte[8] { 0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_128_bit_integerType = [0x05, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 256 bit integer, range [-2^255 .. 2^255 − 1]
 	/// </summary>
 	/// <value>16777222</value>
-	public static readonly byte[] signed_256_bit_integerType = new byte[8] { 0x06, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_256_bit_integerType = [0x06, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 512 bit integer, range [-2^511 .. 2^511 − 1]
 	/// </summary>
 	/// <value>16777223</value>
-	public static readonly byte[] signed_512_bit_integerType = new byte[8] { 0x07, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_512_bit_integerType = [0x07, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 1024 bit integer, range [-2^1023 .. 2^1023 − 1]
 	/// </summary>
 	/// <value>16777224</value>
-	public static readonly byte[] signed_1024_bit_integerType = new byte[8] { 0x08, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_1024_bit_integerType = [0x08, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 2048 bit integer, range [-2^2047 .. 2^2047 − 1]
 	/// </summary>
 	/// <value>16777225</value>
-	public static readonly byte[] signed_2048_bit_integerType = new byte[8] { 0x09, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_2048_bit_integerType = [0x09, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Signed 4096 bit integer, range [-2^4095 .. 2^4095 − 1]
 	/// </summary>
 	/// <value>16777226</value>
-	public static readonly byte[] signed_4096_bit_integerType = new byte[8] { 0x0A, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_4096_bit_integerType = [0x0A, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Signed integer
 
@@ -290,61 +291,61 @@ public static class Definitions
 	/// Array of signed 8 bit integers
 	/// </summary>
 	/// <value>16842753</value>
-	public static readonly byte[] signed_8_bit_integerArrayType = new byte[8] { 0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_8_bit_integerArrayType = [0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 16 bit integers
 	/// </summary>
 	/// <value>16842754</value>
-	public static readonly byte[] signed_16_bit_integerArrayType = new byte[8] { 0x02, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_16_bit_integerArrayType = [0x02, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 32 bit integers
 	/// </summary>
 	/// <value>16842755</value>
-	public static readonly byte[] signed_32_bit_integerArrayType = new byte[8] { 0x03, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_32_bit_integerArrayType = [0x03, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 64 bit integers
 	/// </summary>
 	/// <value>16842756</value>
-	public static readonly byte[] signed_64_bit_integerArrayType = new byte[8] { 0x04, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_64_bit_integerArrayType = [0x04, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 128 bit integers
 	/// </summary>
 	/// <value>16842757</value>
-	public static readonly byte[] signed_128_bit_integerArrayType = new byte[8] { 0x05, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_128_bit_integerArrayType = [0x05, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 256 bit integers
 	/// </summary>
 	/// <value>16842758</value>
-	public static readonly byte[] signed_256_bit_integerArrayType = new byte[8] { 0x06, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_256_bit_integerArrayType = [0x06, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 512 bit integers
 	/// </summary>
 	/// <value>16842759</value>
-	public static readonly byte[] signed_512_bit_integerArrayType = new byte[8] { 0x07, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_512_bit_integerArrayType = [0x07, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 1024 bit integers
 	/// </summary>
 	/// <value>16842760</value>
-	public static readonly byte[] signed_1024_bit_integerArrayType = new byte[8] { 0x08, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_1024_bit_integerArrayType = [0x08, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 2048 bit integers
 	/// </summary>
 	/// <value>16842761</value>
-	public static readonly byte[] signed_2048_bit_integerArrayType = new byte[8] { 0x09, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_2048_bit_integerArrayType = [0x09, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Array of signed 4096 bit integers
 	/// </summary>
 	/// <value>16842762</value>
-	public static readonly byte[] signed_4096_bit_integerArrayType = new byte[8] { 0x0A, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> signed_4096_bit_integerArrayType = [0x0A, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Signed integer array
 
@@ -355,43 +356,43 @@ public static class Definitions
 	/// 8 bit floating point format
 	/// </summary>
 	/// <value>33554433</value>
-	public static readonly byte[] floating_point_8_bit = new byte[8] { 0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_8_bit = [0x01, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// 16 bit floating point format, binary16 from IEEE 754
 	/// </summary>
 	/// <value>33554434</value>
-	public static readonly byte[] floating_point_16_bit = new byte[8] { 0x02, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_16_bit = [0x02, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// 32 bit floating point format, binary32 from IEEE 754
 	/// </summary>
 	/// <value>33554435</value>
-	public static readonly byte[] floating_point_32_bit = new byte[8] { 0x03, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_32_bit = [0x03, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// 64 bit floating point format, binary64 from IEEE 754
 	/// </summary>
 	/// <value>33554436</value>
-	public static readonly byte[] floating_point_64_bit = new byte[8] { 0x04, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_64_bit = [0x04, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// 128 bit floating point format, binary128 from IEEE 754
 	/// </summary>
 	/// <value>33554437</value>
-	public static readonly byte[] floating_point_128_bit = new byte[8] { 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_128_bit = [0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// 256 bit floating point format, binary256 from IEEE 754
 	/// </summary>
 	/// <value>33554438</value>
-	public static readonly byte[] floating_point_256_bit = new byte[8] { 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_256_bit = [0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// 512 bit floating point format
 	/// </summary>
 	/// <value>33554439</value>
-	public static readonly byte[] floating_point_512_bit = new byte[8] { 0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> floating_point_512_bit = [0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Floating points
 
@@ -402,25 +403,25 @@ public static class Definitions
 	/// ASCII string
 	/// </summary>
 	/// <value>83886081</value>
-	public static readonly byte[] string_ascii = new byte[8] { 0x01, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> string_ascii = [0x01, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// UTF-8 Unicode string
 	/// </summary>
 	/// <value>83886082</value>
-	public static readonly byte[] string_utf8 = new byte[8] { 0x02, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> string_utf8 = [0x02, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// UTF-16 Unicode string
 	/// </summary>
 	/// <value>83886083</value>
-	public static readonly byte[] string_utf16 = new byte[8] { 0x03, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> string_utf16 = [0x03, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// UTF-32 Unicode string
 	/// </summary>
 	/// <value>83886084</value>
-	public static readonly byte[] string_utf32 = new byte[8] { 0x04, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> string_utf32 = [0x04, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Strings
 
@@ -430,7 +431,7 @@ public static class Definitions
 	/// Common boolean. It is either True (1) or False (0)
 	/// </summary>
 	/// <value>100663297</value>
-	public static readonly byte[] booleans = new byte[8] { 0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> booleans = [0x01, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Booleans
 
@@ -440,19 +441,19 @@ public static class Definitions
 	/// Aka POSIX time and UNIX Epoch time in seconds, as 64 bit unsigned integer
 	/// </summary>
 	/// <value>117440513</value>
-	public static readonly byte[] datetime_unix_seconds = new byte[8] { 0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> datetime_unix_seconds = [0x01, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// Aka POSIX time and UNIX Epoch time in milliseconds, as 64 bit unsigned integer
 	/// </summary>
 	/// <value>117440514</value>
-	public static readonly byte[] datetime_unix_milliseconds = new byte[8] { 0x02, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> datetime_unix_milliseconds = [0x02, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00];
 
 	/// <summary>
 	/// ISO 8601, as UTF-8 string
 	/// </summary>
 	/// <value>117440515</value>
-	public static readonly byte[] datetime_iso_8601 = new byte[8] { 0x03, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> datetime_iso_8601 = [0x03, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Date / time 
 
@@ -462,7 +463,7 @@ public static class Definitions
 	/// Signed integer without range limits	
 	/// </summary>
 	/// <value>134217729</value>
-	public static readonly byte[] bigIntegerType = new byte[8] { 0x01, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00 };
+	public static readonly ImmutableArray<byte> bigIntegerType = [0x01, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00];
 
 	#endregion // Arbitrarily large signed integer
 
@@ -506,35 +507,35 @@ public static class Definitions
 	private static readonly FrozenDictionary<Type, byte[]> dotnetTypeToAUDALF = new Dictionary<Type, byte[]>()
 	{
 		// Single values
-		{ typeof(byte), unsigned_8_bit_integerType },
-		{ typeof(ushort), unsigned_16_bit_integerType },
-		{ typeof(uint), unsigned_32_bit_integerType },
-		{ typeof(ulong), unsigned_64_bit_integerType },
+		{ typeof(byte), unsigned_8_bit_integerType.ToArray() },
+		{ typeof(ushort), unsigned_16_bit_integerType.ToArray() },
+		{ typeof(uint), unsigned_32_bit_integerType.ToArray() },
+		{ typeof(ulong), unsigned_64_bit_integerType.ToArray() },
 
-		{ typeof(sbyte), signed_8_bit_integerType },
-		{ typeof(short), signed_16_bit_integerType },
-		{ typeof(int), signed_32_bit_integerType },
-		{ typeof(long), signed_64_bit_integerType },
+		{ typeof(sbyte), signed_8_bit_integerType.ToArray() },
+		{ typeof(short), signed_16_bit_integerType.ToArray() },
+		{ typeof(int), signed_32_bit_integerType.ToArray() },
+		{ typeof(long), signed_64_bit_integerType.ToArray() },
 
-		{ typeof(float), floating_point_32_bit },
-		{ typeof(double), floating_point_64_bit },
+		{ typeof(float), floating_point_32_bit.ToArray() },
+		{ typeof(double), floating_point_64_bit.ToArray() },
 
-		{ typeof(string), string_utf8 },
+		{ typeof(string), string_utf8.ToArray() },
 
-		{ typeof(bool), booleans },
+		{ typeof(bool), booleans.ToArray() },
 
-		{ typeof(BigInteger), bigIntegerType },
+		{ typeof(BigInteger), bigIntegerType.ToArray() },
 
 		// Arrays
-		{ typeof(byte[]), unsigned_8_bit_integerArrayType },
-		{ typeof(ushort[]), unsigned_16_bit_integerArrayType },
-		{ typeof(uint[]), unsigned_32_bit_integerArrayType },
-		{ typeof(ulong[]), unsigned_64_bit_integerArrayType },
+		{ typeof(byte[]), unsigned_8_bit_integerArrayType.ToArray() },
+		{ typeof(ushort[]), unsigned_16_bit_integerArrayType.ToArray() },
+		{ typeof(uint[]), unsigned_32_bit_integerArrayType.ToArray() },
+		{ typeof(ulong[]), unsigned_64_bit_integerArrayType.ToArray() },
 
-		{ typeof(sbyte[]), signed_8_bit_integerArrayType },
-		{ typeof(short[]), signed_16_bit_integerArrayType },
-		{ typeof(int[]), signed_32_bit_integerArrayType },
-		{ typeof(long[]), signed_64_bit_integerArrayType },
+		{ typeof(sbyte[]), signed_8_bit_integerArrayType.ToArray() },
+		{ typeof(short[]), signed_16_bit_integerArrayType.ToArray() },
+		{ typeof(int[]), signed_32_bit_integerArrayType.ToArray() },
+		{ typeof(long[]), signed_64_bit_integerArrayType.ToArray() },
 
 	}.ToFrozenDictionary();
 
