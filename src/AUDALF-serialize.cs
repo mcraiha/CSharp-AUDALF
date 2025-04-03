@@ -264,7 +264,7 @@ public static class AUDALF_Serialize
 		writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 	}
 
-	private static void GenericWrite(BinaryWriter writer, Object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
+	private static void GenericWrite(BinaryWriter writer, object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
 	{
 		if (variableToWrite == null)
 		{
@@ -388,7 +388,7 @@ public static class AUDALF_Serialize
 
 	#region Single values
 
-	private static void WriteByte(BinaryWriter writer, Object valueToWrite)
+	private static void WriteByte(BinaryWriter writer, object valueToWrite)
 	{
 		// Single byte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -398,7 +398,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 7);
 	}
 
-	private static void WriteUShort(BinaryWriter writer, Object valueToWrite)
+	private static void WriteUShort(BinaryWriter writer, object valueToWrite)
 	{
 		// Single ushort takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -408,7 +408,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 6);
 	}
 
-	private static void WriteUInt(BinaryWriter writer, Object valueToWrite)
+	private static void WriteUInt(BinaryWriter writer, object valueToWrite)
 	{
 		// Single uint takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -418,7 +418,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 4);
 	}
 
-	private static void WriteULong(BinaryWriter writer, Object valueToWrite)
+	private static void WriteULong(BinaryWriter writer, object valueToWrite)
 	{
 		// Single ulong takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -427,7 +427,7 @@ public static class AUDALF_Serialize
 		// No padding needed
 	}
 
-	private static void WriteSByte(BinaryWriter writer, Object valueToWrite)
+	private static void WriteSByte(BinaryWriter writer, object valueToWrite)
 	{
 		// Single sbyte takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -437,7 +437,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 7);
 	}
 
-	private static void WriteShort(BinaryWriter writer, Object valueToWrite)
+	private static void WriteShort(BinaryWriter writer, object valueToWrite)
 	{
 		// Single short takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -447,7 +447,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 6);
 	}
 
-	private static void WriteInt(BinaryWriter writer, Object valueToWrite)
+	private static void WriteInt(BinaryWriter writer, object valueToWrite)
 	{
 		// Single int takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -457,7 +457,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 4);
 	}
 
-	private static void WriteLong(BinaryWriter writer, Object valueToWrite)
+	private static void WriteLong(BinaryWriter writer, object valueToWrite)
 	{
 		// Single long takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -466,7 +466,7 @@ public static class AUDALF_Serialize
 		// No padding needed
 	}
 
-	private static void WriteFloat(BinaryWriter writer, Object valueToWrite)
+	private static void WriteFloat(BinaryWriter writer, object valueToWrite)
 	{
 		// Single float takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -476,7 +476,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 4);
 	}
 
-	private static void WriteDouble(BinaryWriter writer, Object valueToWrite)
+	private static void WriteDouble(BinaryWriter writer, object valueToWrite)
 	{
 		// Single double takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -485,7 +485,7 @@ public static class AUDALF_Serialize
 		// No padding needed
 	}
 
-	private static void WriteString(BinaryWriter writer, Object valueToWrite)
+	private static void WriteString(BinaryWriter writer, object valueToWrite)
 	{
 		// Single string has variable length
 		string stringToWrite = (string)valueToWrite;
@@ -506,7 +506,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, nextDivisableBy8 - currentPos);		
 	}
 
-	private static void WriteBoolean(BinaryWriter writer, Object valueToWrite)
+	private static void WriteBoolean(BinaryWriter writer, object valueToWrite)
 	{
 		// Single boolean takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
 		
@@ -516,7 +516,7 @@ public static class AUDALF_Serialize
 		PadWithZeros(writer, 7);
 	}
 
-	private static void WriteDateTime(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
+	private static void WriteDateTime(BinaryWriter writer, object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
 	{
 		// Single datetime might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
 		if (!isKey)
@@ -561,7 +561,7 @@ public static class AUDALF_Serialize
 		}
 	}
 
-	private static void WriteDateTimeOffset(BinaryWriter writer, Object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
+	private static void WriteDateTimeOffset(BinaryWriter writer, object valueToWrite, bool isKey, DateTimeFormat dateTimeFormat)
 	{
 		// Single datetimeoffset might take either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given), or variable amount
 		if (!isKey)
@@ -606,7 +606,7 @@ public static class AUDALF_Serialize
 		}
 	}
 
-	private static void WriteBigInteger(BinaryWriter writer, Object valueToWrite)
+	private static void WriteBigInteger(BinaryWriter writer, object valueToWrite)
 	{
 		// Big integer takes at least 9 bytes, most likely more
 		byte[] arrayToWrite = ((BigInteger)valueToWrite).ToByteArray();	
@@ -625,7 +625,7 @@ public static class AUDALF_Serialize
 
 	#endregion // Single values
 
-	private static void WriteArray<T>(BinaryWriter writer, Object valueToWrite, int bytesPerItem)
+	private static void WriteArray<T>(BinaryWriter writer, object valueToWrite, int bytesPerItem)
 	{
 		T[] array = (T[])valueToWrite;
 		byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
