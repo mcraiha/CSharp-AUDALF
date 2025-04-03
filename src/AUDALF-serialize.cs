@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Collections.Frozen;
 using System.Linq;
 using System.Globalization;
 using System.Numerics;
@@ -250,11 +251,11 @@ public static class AUDALF_Serialize
 		return returnValue;
 	}
 
-	private static readonly HashSet<Type> needCustomValueTypeWriting = new HashSet<Type>()
+	private static readonly FrozenSet<Type> needCustomValueTypeWriting = new HashSet<Type>()
 	{
 		typeof(DateTime),
 		typeof(DateTimeOffset),
-	};
+	}.ToFrozenSet();
 
 	// Most types should use this
 	private static void CommonValueTypeWriter(BinaryWriter writer, Type originalType)

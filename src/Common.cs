@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Numerics;
 
@@ -502,43 +503,40 @@ public static class Definitions
 
 	#region Types to types pairings
 
-	private static readonly Dictionary<Type, byte[]> dotnetTypeToAUDALF = new Dictionary<Type, byte[]>();
-
-	static Definitions()
+	private static readonly FrozenDictionary<Type, byte[]> dotnetTypeToAUDALF = new Dictionary<Type, byte[]>()
 	{
 		// Single values
-		dotnetTypeToAUDALF.Add(typeof(byte), unsigned_8_bit_integerType);
-		dotnetTypeToAUDALF.Add(typeof(ushort), unsigned_16_bit_integerType);
-		dotnetTypeToAUDALF.Add(typeof(uint), unsigned_32_bit_integerType);
-		dotnetTypeToAUDALF.Add(typeof(ulong), unsigned_64_bit_integerType);
+		{ typeof(byte), unsigned_8_bit_integerType },
+		{ typeof(ushort), unsigned_16_bit_integerType },
+		{ typeof(uint), unsigned_32_bit_integerType },
+		{ typeof(ulong), unsigned_64_bit_integerType },
 
-		dotnetTypeToAUDALF.Add(typeof(sbyte), signed_8_bit_integerType);
-		dotnetTypeToAUDALF.Add(typeof(short), signed_16_bit_integerType);
-		dotnetTypeToAUDALF.Add(typeof(int), signed_32_bit_integerType);
-		dotnetTypeToAUDALF.Add(typeof(long), signed_64_bit_integerType);
+		{ typeof(sbyte), signed_8_bit_integerType },
+		{ typeof(short), signed_16_bit_integerType },
+		{ typeof(int), signed_32_bit_integerType },
+		{ typeof(long), signed_64_bit_integerType },
 
-		dotnetTypeToAUDALF.Add(typeof(float), floating_point_32_bit);
-		dotnetTypeToAUDALF.Add(typeof(double), floating_point_64_bit);
+		{ typeof(float), floating_point_32_bit },
+		{ typeof(double), floating_point_64_bit },
 
-		dotnetTypeToAUDALF.Add(typeof(string), string_utf8);
+		{ typeof(string), string_utf8 },
 
-		dotnetTypeToAUDALF.Add(typeof(bool), booleans);
+		{ typeof(bool), booleans },
 
-		dotnetTypeToAUDALF.Add(typeof(BigInteger), bigIntegerType);
+		{ typeof(BigInteger), bigIntegerType },
 
 		// Arrays
-		dotnetTypeToAUDALF.Add(typeof(byte[]), unsigned_8_bit_integerArrayType);
-		dotnetTypeToAUDALF.Add(typeof(ushort[]), unsigned_16_bit_integerArrayType);
-		dotnetTypeToAUDALF.Add(typeof(uint[]), unsigned_32_bit_integerArrayType);
-		dotnetTypeToAUDALF.Add(typeof(ulong[]), unsigned_64_bit_integerArrayType);
+		{ typeof(byte[]), unsigned_8_bit_integerArrayType },
+		{ typeof(ushort[]), unsigned_16_bit_integerArrayType },
+		{ typeof(uint[]), unsigned_32_bit_integerArrayType },
+		{ typeof(ulong[]), unsigned_64_bit_integerArrayType },
 
-		dotnetTypeToAUDALF.Add(typeof(sbyte[]), signed_8_bit_integerArrayType);
-		dotnetTypeToAUDALF.Add(typeof(short[]), signed_16_bit_integerArrayType);
-		dotnetTypeToAUDALF.Add(typeof(int[]), signed_32_bit_integerArrayType);
-		dotnetTypeToAUDALF.Add(typeof(long[]), signed_64_bit_integerArrayType);
+		{ typeof(sbyte[]), signed_8_bit_integerArrayType },
+		{ typeof(short[]), signed_16_bit_integerArrayType },
+		{ typeof(int[]), signed_32_bit_integerArrayType },
+		{ typeof(long[]), signed_64_bit_integerArrayType },
 
-		// DateTimes are missing for reason, they have Settings for choosing wanted serialization
-	}
+	}.ToFrozenDictionary();
 
 	/// <summary>
 	/// Get AUDALF type with Dotnet type
