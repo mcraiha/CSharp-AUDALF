@@ -35,7 +35,21 @@ string deserializedString = AUDALF_Deserialize.DeserializeSingleValue<string,str
 
 ## What types are currently supported
 
-byte (single value and array), int (single value and array), long (single value and array), ushort (single value and array), uint (single value and array), float, double, string, boolean, BigInteger, datetime
+- byte (single value and array)
+- ushort (single value and array)
+- uint (single value and array)
+- ulong (single value and array)
+- sbyte
+- short (single value and array)
+- int (single value and array) 
+- long (single value and array) 
+- float
+- double
+- string
+- boolean
+- BigInteger
+- datetime
+- datetimeoffset
 
 ## Test cases
 
