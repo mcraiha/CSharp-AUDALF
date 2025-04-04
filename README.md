@@ -39,11 +39,11 @@ string deserializedString = AUDALF_Deserialize.DeserializeSingleValue<string,str
 - ushort (single value and array)
 - uint (single value and array)
 - ulong (single value and array)
-- sbyte
+- sbyte (single value and array)
 - short (single value and array)
 - int (single value and array) 
 - long (single value and array) 
-- float
+- float (single value and array) 
 - double
 - string
 - boolean

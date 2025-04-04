@@ -360,6 +360,10 @@ public static class AUDALF_Serialize
 		{
 			WriteFloat(writer, variableToWrite);
 		}
+		else if (typeof(float[]) == originalType)
+		{
+			WriteArray<float>(writer, variableToWrite, sizeof(float));;
+		}
 		else if (typeof(double) == originalType)
 		{
 			WriteDouble(writer, variableToWrite);

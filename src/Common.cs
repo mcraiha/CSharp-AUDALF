@@ -397,6 +397,53 @@ public static class Definitions
 	#endregion // Floating points
 
 
+	#region Floating point array
+
+	/// <summary>
+	/// 8 bit floating point format
+	/// </summary>
+	/// <value>33619969</value>
+	public static readonly ImmutableArray<byte> floating_point_8_bitArrayType = [0x01, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	/// <summary>
+	/// 16 bit floating point format, binary16 from IEEE 754
+	/// </summary>
+	/// <value>33619970</value>
+	public static readonly ImmutableArray<byte> floating_point_16_bitArrayType = [0x02, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	/// <summary>
+	/// 32 bit floating point format, binary32 from IEEE 754
+	/// </summary>
+	/// <value>33619971</value>
+	public static readonly ImmutableArray<byte> floating_point_32_bitArrayType = [0x03, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	/// <summary>
+	/// 64 bit floating point format, binary64 from IEEE 754
+	/// </summary>
+	/// <value>33619972</value>
+	public static readonly ImmutableArray<byte> floating_point_64_bitArrayType = [0x04, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	/// <summary>
+	/// 128 bit floating point format, binary128 from IEEE 754
+	/// </summary>
+	/// <value>33619973</value>
+	public static readonly ImmutableArray<byte> floating_point_128_bitArrayType = [0x05, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	/// <summary>
+	/// 256 bit floating point format, binary256 from IEEE 754
+	/// </summary>
+	/// <value>33619974</value>
+	public static readonly ImmutableArray<byte> floating_point_256_bitArrayType = [0x06, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	/// <summary>
+	/// 512 bit floating point format
+	/// </summary>
+	/// <value>33619975</value>
+	public static readonly ImmutableArray<byte> floating_point_512_bitArrayType = [0x07, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00];
+
+	#endregion // Floating points
+
+
 	#region Strings
 
 	/// <summary>
@@ -536,6 +583,8 @@ public static class Definitions
 		{ typeof(short[]), signed_16_bit_integerArrayType.ToArray() },
 		{ typeof(int[]), signed_32_bit_integerArrayType.ToArray() },
 		{ typeof(long[]), signed_64_bit_integerArrayType.ToArray() },
+
+		{ typeof(float[]), floating_point_32_bitArrayType.ToArray() },
 
 	}.ToFrozenDictionary();
 

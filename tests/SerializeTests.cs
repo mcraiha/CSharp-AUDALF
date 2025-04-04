@@ -709,8 +709,10 @@ namespace Tests
 
 				{ "1s", new sbyte[] { sbyte.MinValue, 1, sbyte.MaxValue } },
 				{ "2s", new short[] { short.MinValue, 1337, short.MaxValue } },
-				{ "3s", new int[] { int.MinValue, 123515, 14151616, int.MaxValue} },
-				{ "4s", new long[] { long.MinValue, 1421512, 124156161616266, long.MaxValue} },
+				{ "3s", new int[] { int.MinValue, 123515, 14151616, int.MaxValue } },
+				{ "4s", new long[] { long.MinValue, 1421512, 124156161616266, long.MaxValue } },
+
+				{ "3f", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } },
 			};
 
 			// Act

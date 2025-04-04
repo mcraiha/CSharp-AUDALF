@@ -540,6 +540,10 @@ public static class AUDALF_Deserialize
 		{
 			return BinaryPrimitives.ReadSingleLittleEndian(bytesToProcess);
 		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bitArrayType.AsSpan()))
+		{
+			return ReadArray<float>(bytesToProcess, sizeof(float));
+		}
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit.AsSpan()))
 		{
 			return BinaryPrimitives.ReadDoubleLittleEndian(bytesToProcess);
@@ -668,6 +672,10 @@ public static class AUDALF_Deserialize
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit.AsSpan()))
 		{
 			return reader.ReadSingle();
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bitArrayType.AsSpan()))
+		{
+			return ReadArray<float>(reader, sizeof(float));
 		}
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit.AsSpan()))
 		{

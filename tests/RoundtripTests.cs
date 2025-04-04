@@ -477,10 +477,13 @@ namespace Tests
 				{ "emojis", "🐶🍦"},
 				{ "nicebool", true },
 				{ "ain", new DateTimeOffset(2011, 11, 17, 4, 45, 32, new TimeSpan(7, 0, 0))},
+				
 				{ "ushortarray", new ushort[] {0, 1, 1337, ushort.MaxValue } },
 				{ "uintarray", new uint[] {1, uint.MinValue, 7, uint.MaxValue} },
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
+
+				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } }
 			};
 
 			DeserializationSettings deserializationSettings = new DeserializationSettings()
@@ -520,6 +523,8 @@ namespace Tests
 				{ "shortarray", new short[] {0, 1, 1337, short.MaxValue, short.MinValue } },
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
+
+				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } }
 			};
 
 			DeserializationSettings deserializationSettings = new DeserializationSettings()
@@ -547,6 +552,8 @@ namespace Tests
 			CollectionAssert.AreEqual((short[])stringObjectDictionary["shortarray"], (short[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "shortarray"));
 			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"], (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "intarray"));
 			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
+
+			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"], (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "floatarray"));
 		}
 
 		[Test, Description("String-byte array dictionary roundtrip test")]
