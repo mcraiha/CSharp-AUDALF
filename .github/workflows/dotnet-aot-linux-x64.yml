@@ -5,6 +5,7 @@ on:
   push:
      tags:
       - v1.*           # Push events to v1.0, v1.1, and v1.9 tags
+      - v0.9.*
 
 jobs:
   build:
