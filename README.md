@@ -1,7 +1,9 @@
 # CSharp-AUDALF
-.Net Standard compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
+
+.Net 8 compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
 
 ## Build status
+
 ![.NET Core](https://github.com/mcraiha/CSharp-AUDALF/workflows/.NET%20Core/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/0c9c327249964ce2a2fd9bc66a69b3eb)](https://www.codacy.com/gh/mcraiha/CSharp-AUDALF/dashboard?utm_source=github.com&utm_medium=referral&utm_content=mcraiha/CSharp-AUDALF&utm_campaign=Badge_Coverage)
 
@@ -14,6 +16,7 @@ Because I needed this for my personal project
 Either copy the [AUDALF-deserialize.cs](src/AUDALF-deserialize.cs), [AUDALF-serialize.cs](src/AUDALF-serialize.cs) and [Common.cs](src/Common.cs) files to your project or use [nuget package](https://www.nuget.org/packages/LibAUDALF/) 
 
 Then do code like
+
 ```csharp
 using CSharp_AUDALF;
 
@@ -54,6 +57,7 @@ string deserializedString = AUDALF_Deserialize.DeserializeSingleValue<string,str
 ## Test cases
 
 You can run test cases by moving to **tests** folder and running following command
+
 ```bash
 dotnet test
 ```
