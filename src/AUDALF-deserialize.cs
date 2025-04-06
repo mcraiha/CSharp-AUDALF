@@ -413,9 +413,9 @@ public static class AUDALF_Deserialize
 	public static (ulong key, object value) ReadListKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, Type wantedType)
 	{
 		ulong key = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset, 8));
-		ReadOnlySpan<byte> typeIdAsBytes = payload.Slice(8, 8);
-		object value = Read(payload.Slice(16), typeIdAsBytes, wantedType);
-		return ReadListKeyAndValueFromOffset(new MemoryStream(payload.ToArray(), writable: false), offset, wantedType);
+		ReadOnlySpan<byte> typeIdAsBytes = payload.Slice((int)offset + 8, 8);
+		object value = Read(payload.Slice((int)offset + 16), typeIdAsBytes, wantedType);
+		return (key, value);
 	}
 
 	/// <summary>
