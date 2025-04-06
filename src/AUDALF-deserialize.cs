@@ -554,7 +554,7 @@ public static class AUDALF_Deserialize
 		}
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8.AsSpan()))
 		{
-			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);;
+			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
 			return Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
 		}
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.booleans.AsSpan()))

@@ -362,7 +362,7 @@ public static class AUDALF_Serialize
 		}
 		else if (typeof(float[]) == originalType)
 		{
-			WriteArray<float>(writer, variableToWrite, sizeof(float));;
+			WriteArray<float>(writer, variableToWrite, sizeof(float));
 		}
 		else if (typeof(double) == originalType)
 		{
@@ -370,7 +370,7 @@ public static class AUDALF_Serialize
 		}
 		else if (typeof(double[]) == originalType)
 		{
-			WriteArray<double>(writer, variableToWrite, sizeof(double));;
+			WriteArray<double>(writer, variableToWrite, sizeof(double));
 		}
 		else if (typeof(string) == originalType)
 		{
