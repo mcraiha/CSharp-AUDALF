@@ -1,3 +1,5 @@
+# Changelog
+
 ## Version 0.9.2 (not released yet)
 - Support some new array types (**FEATURE**)
 - Deterministic build (**FEATURE**)
