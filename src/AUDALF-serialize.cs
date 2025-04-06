@@ -368,6 +368,10 @@ public static class AUDALF_Serialize
 		{
 			WriteDouble(writer, variableToWrite);
 		}
+		else if (typeof(double[]) == originalType)
+		{
+			WriteArray<double>(writer, variableToWrite, sizeof(double));;
+		}
 		else if (typeof(string) == originalType)
 		{
 			WriteString(writer, variableToWrite);

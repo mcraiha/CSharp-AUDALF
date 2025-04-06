@@ -713,6 +713,7 @@ namespace Tests
 				{ "4s", new long[] { long.MinValue, 1421512, 124156161616266, long.MaxValue } },
 
 				{ "3f", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } },
+				{ "4f", new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue } }
 			};
 
 			// Act

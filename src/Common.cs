@@ -585,6 +585,7 @@ public static class Definitions
 		{ typeof(long[]), signed_64_bit_integerArrayType.ToArray() },
 
 		{ typeof(float[]), floating_point_32_bitArrayType.ToArray() },
+		{ typeof(double[]), floating_point_64_bitArrayType.ToArray() },
 
 	}.ToFrozenDictionary();
 

@@ -483,7 +483,8 @@ namespace Tests
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
 
-				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } }
+				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } },
+				{ "doublearray", new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue } }
 			};
 
 			DeserializationSettings deserializationSettings = new DeserializationSettings()
@@ -524,7 +525,8 @@ namespace Tests
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
 
-				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } }
+				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } },
+				{ "doublearray", new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue } }
 			};
 
 			DeserializationSettings deserializationSettings = new DeserializationSettings()
@@ -554,6 +556,7 @@ namespace Tests
 			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
 
 			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"], (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "floatarray"));
+			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"], (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "doublearray"));
 		}
 
 		[Test, Description("String-byte array dictionary roundtrip test")]

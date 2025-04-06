@@ -548,6 +548,10 @@ public static class AUDALF_Deserialize
 		{
 			return BinaryPrimitives.ReadDoubleLittleEndian(bytesToProcess);
 		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bitArrayType.AsSpan()))
+		{
+			return ReadArray<double>(bytesToProcess, sizeof(double));
+		}
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8.AsSpan()))
 		{
 			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);;
@@ -680,6 +684,10 @@ public static class AUDALF_Deserialize
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit.AsSpan()))
 		{
 			return reader.ReadDouble();
+		}
+		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bitArrayType.AsSpan()))
+		{
+			return ReadArray<double>(reader, sizeof(double));
 		}
 		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8.AsSpan()))
 		{

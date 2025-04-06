@@ -47,7 +47,7 @@ string deserializedString = AUDALF_Deserialize.DeserializeSingleValue<string,str
 - int (single value and array) 
 - long (single value and array) 
 - float (single value and array) 
-- double
+- double (single value and array) 
 - string
 - boolean
 - BigInteger
