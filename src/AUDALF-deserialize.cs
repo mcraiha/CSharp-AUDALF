@@ -53,7 +53,14 @@ public static class AUDALF_Deserialize
 	/// <returns>Array of variables</returns>
 	public static T[] Deserialize<T>(ReadOnlySpan<byte> payload, bool doSafetyChecks = true)
 	{
-		return Deserialize<T>(new MemoryStream(payload.ToArray(), writable: false), doSafetyChecks);
+		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
+		T[] returnValues = new T[entryOffsets.Length];
+		for (int i = 0; i < returnValues.Length; i++)
+		{
+			returnValues[i] = (T)ReadListKeyAndValueFromOffset(payload, entryOffsets[i], typeof(T)).value;
+		}
+
+		return returnValues;
 	}
 
 	/// <summary>
@@ -86,7 +93,13 @@ public static class AUDALF_Deserialize
 	/// <returns>Value of type T</returns>
 	public static T DeserializeSingleElement<T>(ReadOnlySpan<byte> payload, ulong index, bool doSafetyChecks = true, DeserializationSettings settings = null)
 	{
-		return DeserializeSingleElement<T>(new MemoryStream(payload.ToArray(), writable: false), index, doSafetyChecks, settings);
+		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
+
+		ulong wantedOffset = entryOffsets[index];
+
+		(_, object value) = ReadListKeyAndValueFromOffset(payload, wantedOffset, typeof(T));
+
+		return (T)value;
 	}
 
 	/// <summary>
@@ -120,7 +133,17 @@ public static class AUDALF_Deserialize
 	/// <returns>Dictionary</returns>
 	public static Dictionary<T, V> Deserialize<T, V>(ReadOnlySpan<byte> payload, bool doSafetyChecks = true, DeserializationSettings settings = null)
 	{
-		return Deserialize<T,V>(new MemoryStream(payload.ToArray(), writable: false), doSafetyChecks, settings);
+		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(payload);
+
+		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
+		Dictionary<T, V> returnDictionary = new Dictionary<T, V>(entryOffsets.Length);
+		for (int i = 0; i < entryOffsets.Length; i++)
+		{
+			(object key, object value) = ReadDictionaryKeyAndValueFromOffset(payload, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+			returnDictionary.Add((T)key, (V)value);
+		}
+
+		return returnDictionary;
 	}
 
 	/// <summary>
@@ -159,7 +182,20 @@ public static class AUDALF_Deserialize
 	/// <returns>Value of type V</returns>
 	public static V DeserializeSingleValue<T, V>(ReadOnlySpan<byte> payload, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings settings = null)
 	{
-		return DeserializeSingleValue<T, V>(new MemoryStream(payload.ToArray(), writable: false), keyToSeek, doSafetyChecks, settings);
+		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(payload);
+
+		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
+
+		for (int i = 0; i < entryOffsets.Length; i++)
+		{
+			(object key, object value) = ReadDictionaryKeyAndValueFromOffset(payload, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+			if (key.Equals(keyToSeek))
+			{
+				return (V)value;
+			}
+		}
+
+		return default;
 	}
 
 	/// <summary>
@@ -439,6 +475,154 @@ public static class AUDALF_Deserialize
 		}
 	}
 
+	private static int GetDictionaryKeySizeInBytes(ReadOnlySpan<byte> payload, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType)
+	{
+		if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_8_bit_integerType.AsSpan()))
+		{
+			return sizeof(byte);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_8_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_16_bit_integerType.AsSpan()))
+		{
+			return sizeof(ushort);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_32_bit_integerType.AsSpan()))
+		{
+			return sizeof(uint);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_64_bit_integerType.AsSpan()))
+		{
+			return sizeof(ulong);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_16_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_32_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_64_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_8_bit_integerType.AsSpan()))
+		{
+			return sizeof(sbyte);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_8_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_16_bit_integerType.AsSpan()))
+		{
+			return sizeof(short);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_16_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_32_bit_integerType.AsSpan()))
+		{
+			return sizeof(int);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_32_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_64_bit_integerType.AsSpan()))
+		{
+			return sizeof(long);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_64_bit_integerArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_32_bit.AsSpan()))
+		{
+			return sizeof(float);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_32_bitArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_64_bit.AsSpan()))
+		{
+			return sizeof(double);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_64_bitArrayType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.string_utf8.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.booleans.AsSpan()))
+		{
+			return sizeof(bool);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.datetime_unix_seconds.AsSpan()))
+		{
+			return sizeof(long);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.datetime_unix_milliseconds.AsSpan()))
+		{
+			return sizeof(long);
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.datetime_iso_8601.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.bigIntegerType.AsSpan()))
+		{
+			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
+			return sizeof(ulong) + (int)byteArrayLengthInBytes;
+		}
+
+		throw new NotImplementedException($"GetDictionaryKeySizeInBytes not implemented for {keyType}");
+	}
+
+	/// <summary>
+	/// Read dictionary key and value from offset.
+	/// </summary>
+	/// <param name="payload">AUDALF byte array</param>
+	/// <param name="offset">Offset bytes</param>
+	/// <param name="typeIdOfKeyAsBytes">AUDALF type Id of key</param>
+	/// <param name="keyType">Wanted type of key</param>
+	/// <param name="valueType">Wanted type of value</param>
+	/// <param name="settings">Optional deserialization settings</param>
+	/// <returns>Tuple that has key object and value object associated to it</returns>
+	public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings settings = null)
+	{
+		object key = Read(payload.Slice((int)offset), typeIdOfKeyAsBytes, keyType);
+
+		// Since key might not end in 8 byte alignment, move to it
+		int keyLengthInBytes = GetDictionaryKeySizeInBytes(payload, offset, typeIdOfKeyAsBytes, keyType);
+		ulong nextValid8ByteBlock = Definitions.NextDivisableBy8(offset + (ulong)keyLengthInBytes);
+
+		ReadOnlySpan<byte> typeIdOfValueAsBytes = payload.Slice((int)nextValid8ByteBlock, 8);
+
+		object value = Read(payload.Slice((int)nextValid8ByteBlock + 8), typeIdOfValueAsBytes, valueType, settings);
+
+		return (key, value);
+	}
+
 	/// <summary>
 	/// Read dictionary key and value from offset.
 	/// </summary>
@@ -460,10 +644,9 @@ public static class AUDALF_Deserialize
 			long nextValid8ByteBlock = (long)Definitions.NextDivisableBy8((ulong)reader.BaseStream.Position);
 			reader.BaseStream.Seek(nextValid8ByteBlock, SeekOrigin.Begin);
 
-			object value = null;
 			byte[] typeIdOfValueAsBytes = reader.ReadBytes(8);
 
-			value = Read(reader, typeIdOfValueAsBytes, valueType, settings);
+			object value = Read(reader, typeIdOfValueAsBytes, valueType, settings);
 
 			return (key, value);
 		}
