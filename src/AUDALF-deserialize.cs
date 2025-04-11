@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Collections.Frozen;
 using System.Numerics;
 using System.Buffers.Binary;
 
@@ -39,11 +40,173 @@ public enum AUDALF_ValidationResult
 	UnknownValueType
 }
 
+delegate object ReadFromStream(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null);
+
+delegate object ReadFromReadOnlySpan(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null);
+
+sealed class DeserializeDefinition
+{
+	public readonly Type type;
+	public readonly ReadFromStream readFromStream;
+	public readonly ReadFromReadOnlySpan readFromReadOnlySpan;
+	public readonly bool isConstantSized;
+	public readonly int constantSizeInBytes;
+
+	public DeserializeDefinition(Type dotnetType, ReadFromStream streamRead, ReadFromReadOnlySpan readOnlySpanRead)
+	{
+		type = dotnetType;
+
+		readFromStream = streamRead;
+		readFromReadOnlySpan = readOnlySpanRead;
+
+		isConstantSized = false;
+		constantSizeInBytes = -1;
+	}
+
+	public DeserializeDefinition(Type dotnetType, ReadFromStream streamRead, ReadFromReadOnlySpan readOnlySpanRead, int sizeInBytes)
+	{
+		type = dotnetType;
+
+		readFromStream = streamRead;
+		readFromReadOnlySpan = readOnlySpanRead;
+
+		isConstantSized = true;
+		constantSizeInBytes = sizeInBytes;
+	}
+}
+
 /// <summary>
 /// Static class for deserializing AUDALF bytes into something more useful
 /// </summary>
 public static class AUDALF_Deserialize
 {
+	private static readonly FrozenDictionary<long, DeserializeDefinition> definitions = new Dictionary<long, DeserializeDefinition>()
+	{
+		// Null values
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.specialType.AsSpan()),
+			new DeserializeDefinition(typeof(object), ReadNull, ReadNull)
+		},
+
+		// Single values
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_8_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(byte), ReadByte, ReadByte, sizeof(byte))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_16_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(ushort), ReadUShort, ReadUShort, sizeof(ushort))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_32_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(uint), ReadUInt, ReadUInt, sizeof(uint))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_64_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(ulong), ReadULong, ReadULong, sizeof(ulong))
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_8_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(sbyte), ReadSByte, ReadSByte, sizeof(sbyte))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_16_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(short), ReadShort, ReadShort, sizeof(short))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_32_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(int), ReadInt, ReadInt, sizeof(int))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_64_bit_integerType.AsSpan()),
+			new DeserializeDefinition(typeof(long), ReadLong, ReadLong, sizeof(long))
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_32_bit.AsSpan()),
+			new DeserializeDefinition(typeof(float), ReadSingle, ReadSingle, sizeof(float))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_64_bit.AsSpan()),
+			new DeserializeDefinition(typeof(double), ReadDouble, ReadDouble, sizeof(double))
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.string_utf8.AsSpan()),
+			new DeserializeDefinition(typeof(string), ReadUTF8String, ReadUTF8String)
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.booleans.AsSpan()),
+			new DeserializeDefinition(typeof(bool), ReadBool, ReadBool, sizeof(bool))
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.datetime_unix_seconds.AsSpan()),
+			new DeserializeDefinition(typeof(DateTimeOffset), ReadUnixSeconds, ReadUnixSeconds, sizeof(long))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.datetime_unix_milliseconds.AsSpan()),
+			new DeserializeDefinition(typeof(DateTimeOffset), ReadUnixMilliSeconds, ReadUnixMilliSeconds, sizeof(long))
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.datetime_iso_8601.AsSpan()),
+			new DeserializeDefinition(typeof(DateTimeOffset), ReadISO8601Timestamp, ReadISO8601Timestamp)
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.bigIntegerType.AsSpan()),
+			new DeserializeDefinition(typeof(BigInteger), ReadBigInteger, ReadBigInteger)
+		},
+
+
+		// Array values
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_8_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(byte[]), ReadByteArray, ReadByteArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_16_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(ushort[]), ReadUShortArray, ReadUShortArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_32_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(uint[]), ReadUIntArray, ReadUIntArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_64_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(ulong[]), ReadULongArray, ReadULongArray)
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_8_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(sbyte[]), ReadSByteArray, ReadSByteArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_16_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(short[]), ReadShortArray, ReadShortArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_32_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(int[]), ReadIntArray, ReadIntArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_64_bit_integerArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(long[]), ReadLongArray, ReadLongArray)
+		},
+
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_32_bitArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(float[]), ReadSingleArray, ReadSingleArray)
+		},
+		{ 
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_64_bitArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(double[]), ReadDoubleArray, ReadDoubleArray)
+		},
+
+	}.ToFrozenDictionary();
+
 	/// <summary>
 	/// Deserialize AUDALF bytes to array
 	/// </summary>
@@ -652,279 +815,389 @@ public static class AUDALF_Deserialize
 		}
 	}
 
+
+	internal static object ReadNull(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		long key = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+
+		if (definitions.TryGetValue(key, out var definition))
+		{
+			return Convert.ChangeType(null, definition.type);
+		}
+
+		throw new NotImplementedException($"Missing implementation");
+	}
+
+	internal static object ReadNull(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		long key = reader.ReadInt64();
+
+		if (definitions.TryGetValue(key, out var definition))
+		{
+			return Convert.ChangeType(null, definition.type);
+		}
+
+		throw new NotImplementedException($"Missing implementation");
+	}
+
+
+	internal static object ReadByte(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return bytesToProcess[0];
+	}
+
+	internal static object ReadByte(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadByte();
+	}
+
+	internal static object ReadByteArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		return bytesToProcess.Slice(8, (int)byteArrayLengthInBytes).ToArray();
+	}
+
+	internal static object ReadByteArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong byteArrayLengthInBytes = reader.ReadUInt64();
+		return reader.ReadBytes((int)byteArrayLengthInBytes);
+	}
+
+
+	internal static object ReadUShort(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadUInt16LittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadUShort(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadUInt16();
+	}
+
+	internal static object ReadUShortArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<ushort>(bytesToProcess, sizeof(ushort));
+	}
+
+	internal static object ReadUShortArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<ushort>(reader, sizeof(ushort));
+	}
+
+
+	internal static object ReadUInt(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadUInt32LittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadUInt(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadUInt32();
+	}
+
+	internal static object ReadUIntArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<uint>(bytesToProcess, sizeof(uint));
+	}
+
+	internal static object ReadUIntArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<uint>(reader, sizeof(uint));
+	}
+
+
+	internal static object ReadULong(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadULong(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadUInt64();
+	}
+
+	internal static object ReadULongArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<ulong>(bytesToProcess, sizeof(ulong));
+	}
+
+	internal static object ReadULongArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<ulong>(reader, sizeof(ulong));
+	}
+
+
+	internal static object ReadSByte(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return (sbyte)bytesToProcess[0];
+	}
+
+	internal static object ReadSByte(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadSByte();
+	}
+
+	internal static object ReadSByteArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<sbyte>(bytesToProcess, sizeof(sbyte));
+	}
+
+	internal static object ReadSByteArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<sbyte>(reader, sizeof(sbyte));
+	}
+
+
+	internal static object ReadShort(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadInt16LittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadShort(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadInt16();
+	}
+
+	internal static object ReadShortArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<short>(bytesToProcess, sizeof(short));
+	}
+
+	internal static object ReadShortArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<short>(reader, sizeof(short));
+	}
+
+
+	internal static object ReadInt(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadInt32LittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadInt(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadInt32();
+	}
+
+	internal static object ReadIntArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<int>(bytesToProcess, sizeof(int));
+	}
+
+	internal static object ReadIntArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<int>(reader, sizeof(int));
+	}
+
+
+	internal static object ReadLong(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadLong(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadInt64();
+	}
+
+	internal static object ReadLongArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<long>(bytesToProcess, sizeof(long));
+	}
+
+	internal static object ReadLongArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<long>(reader, sizeof(long));
+	}
+
+
+	internal static object ReadSingle(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadSingleLittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadSingle(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadSingle();
+	}
+
+	internal static object ReadSingleArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<float>(bytesToProcess, sizeof(float));
+	}
+
+	internal static object ReadSingleArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<float>(reader, sizeof(float));
+	}
+
+
+	internal static object ReadDouble(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return BinaryPrimitives.ReadDoubleLittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadDouble(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadDouble();
+	}
+
+	internal static object ReadDoubleArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<double>(bytesToProcess, sizeof(double));
+	}
+
+	internal static object ReadDoubleArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return ReadArray<double>(reader, sizeof(double));
+	}
+
+
+	internal static object ReadUTF8String(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		return Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
+	}
+
+	internal static object ReadUTF8String(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong stringLengthInBytes = reader.ReadUInt64();
+		return Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
+	}
+
+	// TODO: String arrays
+
+	internal static object ReadBool(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return bytesToProcess[0] != 0;
+	}
+
+	internal static object ReadBool(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		return reader.ReadBoolean();
+	}
+
+	// TODO: bool arrays
+
+	internal static object ReadUnixSeconds(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
+
+		if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+		{
+			return dateTimeOffset;
+		}
+		
+		return dateTimeOffset.UtcDateTime;// .DateTime;
+	}
+
+	internal static object ReadUnixSeconds(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		long timeStamp = reader.ReadInt64();
+		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
+
+		if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+		{
+			return dateTimeOffset;
+		}
+		
+		return dateTimeOffset.UtcDateTime;// .DateTime;
+	}
+
+	// TODO: unix seconds arrays
+
+	internal static object ReadUnixMilliSeconds(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
+		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
+
+		if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+		{
+			return dateTimeOffset;
+		}
+
+		return dateTimeOffset.UtcDateTime;// .DateTime;
+	}
+
+	internal static object ReadUnixMilliSeconds(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		long timeStamp = reader.ReadInt64();
+		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
+
+		if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+		{
+			return dateTimeOffset;
+		}
+
+		return dateTimeOffset.UtcDateTime;// .DateTime;
+	}
+
+	// TODO: unix milliseconds arrays
+
+	internal static object ReadISO8601Timestamp(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		string iso8601 = Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
+
+		if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+		{
+			return DateTimeOffset.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+		}
+
+		return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+	}
+
+	internal static object ReadISO8601Timestamp(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong stringLengthInBytes = reader.ReadUInt64();
+		string iso8601 = Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
+
+		if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
+		{
+			return DateTimeOffset.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+		}
+
+		return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
+	}
+
+	// TODO: ISO 8601 timestamp arrays
+
+	internal static object ReadBigInteger(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong bigIntegerLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		return new BigInteger(bytesToProcess.Slice(8, (int)bigIntegerLengthInBytes));
+	}
+
+	internal static object ReadBigInteger(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	{
+		ulong bigIntegerLengthInBytes = reader.ReadUInt64();
+		byte[] tempBytes = reader.ReadBytes((int)bigIntegerLengthInBytes);
+		return new BigInteger(tempBytes);
+	}
+
+	// TODO: big integer arrays
+
 	private static object Read(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
 	{
-		if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType.AsSpan()))
+		long key = BinaryPrimitives.ReadInt64LittleEndian(typeIdAsBytes);
+		if (definitions.TryGetValue(key, out var definition))
 		{
-			return bytesToProcess[0];
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
-			return bytesToProcess.Slice(8, (int)byteArrayLengthInBytes).ToArray();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerType.AsSpan()))
-		{
-			return BinaryPrimitives.ReadUInt16LittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType.AsSpan()))
-		{
-			return BinaryPrimitives.ReadUInt32LittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerType.AsSpan()))
-		{
-			return BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<ushort>(bytesToProcess, sizeof(ushort));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<uint>(bytesToProcess, sizeof(uint));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<ulong>(bytesToProcess, sizeof(ulong));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerType.AsSpan()))
-		{
-			return (sbyte)bytesToProcess[0];
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<sbyte>(bytesToProcess, sizeof(sbyte));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerType.AsSpan()))
-		{
-			return BinaryPrimitives.ReadInt16LittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<short>(bytesToProcess, sizeof(short));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType.AsSpan()))
-		{
-			return BinaryPrimitives.ReadInt32LittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<int>(bytesToProcess, sizeof(int));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerType.AsSpan()))
-		{
-			return BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<long>(bytesToProcess, sizeof(long));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit.AsSpan()))
-		{
-			return BinaryPrimitives.ReadSingleLittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bitArrayType.AsSpan()))
-		{
-			return ReadArray<float>(bytesToProcess, sizeof(float));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit.AsSpan()))
-		{
-			return BinaryPrimitives.ReadDoubleLittleEndian(bytesToProcess);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bitArrayType.AsSpan()))
-		{
-			return ReadArray<double>(bytesToProcess, sizeof(double));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8.AsSpan()))
-		{
-			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
-			return Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.booleans.AsSpan()))
-		{
-			return bytesToProcess[0] != 0;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_seconds.AsSpan()))
-		{
-			long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
-			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
-
-			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
-			{
-				return dateTimeOffset;
-			}
-			
-			return dateTimeOffset.UtcDateTime;// .DateTime;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_milliseconds.AsSpan()))
-		{
-			long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
-			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
-
-			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
-			{
-				return dateTimeOffset;
-			}
-
-			return dateTimeOffset.UtcDateTime;// .DateTime;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_iso_8601.AsSpan()))
-		{
-			ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
-			string iso8601 = Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
-
-			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
-			{
-				return DateTimeOffset.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
-			}
-
-			return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.bigIntegerType.AsSpan()))
-		{
-			ulong bigIntegerLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
-			return new BigInteger(bytesToProcess.Slice(8, (int)bigIntegerLengthInBytes));
+			return definition.readFromReadOnlySpan(bytesToProcess, typeIdAsBytes, wantedType, settings);
 		}
 
-		return null;
+		throw new NotImplementedException($"Missing implementation");
 	}
 
 	private static object Read(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
 	{
-		if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerType.AsSpan()))
+		long key = BinaryPrimitives.ReadInt64LittleEndian(typeIdAsBytes);
+		if (definitions.TryGetValue(key, out var definition))
 		{
-			return reader.ReadByte();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_8_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = reader.ReadUInt64();
-			return reader.ReadBytes((int)byteArrayLengthInBytes);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerType.AsSpan()))
-		{
-			return reader.ReadUInt16();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerType.AsSpan()))
-		{
-			return reader.ReadUInt32();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerType.AsSpan()))
-		{
-			return reader.ReadUInt64();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_16_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<ushort>(reader, sizeof(ushort));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_32_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<uint>(reader, sizeof(uint));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.unsigned_64_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<ulong>(reader, sizeof(ulong));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerType.AsSpan()))
-		{
-			return reader.ReadSByte();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_8_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<sbyte>(reader, sizeof(sbyte));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerType.AsSpan()))
-		{
-			return reader.ReadInt16();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_16_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<short>(reader, sizeof(short));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerType.AsSpan()))
-		{
-			return reader.ReadInt32();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_32_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<int>(reader, sizeof(int));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerType.AsSpan()))
-		{
-			return reader.ReadInt64();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.signed_64_bit_integerArrayType.AsSpan()))
-		{
-			return ReadArray<long>(reader, sizeof(long));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bit.AsSpan()))
-		{
-			return reader.ReadSingle();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_32_bitArrayType.AsSpan()))
-		{
-			return ReadArray<float>(reader, sizeof(float));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bit.AsSpan()))
-		{
-			return reader.ReadDouble();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.floating_point_64_bitArrayType.AsSpan()))
-		{
-			return ReadArray<double>(reader, sizeof(double));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.string_utf8.AsSpan()))
-		{
-			ulong stringLengthInBytes = reader.ReadUInt64();
-			return Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.booleans.AsSpan()))
-		{
-			return reader.ReadBoolean();
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_seconds.AsSpan()))
-		{
-			long timeStamp = reader.ReadInt64();
-			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
-
-			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
-			{
-				return dateTimeOffset;
-			}
-			
-			return dateTimeOffset.UtcDateTime;// .DateTime;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_unix_milliseconds.AsSpan()))
-		{
-			long timeStamp = reader.ReadInt64();
-			DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
-
-			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
-			{
-				return dateTimeOffset;
-			}
-
-			return dateTimeOffset.UtcDateTime;// .DateTime;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.datetime_iso_8601.AsSpan()))
-		{
-			ulong stringLengthInBytes = reader.ReadUInt64();
-			string iso8601 = Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
-
-			if (wantedType == typeof(DateTimeOffset) || settings?.wantedDateTimeType == typeof(DateTimeOffset))
-			{
-				return DateTimeOffset.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
-			}
-
-			return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdAsBytes, Definitions.bigIntegerType.AsSpan()))
-		{
-			ulong bigIntegerLengthInBytes = reader.ReadUInt64();
-			byte[] tempBytes = reader.ReadBytes((int)bigIntegerLengthInBytes);
-			return new BigInteger(tempBytes);
+			return definition.readFromStream(reader, typeIdAsBytes, wantedType, settings);
 		}
 
-		return null;
+		throw new NotImplementedException($"Missing implementation");
 	}
 
 	private static T[] ReadArray<T>(BinaryReader reader, ulong bytesPerItem)
