@@ -640,120 +640,14 @@ public static class AUDALF_Deserialize
 
 	private static int GetDictionaryKeySizeInBytes(ReadOnlySpan<byte> payload, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType)
 	{
-		if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_8_bit_integerType.AsSpan()))
+		long key = BinaryPrimitives.ReadInt64LittleEndian(typeIdOfKeyAsBytes);
+		if (definitions.TryGetValue(key, out var definition))
 		{
-			return sizeof(byte);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_8_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_16_bit_integerType.AsSpan()))
-		{
-			return sizeof(ushort);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_32_bit_integerType.AsSpan()))
-		{
-			return sizeof(uint);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_64_bit_integerType.AsSpan()))
-		{
-			return sizeof(ulong);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_16_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_32_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.unsigned_64_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_8_bit_integerType.AsSpan()))
-		{
-			return sizeof(sbyte);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_8_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_16_bit_integerType.AsSpan()))
-		{
-			return sizeof(short);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_16_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_32_bit_integerType.AsSpan()))
-		{
-			return sizeof(int);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_32_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_64_bit_integerType.AsSpan()))
-		{
-			return sizeof(long);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.signed_64_bit_integerArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_32_bit.AsSpan()))
-		{
-			return sizeof(float);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_32_bitArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_64_bit.AsSpan()))
-		{
-			return sizeof(double);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.floating_point_64_bitArrayType.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.string_utf8.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.booleans.AsSpan()))
-		{
-			return sizeof(bool);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.datetime_unix_seconds.AsSpan()))
-		{
-			return sizeof(long);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.datetime_unix_milliseconds.AsSpan()))
-		{
-			return sizeof(long);
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.datetime_iso_8601.AsSpan()))
-		{
-			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
-			return sizeof(ulong) + (int)byteArrayLengthInBytes;
-		}
-		else if (Definitions.ByteArrayCompare(typeIdOfKeyAsBytes, Definitions.bigIntegerType.AsSpan()))
-		{
+			if (definition.isConstantSized)
+			{
+				return definition.constantSizeInBytes;
+			}
+
 			ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset));
 			return sizeof(ulong) + (int)byteArrayLengthInBytes;
 		}
