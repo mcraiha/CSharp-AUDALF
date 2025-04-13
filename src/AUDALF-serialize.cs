@@ -511,7 +511,7 @@ public static class AUDALF_Serialize
 		// Pad with zeroes if needed
 		ulong currentPos = (ulong)writer.BaseStream.Position;
 		ulong nextDivisableBy8 = Definitions.NextDivisableBy8(currentPos);
-		PadWithZeros(writer, nextDivisableBy8 - currentPos);		
+		PadWithZeros(writer, nextDivisableBy8 - currentPos);
 	}
 
 	private static void WriteBoolean(BinaryWriter writer, object valueToWrite)
@@ -551,7 +551,7 @@ public static class AUDALF_Serialize
 
 		switch (dateTimeFormat)
 		{
-			case DateTimeFormat.UnixInSeconds:				
+			case DateTimeFormat.UnixInSeconds:
 				long unixTimeSeconds = new DateTimeOffset(dt, TimeZoneInfo.Utc.GetUtcOffset(dt)).ToUnixTimeSeconds();
 				writer.Write(unixTimeSeconds);
 				break;
@@ -678,5 +678,5 @@ public static class AUDALF_Serialize
 		{
 			writer.Write(zeroByte);
 		}
-	}		
+	}
 }
