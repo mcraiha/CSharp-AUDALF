@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.9.2 (not released yet)
+## Version 0.9.2 (released 2025-04-14)
 - Support some new array types (**FEATURE**)
 - Deterministic build (**FEATURE**)
 - Dropped NetStandard support (**BREAKING**)
