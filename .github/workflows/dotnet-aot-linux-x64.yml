@@ -29,7 +29,7 @@ jobs:
     - name: Install zip
       run: sudo apt install zip
     - name: Package Linux-x64 release
-      run: zip -9 release_${{ github.ref_name }}-linux_x64.zip clitool/out
+      run: zip -j -9 release_${{ github.ref_name }}-linux_x64.zip clitool/out/*
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
