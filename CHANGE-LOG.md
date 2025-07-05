@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.9.3 (released X-Y-Z)
+- Support `<Nullable>enable</Nullable>`
+
 ## Version 0.9.2 (released 2025-04-14)
 - Support some new array types (**FEATURE**)
 - Deterministic build (**FEATURE**)

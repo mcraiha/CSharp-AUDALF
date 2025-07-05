@@ -127,8 +127,8 @@ namespace Tests
 			byte[] byteArrayReadOneByOne = new byte[indexCount];
 			for (int i = 0; i < entryDefinitionOffsets.Length; i++)
 			{
-				(ulong index, object value) = AUDALF_Deserialize.ReadListKeyAndValueFromOffset(inputArray, entryDefinitionOffsets[i], typeof(byte));
-				byteArrayReadOneByOne[index] = (byte)value;
+				(ulong index, object? value) = AUDALF_Deserialize.ReadListKeyAndValueFromOffset(inputArray, entryDefinitionOffsets[i], typeof(byte));
+				byteArrayReadOneByOne[index] = (byte)value!;
 			}
 
 			// Assert
@@ -189,7 +189,7 @@ namespace Tests
 		{
 			// Arrange
 			byte[] inputArray = File.ReadAllBytes("samples/string_dictionary.audalf");
-			Dictionary<string, string> expected = new Dictionary<string, string>() 
+			Dictionary<string, string?> expected = new Dictionary<string, string?>() 
 			{
 				{ "1", "is one" },
 				{ "second", null },
@@ -204,7 +204,7 @@ namespace Tests
 			ulong indexCount = AUDALF_Deserialize.GetIndexCount(inputArray);
 			ReadOnlySpan<byte> keyType = AUDALF_Deserialize.ReadKeyType(inputArray);
 			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(inputArray);
-			Dictionary<string, string> stringStringDictionary = AUDALF_Deserialize.Deserialize<string, string>(inputArray);
+			Dictionary<string, string?> stringStringDictionary = AUDALF_Deserialize.Deserialize<string, string?>(inputArray);
 
 			// Assert
 			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");

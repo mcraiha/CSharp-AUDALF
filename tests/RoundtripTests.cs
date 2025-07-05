@@ -281,12 +281,12 @@ namespace Tests
 		public void StringArrayRoundtripTest()
 		{
 			// Arrange
-			string[] stringArray = new string[] { "something", null, "🐱", "null" };
+			string?[] stringArray = new string?[] { "something", null, "🐱", "null" };
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringArray);
-			string[] stringArrayDeserialized1 = AUDALF_Deserialize.Deserialize<string>(result);
-			string[] stringArrayDeserialized2 = AUDALF_Deserialize.Deserialize<string>(new MemoryStream(result));
+			string?[] stringArrayDeserialized1 = AUDALF_Deserialize.Deserialize<string?>(result);
+			string?[] stringArrayDeserialized2 = AUDALF_Deserialize.Deserialize<string?>(new MemoryStream(result));
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -298,7 +298,7 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)stringArray.Length; i++)
 			{
-				string elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<string>(result, i);
+				string? elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<string>(result, i);
 				Assert.AreEqual(stringArray[i], elementAtIndex);
 			}
 		}
@@ -307,7 +307,7 @@ namespace Tests
 		public void StringStringDictionaryRoundtripTest()
 		{
 			// Arrange
-			Dictionary<string, string> stringStringDictionary = new Dictionary<string, string>() 
+			Dictionary<string, string?> stringStringDictionary = new Dictionary<string, string?>() 
 			{
 				{ "1", "is one" },
 				{ "second", null },
@@ -318,10 +318,10 @@ namespace Tests
 			byte[] result = AUDALF_Serialize.Serialize(stringStringDictionary);
 
 			Type keyType1 = AUDALF_Deserialize.ParseKeyType(result);
-			Dictionary<string, string> stringStringDictionaryDeserialized1 = AUDALF_Deserialize.Deserialize<string, string>(result);
+			Dictionary<string, string?> stringStringDictionaryDeserialized1 = AUDALF_Deserialize.Deserialize<string, string?>(result);
 
 			Type keyType2 = AUDALF_Deserialize.ParseKeyType(new MemoryStream(result));
-			Dictionary<string, string> stringStringDictionaryDeserialized2 = AUDALF_Deserialize.Deserialize<string, string>(new MemoryStream(result));
+			Dictionary<string, string?> stringStringDictionaryDeserialized2 = AUDALF_Deserialize.Deserialize<string, string?>(new MemoryStream(result));
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -340,7 +340,7 @@ namespace Tests
 		public void StringStringDictionaryRoundtripSingleValuesTest()
 		{
 			// Arrange
-			Dictionary<string, string> stringStringDictionary = new Dictionary<string, string>() 
+			Dictionary<string, string?> stringStringDictionary = new Dictionary<string, string?>() 
 			{
 				{ "1", "is one" },
 				{ "second", null },
@@ -552,7 +552,7 @@ namespace Tests
 		public void StringObjectDictionaryRoundtripTest()
 		{
 			// Arrange
-			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			Dictionary<string, object?> stringObjectDictionary = new Dictionary<string, object?>() 
 			{
 				{ "1", "is one" },
 				{ "second", 137f },
@@ -576,8 +576,8 @@ namespace Tests
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringObjectDictionary);
-			Dictionary<string, object> stringObjectDictionaryDeserialized1 = AUDALF_Deserialize.Deserialize<string, object>(result, doSafetyChecks: false, settings: deserializationSettings);
-			Dictionary<string, object> stringObjectDictionaryDeserialized2 = AUDALF_Deserialize.Deserialize<string, object>(new MemoryStream(result), doSafetyChecks: false, settings: deserializationSettings);
+			Dictionary<string, object?> stringObjectDictionaryDeserialized1 = AUDALF_Deserialize.Deserialize<string, object?>(result, doSafetyChecks: false, settings: deserializationSettings);
+			Dictionary<string, object?> stringObjectDictionaryDeserialized2 = AUDALF_Deserialize.Deserialize<string, object?>(new MemoryStream(result), doSafetyChecks: false, settings: deserializationSettings);
 
 			// Assert
 			Assert.IsNotNull(result);
@@ -592,7 +592,7 @@ namespace Tests
 		public void StringObjectDictionaryRoundtripSingleValuesTest()
 		{
 			// Arrange
-			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			Dictionary<string, object?> stringObjectDictionary = new Dictionary<string, object?>() 
 			{
 				{ "1", "is one" },
 				{ "second", 137f },
@@ -625,48 +625,48 @@ namespace Tests
 			// Assert
 			Assert.IsNotNull(result);
 
-			Assert.AreEqual("is one", (string)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "1"));
-			Assert.AreEqual(137f, (float)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "second"));
-			Assert.AreEqual(true, (bool)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "nicebool"));
-			Assert.AreEqual(stringObjectDictionary["ain"], (DateTimeOffset)AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ain", settings: deserializationSettings));
+			Assert.AreEqual("is one", (string?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "1"));
+			Assert.AreEqual(137f, (float?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "second"));
+			Assert.AreEqual(true, (bool?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "nicebool"));
+			Assert.AreEqual(stringObjectDictionary["ain"], (DateTimeOffset?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "ain", settings: deserializationSettings));
 
-			Assert.AreEqual("is one", (string)AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "1"));
-			Assert.AreEqual(137f, (float)AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "second"));
-			Assert.AreEqual(true, (bool)AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "nicebool"));
-			Assert.AreEqual(stringObjectDictionary["ain"], (DateTimeOffset)AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "ain", settings: deserializationSettings));
+			Assert.AreEqual("is one", (string?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "1"));
+			Assert.AreEqual(137f, (float?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "second"));
+			Assert.AreEqual(true, (bool?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "nicebool"));
+			Assert.AreEqual(stringObjectDictionary["ain"], (DateTimeOffset?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "ain", settings: deserializationSettings));
 
-			CollectionAssert.AreEqual((byte[])stringObjectDictionary["bytearray"], (byte[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "bytearray"));
-			CollectionAssert.AreEqual((ushort[])stringObjectDictionary["ushortarray"], (ushort[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ushortarray"));
-			CollectionAssert.AreEqual((uint[])stringObjectDictionary["uintarray"], (uint[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "uintarray"));
-			CollectionAssert.AreEqual((ulong[])stringObjectDictionary["ulongtarray"], (ulong[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "ulongtarray"));
+			CollectionAssert.AreEqual((byte[])stringObjectDictionary["bytearray"]!, (byte[]?)AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "bytearray")!);
+			CollectionAssert.AreEqual((ushort[])stringObjectDictionary["ushortarray"]!, (ushort[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "ushortarray")!);
+			CollectionAssert.AreEqual((uint[])stringObjectDictionary["uintarray"]!, (uint[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "uintarray")!);
+			CollectionAssert.AreEqual((ulong[])stringObjectDictionary["ulongtarray"]!, (ulong[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "ulongtarray")!);
 
-			CollectionAssert.AreEqual((byte[])stringObjectDictionary["bytearray"], (byte[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "bytearray"));
-			CollectionAssert.AreEqual((ushort[])stringObjectDictionary["ushortarray"], (ushort[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "ushortarray"));
-			CollectionAssert.AreEqual((uint[])stringObjectDictionary["uintarray"], (uint[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "uintarray"));
-			CollectionAssert.AreEqual((ulong[])stringObjectDictionary["ulongtarray"], (ulong[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "ulongtarray"));
+			CollectionAssert.AreEqual((byte[])stringObjectDictionary["bytearray"]!, (byte[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "bytearray")!);
+			CollectionAssert.AreEqual((ushort[])stringObjectDictionary["ushortarray"]!, (ushort[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "ushortarray")!);
+			CollectionAssert.AreEqual((uint[])stringObjectDictionary["uintarray"]!, (uint[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "uintarray")!);
+			CollectionAssert.AreEqual((ulong[])stringObjectDictionary["ulongtarray"]!, (ulong[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "ulongtarray")!);
 
-			CollectionAssert.AreEqual((sbyte[])stringObjectDictionary["sbytearray"], (sbyte[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "sbytearray"));
-			CollectionAssert.AreEqual((short[])stringObjectDictionary["shortarray"], (short[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "shortarray"));
-			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"], (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "intarray"));
-			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "longarray"));
+			CollectionAssert.AreEqual((sbyte[])stringObjectDictionary["sbytearray"]!, (sbyte[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "sbytearray")!);
+			CollectionAssert.AreEqual((short[])stringObjectDictionary["shortarray"]!, (short[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "shortarray")!);
+			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"]!, (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "intarray")!);
+			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"]!, (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "longarray")!);
 
-			CollectionAssert.AreEqual((sbyte[])stringObjectDictionary["sbytearray"], (sbyte[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "sbytearray"));
-			CollectionAssert.AreEqual((short[])stringObjectDictionary["shortarray"], (short[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "shortarray"));
-			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"], (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "intarray"));
-			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"], (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "longarray"));
+			CollectionAssert.AreEqual((sbyte[])stringObjectDictionary["sbytearray"]!, (sbyte[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "sbytearray")!);
+			CollectionAssert.AreEqual((short[])stringObjectDictionary["shortarray"]!, (short[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "shortarray")!);
+			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"]!, (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "intarray")!);
+			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"]!, (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "longarray")!);
 
-			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"], (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "floatarray"));
-			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"], (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(result, "doublearray"));
+			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"]!, (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "floatarray")!);
+			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"]!, (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "doublearray")!);
 
-			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"], (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "floatarray"));
-			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"], (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object>(new MemoryStream(result), "doublearray"));
+			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"]!, (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "floatarray")!);
+			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"]!, (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "doublearray")!);
 		}
 
 		[Test, Description("String-byte array dictionary roundtrip test")]
 		public void StringByteArrayDictionaryRoundtripTest()
 		{
 			// Arrange
-			Dictionary<string, byte[]> stringByteArrayDictionary = new Dictionary<string, byte[]>() 
+			Dictionary<string, byte[]?> stringByteArrayDictionary = new Dictionary<string, byte[]?>() 
 			{
 				{ "1", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, byte.MaxValue } },
 				{ "second", null },
@@ -677,8 +677,8 @@ namespace Tests
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringByteArrayDictionary);
-			Dictionary<string, byte[]> stringByteArrayDictionaryDeserialized1 = AUDALF_Deserialize.Deserialize<string, byte[]>(result, doSafetyChecks: false);
-			Dictionary<string, byte[]> stringByteArrayDictionaryDeserialized2 = AUDALF_Deserialize.Deserialize<string, byte[]>(new MemoryStream(result), doSafetyChecks: false);
+			Dictionary<string, byte[]?> stringByteArrayDictionaryDeserialized1 = AUDALF_Deserialize.Deserialize<string, byte[]?>(result, doSafetyChecks: false);
+			Dictionary<string, byte[]?> stringByteArrayDictionaryDeserialized2 = AUDALF_Deserialize.Deserialize<string, byte[]?>(new MemoryStream(result), doSafetyChecks: false);
 
 			// Assert
 			Assert.IsNotNull(result);

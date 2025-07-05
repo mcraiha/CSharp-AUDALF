@@ -16,6 +16,7 @@
     <PackageReadmeFile>nuget-readme.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsTrimmable>true</IsTrimmable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

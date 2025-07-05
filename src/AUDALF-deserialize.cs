@@ -40,9 +40,9 @@ public enum AUDALF_ValidationResult
 	UnknownValueType
 }
 
-delegate object ReadFromStream(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null);
+delegate object? ReadFromStream(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null);
 
-delegate object ReadFromReadOnlySpan(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null);
+delegate object? ReadFromReadOnlySpan(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null);
 
 sealed class DeserializeDefinition
 {
@@ -214,13 +214,13 @@ public static class AUDALF_Deserialize
 	/// <param name="doSafetyChecks">Do safety checks</param>
 	/// <typeparam name="T">Type of array variables</typeparam>
 	/// <returns>Array of variables</returns>
-	public static T[] Deserialize<T>(ReadOnlySpan<byte> payload, bool doSafetyChecks = true)
+	public static T?[] Deserialize<T>(ReadOnlySpan<byte> payload, bool doSafetyChecks = true)
 	{
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
-		T[] returnValues = new T[entryOffsets.Length];
+		T?[] returnValues = new T[entryOffsets.Length];
 		for (int i = 0; i < returnValues.Length; i++)
 		{
-			returnValues[i] = (T)ReadListKeyAndValueFromOffset(payload, entryOffsets[i], typeof(T)).value;
+			returnValues[i] = (T?)ReadListKeyAndValueFromOffset(payload, entryOffsets[i], typeof(T)).value;
 		}
 
 		return returnValues;
@@ -233,13 +233,13 @@ public static class AUDALF_Deserialize
 	/// <param name="doSafetyChecks">Do safety checks</param>
 	/// <typeparam name="T">Type of array variables</typeparam>
 	/// <returns>Array of variables</returns>
-	public static T[] Deserialize<T>(Stream inputStream, bool doSafetyChecks = true)
+	public static T?[] Deserialize<T>(Stream inputStream, bool doSafetyChecks = true)
 	{
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
-		T[] returnValues = new T[entryOffsets.Length];
+		T?[] returnValues = new T[entryOffsets.Length];
 		for (int i = 0; i < returnValues.Length; i++)
 		{
-			returnValues[i] = (T)ReadListKeyAndValueFromOffset(inputStream, entryOffsets[i], typeof(T)).value;
+			returnValues[i] = (T?)ReadListKeyAndValueFromOffset(inputStream, entryOffsets[i], typeof(T)).value;
 		}
 
 		return returnValues;
@@ -254,15 +254,15 @@ public static class AUDALF_Deserialize
 	/// <param name="settings">Optional Deserialization Settings</param>
 	/// <typeparam name="T">Type of array variables</typeparam>
 	/// <returns>Value of type T</returns>
-	public static T DeserializeSingleElement<T>(ReadOnlySpan<byte> payload, ulong index, bool doSafetyChecks = true, DeserializationSettings settings = null)
+	public static T? DeserializeSingleElement<T>(ReadOnlySpan<byte> payload, ulong index, bool doSafetyChecks = true, DeserializationSettings? settings = null)
 	{
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
 
 		ulong wantedOffset = entryOffsets[index];
 
-		(_, object value) = ReadListKeyAndValueFromOffset(payload, wantedOffset, typeof(T));
+		(_, object? value) = ReadListKeyAndValueFromOffset(payload, wantedOffset, typeof(T));
 
-		return (T)value;
+		return (T?)value;
 	}
 
 	/// <summary>
@@ -274,15 +274,15 @@ public static class AUDALF_Deserialize
 	/// <param name="settings">Optional Deserialization Settings</param>
 	/// <typeparam name="T">Type of array variables</typeparam>
 	/// <returns>Value of type T</returns>
-	public static T DeserializeSingleElement<T>(Stream inputStream, ulong index, bool doSafetyChecks = true, DeserializationSettings settings = null)
+	public static T? DeserializeSingleElement<T>(Stream inputStream, ulong index, bool doSafetyChecks = true, DeserializationSettings? settings = null)
 	{
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
 
 		ulong wantedOffset = entryOffsets[index];
 
-		(_, object value) = ReadListKeyAndValueFromOffset(inputStream, wantedOffset, typeof(T));
+		(_, object? value) = ReadListKeyAndValueFromOffset(inputStream, wantedOffset, typeof(T));
 
-		return (T)value;
+		return (T?)value;
 	}
 
 	/// <summary>
@@ -294,16 +294,16 @@ public static class AUDALF_Deserialize
 	/// <typeparam name="T">Key type of Dictionary</typeparam>
 	/// <typeparam name="V">Value type of Dictionary</typeparam>
 	/// <returns>Dictionary</returns>
-	public static Dictionary<T, V> Deserialize<T, V>(ReadOnlySpan<byte> payload, bool doSafetyChecks = true, DeserializationSettings settings = null)
+	public static Dictionary<T, V?> Deserialize<T, V>(ReadOnlySpan<byte> payload, bool doSafetyChecks = true, DeserializationSettings? settings = null) where T : notnull
 	{
 		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(payload);
 
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
-		Dictionary<T, V> returnDictionary = new Dictionary<T, V>(entryOffsets.Length);
+		Dictionary<T, V?> returnDictionary = new Dictionary<T, V?>(entryOffsets.Length);
 		for (int i = 0; i < entryOffsets.Length; i++)
 		{
-			(object key, object value) = ReadDictionaryKeyAndValueFromOffset(payload, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
-			returnDictionary.Add((T)key, (V)value);
+			(object key, object? value) = ReadDictionaryKeyAndValueFromOffset(payload, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+			returnDictionary.Add((T)key, (V?)value);
 		}
 
 		return returnDictionary;
@@ -318,16 +318,16 @@ public static class AUDALF_Deserialize
 	/// <typeparam name="T">Key type of Dictionary</typeparam>
 	/// <typeparam name="V">Value type of Dictionary</typeparam>
 	/// <returns>Dictionary</returns>
-	public static Dictionary<T, V> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true, DeserializationSettings settings = null)
+	public static Dictionary<T, V?> Deserialize<T, V>(Stream inputStream, bool doSafetyChecks = true, DeserializationSettings? settings = null) where T : notnull
 	{
 		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(inputStream);
 
 		ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
-		Dictionary<T, V> returnDictionary = new Dictionary<T, V>(entryOffsets.Length);
+		Dictionary<T, V?> returnDictionary = new Dictionary<T, V?>(entryOffsets.Length);
 		for (int i = 0; i < entryOffsets.Length; i++)
 		{
-			(object key, object value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
-			returnDictionary.Add((T)key, (V)value);
+			(object key, object? value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+			returnDictionary.Add((T)key, (V?)value);
 		}
 
 		return returnDictionary;
@@ -343,7 +343,7 @@ public static class AUDALF_Deserialize
 	/// <typeparam name="T">Key type of Dictionary</typeparam>
 	/// <typeparam name="V">Value type of Dictionary</typeparam>
 	/// <returns>Value of type V</returns>
-	public static V DeserializeSingleValue<T, V>(ReadOnlySpan<byte> payload, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings settings = null)
+	public static V? DeserializeSingleValue<T, V>(ReadOnlySpan<byte> payload, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings? settings = null)
 	{
 		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(payload);
 
@@ -351,10 +351,10 @@ public static class AUDALF_Deserialize
 
 		for (int i = 0; i < entryOffsets.Length; i++)
 		{
-			(object key, object value) = ReadDictionaryKeyAndValueFromOffset(payload, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+			(object key, object? value) = ReadDictionaryKeyAndValueFromOffset(payload, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
 			if (key.Equals(keyToSeek))
 			{
-				return (V)value;
+				return (V?)value;
 			}
 		}
 
@@ -371,7 +371,7 @@ public static class AUDALF_Deserialize
 	/// <typeparam name="T">Key type of Dictionary</typeparam>
 	/// <typeparam name="V">Value type of Dictionary</typeparam>
 	/// <returns>Value of type V</returns>
-	public static V DeserializeSingleValue<T, V>(Stream inputStream, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings settings = null)
+	public static V? DeserializeSingleValue<T, V>(Stream inputStream, T keyToSeek, bool doSafetyChecks = true, DeserializationSettings? settings = null)
 	{
 		ReadOnlySpan<byte> typeIdOfKeys = ReadKeyType(inputStream);
 
@@ -379,10 +379,10 @@ public static class AUDALF_Deserialize
 
 		for (int i = 0; i < entryOffsets.Length; i++)
 		{
-			(object key, object value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
+			(object key, object? value) = ReadDictionaryKeyAndValueFromOffset(inputStream, entryOffsets[i], typeIdOfKeys, typeof(T), typeof(V), settings);
 			if (key.Equals(keyToSeek))
 			{
-				return (V)value;
+				return (V?)value;
 			}
 		}
 
@@ -609,11 +609,11 @@ public static class AUDALF_Deserialize
 	/// <param name="offset">Offset bytes</param>
 	/// <param name="wantedType">Wanted type for object (in case there are multiple options for deserialization)</param>
 	/// <returns>Tuple that has key index and object for value</returns>
-	public static (ulong key, object value) ReadListKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, Type wantedType)
+	public static (ulong key, object? value) ReadListKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, Type wantedType)
 	{
 		ulong key = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice((int)offset, 8));
 		ReadOnlySpan<byte> typeIdAsBytes = payload.Slice((int)offset + 8, 8);
-		object value = Read(payload.Slice((int)offset + 16), typeIdAsBytes, wantedType);
+		object? value = Read(payload.Slice((int)offset + 16), typeIdAsBytes, wantedType);
 		return (key, value);
 	}
 
@@ -624,7 +624,7 @@ public static class AUDALF_Deserialize
 	/// <param name="offset">Offset bytes</param>
 	/// <param name="wantedType">Wanted type for object (in case there are multiple options for deserialization)</param>
 	/// <returns>Tuple that has key index and object for value</returns>
-	public static (ulong key, object value) ReadListKeyAndValueFromOffset(Stream inputStream, ulong offset, Type wantedType)
+	public static (ulong key, object? value) ReadListKeyAndValueFromOffset(Stream inputStream, ulong offset, Type wantedType)
 	{
 		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 		{
@@ -632,7 +632,7 @@ public static class AUDALF_Deserialize
 			ulong key = reader.ReadUInt64();
 			byte[] typeIdAsBytes = reader.ReadBytes(8);
 
-			object value = Read(reader, typeIdAsBytes, wantedType);
+			object? value = Read(reader, typeIdAsBytes, wantedType);
 
 			return (key, value);
 		}
@@ -665,9 +665,9 @@ public static class AUDALF_Deserialize
 	/// <param name="valueType">Wanted type of value</param>
 	/// <param name="settings">Optional deserialization settings</param>
 	/// <returns>Tuple that has key object and value object associated to it</returns>
-	public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings settings = null)
+	public static (object key, object? value) ReadDictionaryKeyAndValueFromOffset(ReadOnlySpan<byte> payload, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings? settings = null)
 	{
-		object key = Read(payload.Slice((int)offset), typeIdOfKeyAsBytes, keyType);
+		object key = Read(payload.Slice((int)offset), typeIdOfKeyAsBytes, keyType)!;
 
 		// Since key might not end in 8 byte alignment, move to it
 		int keyLengthInBytes = GetDictionaryKeySizeInBytes(payload, offset, typeIdOfKeyAsBytes, keyType);
@@ -675,7 +675,7 @@ public static class AUDALF_Deserialize
 
 		ReadOnlySpan<byte> typeIdOfValueAsBytes = payload.Slice((int)nextValid8ByteBlock, 8);
 
-		object value = Read(payload.Slice((int)nextValid8ByteBlock + 8), typeIdOfValueAsBytes, valueType, settings);
+		object? value = Read(payload.Slice((int)nextValid8ByteBlock + 8), typeIdOfValueAsBytes, valueType, settings);
 
 		return (key, value);
 	}
@@ -690,12 +690,12 @@ public static class AUDALF_Deserialize
 	/// <param name="valueType">Wanted type of value</param>
 	/// <param name="settings">Optional deserialization settings</param>
 	/// <returns>Tuple that has key object and value object associated to it</returns>
-	public static (object key, object value) ReadDictionaryKeyAndValueFromOffset(Stream inputStream, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings settings = null)
+	public static (object key, object? value) ReadDictionaryKeyAndValueFromOffset(Stream inputStream, ulong offset, ReadOnlySpan<byte> typeIdOfKeyAsBytes, Type keyType, Type valueType, DeserializationSettings? settings = null)
 	{
 		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 		{
 			reader.BaseStream.Seek((long)offset, SeekOrigin.Begin);
-			object key = Read(reader, typeIdOfKeyAsBytes, keyType);
+			object key = Read(reader, typeIdOfKeyAsBytes, keyType)!;
 
 			// Since key might not end in 8 byte alignment, move to it
 			long nextValid8ByteBlock = (long)Definitions.NextDivisableBy8((ulong)reader.BaseStream.Position);
@@ -703,14 +703,14 @@ public static class AUDALF_Deserialize
 
 			byte[] typeIdOfValueAsBytes = reader.ReadBytes(8);
 
-			object value = Read(reader, typeIdOfValueAsBytes, valueType, settings);
+			object? value = Read(reader, typeIdOfValueAsBytes, valueType, settings);
 
 			return (key, value);
 		}
 	}
 
 
-	internal static object ReadNull(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object? ReadNull(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long key = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
 
@@ -722,7 +722,7 @@ public static class AUDALF_Deserialize
 		throw new NotImplementedException($"Missing implementation");
 	}
 
-	internal static object ReadNull(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object? ReadNull(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long key = reader.ReadInt64();
 
@@ -735,225 +735,225 @@ public static class AUDALF_Deserialize
 	}
 
 
-	internal static object ReadByte(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadByte(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return bytesToProcess[0];
 	}
 
-	internal static object ReadByte(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadByte(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadByte();
 	}
 
-	internal static object ReadByteArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadByteArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
 		return bytesToProcess.Slice(8, (int)byteArrayLengthInBytes).ToArray();
 	}
 
-	internal static object ReadByteArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadByteArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong byteArrayLengthInBytes = reader.ReadUInt64();
 		return reader.ReadBytes((int)byteArrayLengthInBytes);
 	}
 
 
-	internal static object ReadUShort(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUShort(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadUInt16LittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadUShort(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUShort(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadUInt16();
 	}
 
-	internal static object ReadUShortArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUShortArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<ushort>(bytesToProcess, sizeof(ushort));
 	}
 
-	internal static object ReadUShortArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUShortArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<ushort>(reader, sizeof(ushort));
 	}
 
 
-	internal static object ReadUInt(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUInt(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadUInt32LittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadUInt(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUInt(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadUInt32();
 	}
 
-	internal static object ReadUIntArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUIntArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<uint>(bytesToProcess, sizeof(uint));
 	}
 
-	internal static object ReadUIntArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUIntArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<uint>(reader, sizeof(uint));
 	}
 
 
-	internal static object ReadULong(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadULong(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadULong(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadULong(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadUInt64();
 	}
 
-	internal static object ReadULongArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadULongArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<ulong>(bytesToProcess, sizeof(ulong));
 	}
 
-	internal static object ReadULongArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadULongArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<ulong>(reader, sizeof(ulong));
 	}
 
 
-	internal static object ReadSByte(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSByte(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return (sbyte)bytesToProcess[0];
 	}
 
-	internal static object ReadSByte(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSByte(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadSByte();
 	}
 
-	internal static object ReadSByteArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSByteArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<sbyte>(bytesToProcess, sizeof(sbyte));
 	}
 
-	internal static object ReadSByteArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSByteArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<sbyte>(reader, sizeof(sbyte));
 	}
 
 
-	internal static object ReadShort(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadShort(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadInt16LittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadShort(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadShort(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadInt16();
 	}
 
-	internal static object ReadShortArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadShortArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<short>(bytesToProcess, sizeof(short));
 	}
 
-	internal static object ReadShortArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadShortArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<short>(reader, sizeof(short));
 	}
 
 
-	internal static object ReadInt(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadInt(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadInt32LittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadInt(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadInt(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadInt32();
 	}
 
-	internal static object ReadIntArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadIntArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<int>(bytesToProcess, sizeof(int));
 	}
 
-	internal static object ReadIntArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadIntArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<int>(reader, sizeof(int));
 	}
 
 
-	internal static object ReadLong(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadLong(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadLong(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadLong(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadInt64();
 	}
 
-	internal static object ReadLongArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadLongArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<long>(bytesToProcess, sizeof(long));
 	}
 
-	internal static object ReadLongArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadLongArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<long>(reader, sizeof(long));
 	}
 
 
-	internal static object ReadSingle(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSingle(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadSingleLittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadSingle(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSingle(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadSingle();
 	}
 
-	internal static object ReadSingleArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSingleArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<float>(bytesToProcess, sizeof(float));
 	}
 
-	internal static object ReadSingleArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadSingleArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<float>(reader, sizeof(float));
 	}
 
 
-	internal static object ReadDouble(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadDouble(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadDoubleLittleEndian(bytesToProcess);
 	}
 
-	internal static object ReadDouble(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadDouble(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadDouble();
 	}
 
-	internal static object ReadDoubleArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadDoubleArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<double>(bytesToProcess, sizeof(double));
 	}
 
-	internal static object ReadDoubleArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadDoubleArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return ReadArray<double>(reader, sizeof(double));
 	}
 
 
-	internal static object ReadUTF8String(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUTF8String(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
 		return Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
 	}
 
-	internal static object ReadUTF8String(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUTF8String(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong stringLengthInBytes = reader.ReadUInt64();
 		return Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
@@ -961,19 +961,19 @@ public static class AUDALF_Deserialize
 
 	// TODO: String arrays
 
-	internal static object ReadBool(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadBool(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return bytesToProcess[0] != 0;
 	}
 
-	internal static object ReadBool(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadBool(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return reader.ReadBoolean();
 	}
 
 	// TODO: bool arrays
 
-	internal static object ReadUnixSeconds(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUnixSeconds(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
 		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
@@ -986,7 +986,7 @@ public static class AUDALF_Deserialize
 		return dateTimeOffset.UtcDateTime;// .DateTime;
 	}
 
-	internal static object ReadUnixSeconds(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUnixSeconds(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long timeStamp = reader.ReadInt64();
 		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
@@ -1001,7 +1001,7 @@ public static class AUDALF_Deserialize
 
 	// TODO: unix seconds arrays
 
-	internal static object ReadUnixMilliSeconds(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUnixMilliSeconds(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long timeStamp = BinaryPrimitives.ReadInt64LittleEndian(bytesToProcess);
 		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
@@ -1014,7 +1014,7 @@ public static class AUDALF_Deserialize
 		return dateTimeOffset.UtcDateTime;// .DateTime;
 	}
 
-	internal static object ReadUnixMilliSeconds(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadUnixMilliSeconds(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long timeStamp = reader.ReadInt64();
 		DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(timeStamp);
@@ -1029,7 +1029,7 @@ public static class AUDALF_Deserialize
 
 	// TODO: unix milliseconds arrays
 
-	internal static object ReadISO8601Timestamp(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadISO8601Timestamp(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong stringLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
 		string iso8601 = Encoding.UTF8.GetString(bytesToProcess.Slice(8, (int)stringLengthInBytes));
@@ -1042,7 +1042,7 @@ public static class AUDALF_Deserialize
 		return DateTime.Parse(iso8601, null, DateTimeStyles.RoundtripKind);
 	}
 
-	internal static object ReadISO8601Timestamp(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadISO8601Timestamp(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong stringLengthInBytes = reader.ReadUInt64();
 		string iso8601 = Encoding.UTF8.GetString(reader.ReadBytes((int)stringLengthInBytes));
@@ -1057,13 +1057,13 @@ public static class AUDALF_Deserialize
 
 	// TODO: ISO 8601 timestamp arrays
 
-	internal static object ReadBigInteger(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadBigInteger(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong bigIntegerLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
 		return new BigInteger(bytesToProcess.Slice(8, (int)bigIntegerLengthInBytes));
 	}
 
-	internal static object ReadBigInteger(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	internal static object ReadBigInteger(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		ulong bigIntegerLengthInBytes = reader.ReadUInt64();
 		byte[] tempBytes = reader.ReadBytes((int)bigIntegerLengthInBytes);
@@ -1072,7 +1072,7 @@ public static class AUDALF_Deserialize
 
 	// TODO: big integer arrays
 
-	private static object Read(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	private static object? Read(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long key = BinaryPrimitives.ReadInt64LittleEndian(typeIdAsBytes);
 		if (definitions.TryGetValue(key, out var definition))
@@ -1083,7 +1083,7 @@ public static class AUDALF_Deserialize
 		throw new NotImplementedException($"Missing implementation");
 	}
 
-	private static object Read(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings settings = null)
+	private static object? Read(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		long key = BinaryPrimitives.ReadInt64LittleEndian(typeIdAsBytes);
 		if (definitions.TryGetValue(key, out var definition))

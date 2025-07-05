@@ -333,7 +333,7 @@ namespace Tests
 		public void GetDotnetTypeWithAUDALFtypeTest()
 		{
 			// Arrange
-			byte[] invalid1 = null;
+			byte[]? invalid1 = null;
 			byte[] invalid2 = new byte[0];
 
 			// Act

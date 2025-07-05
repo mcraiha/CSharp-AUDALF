@@ -355,7 +355,7 @@ namespace Tests
 		public void SerializeStringArrayToAUDALFList()
 		{
 			// Arrange
-			string[] stringArray = new string[] { "something", null, "🐱", "null" };
+			string?[] stringArray = new string?[] { "something", null, "🐱", "null" };
 
 			// Act
 			byte[] result = AUDALF_Serialize.Serialize(stringArray);
@@ -387,7 +387,7 @@ namespace Tests
 		public void SerializeStringStringDictionary()
 		{
 			// Arrange
-			Dictionary<string, string> stringStringDictionary = new Dictionary<string, string>() 
+			Dictionary<string, string?> stringStringDictionary = new Dictionary<string, string?>() 
 			{
 				{ "1", "is one" },
 				{ "second", null },
@@ -655,11 +655,43 @@ namespace Tests
 			CollectionAssert.AreNotEqual(result2, result3);
 		}
 
+		[Test, Description("Serialize big integer array to AUDALF list")]
+		public void SerializeDotnetObjectArrayToAUDALFList()
+		{
+			// Arrange
+			object?[] objectArray = new object?[] { "kitty cat", true, 3.14f, 1001.3, int.MaxValue, null };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(objectArray, typeof(string));
+			bool isAUDALF = AUDALF_Deserialize.IsAUDALF(result);
+			uint versionNumber = AUDALF_Deserialize.GetVersionNumber(result);
+			ulong byteSize = AUDALF_Deserialize.GetByteSize(result);
+			bool isDictionary = AUDALF_Deserialize.IsDictionary(result);
+			ulong indexCount = AUDALF_Deserialize.GetIndexCount(result);
+			ulong[] entryDefinitionOffsets = AUDALF_Deserialize.GetEntryDefinitionOffsets(result);
+
+			// Assert
+			Assert.IsNotNull(result, "Result should NOT be null");
+			Assert.IsTrue(isAUDALF, "Result should be AUDALF payload");
+			Assert.AreEqual(BitConverter.ToUInt32(Definitions.versionNumber.AsSpan()), versionNumber, "Result should have correct version number");
+			Assert.AreEqual(result.LongLength, byteSize, "Result payload should have correct amount lenght info");
+			Assert.IsFalse(isDictionary, "Result should contain an array, not a dictionary");
+			Assert.AreEqual((ulong)objectArray.LongLength, indexCount, "Result should contain certain number of items");
+			Assert.AreEqual(indexCount, (ulong)entryDefinitionOffsets.LongLength, "Result should have certain number of entry definitions");
+			
+			foreach (ulong u in entryDefinitionOffsets)
+			{
+				Assert.GreaterOrEqual(u, (ulong)Definitions.entryDefinitionsOffset, "Each entry definition should point to valid address inside the payload");
+				Assert.LessOrEqual(u, byteSize, "Each entry definition should point to valid address inside the payload");
+				Assert.IsTrue(u % 8 == 0, "Every offset should align to 8 bytes (64 bits)");
+			}
+		}
+
 		[Test, Description("Serialize string-object dictionary to AUDALF dictionary")]
 		public void SerializeStringObjectDictionary()
 		{
 			// Arrange
-			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			Dictionary<string, object?> stringObjectDictionary = new Dictionary<string, object?>() 
 			{
 				{ "1", "is one" },
 				{ "second", 137f },
@@ -700,7 +732,7 @@ namespace Tests
 		public void SerializeStringObjectDictionaryWithArrayValuesTest()
 		{
 			// Arrange
-			Dictionary<string, object> stringObjectDictionary = new Dictionary<string, object>() 
+			Dictionary<string, object?> stringObjectDictionary = new Dictionary<string, object?>() 
 			{
 				{ "1", new byte[] { byte.MinValue, 1, byte.MaxValue } },
 				{ "2", new ushort[] { ushort.MinValue, 1337, ushort.MaxValue } },
@@ -748,7 +780,7 @@ namespace Tests
 		public void SerializeStringByteArrayDictionary()
 		{
 			// Arrange
-			Dictionary<string, byte[]> stringByteArrayDictionary = new Dictionary<string, byte[]>() 
+			Dictionary<string, byte[]?> stringByteArrayDictionary = new Dictionary<string, byte[]?>() 
 			{
 				{ "1", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, byte.MaxValue } },
 				{ "second", null },

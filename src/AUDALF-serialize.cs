@@ -24,11 +24,24 @@ public static class AUDALF_Serialize
 	/// <param name="serializationSettings">Optional serialization settings</param>
 	/// <typeparam name="T">Type to serialize</typeparam>
 	/// <returns>Byte array</returns>
-	public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings serializationSettings = null)
+	public static byte[] Serialize<T>(IEnumerable<T> ienumerableStructure, SerializationSettings? serializationSettings = null)
 	{
 		IEnumerable<object> objects = ienumerableStructure.Cast<object>();
 		// Generate Key and value pairs section
 		var generateResult = GenerateListKeyValuePairs(objects, typeof(T), serializationSettings);
+		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType.AsSpan());
+	}
+
+	/// <summary>
+	/// Serialize a IEnumerable structure of objects to AUDALF bytes
+	/// </summary>
+	/// <param name="ienumerableStructure">IEnumerable structure of objects</param>
+	/// <param name="typeForNullValues">Type info for null values</param>
+	/// <param name="serializationSettings">Optional serialization settings</param>
+	/// <returns>Byte array</returns>
+	public static byte[] Serialize(IEnumerable<object?> ienumerableStructure, Type? typeForNullValues = null, SerializationSettings? serializationSettings = null)
+	{
+		var generateResult = GenerateListKeyValuePairsWithPossibleNull(ienumerableStructure, typeForNullValues, serializationSettings);
 		return GenericSerialize(generateResult.bytes, generateResult.positions, Definitions.specialType.AsSpan());
 	}
 
@@ -38,7 +51,7 @@ public static class AUDALF_Serialize
 	/// <param name="dictionary">Byte to byte Dictionary to serialize</param>
 	/// <param name="serializationSettings">Optional serialization settings</param>
 	/// <returns>Byte array</returns>
-	public static byte[] Serialize(IDictionary<byte, byte> dictionary, SerializationSettings serializationSettings = null)
+	public static byte[] Serialize(IDictionary<byte, byte> dictionary, SerializationSettings? serializationSettings = null)
 	{
 		var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(byte));
 		// Generate Key and value pairs section
@@ -53,7 +66,7 @@ public static class AUDALF_Serialize
 	/// <param name="dictionary">Int to int Dictionary to serialize</param>
 	/// <param name="serializationSettings">Optional serialization settings</param>
 	/// <returns>Byte array</returns>
-	public static byte[] Serialize(IDictionary<int, int> dictionary, SerializationSettings serializationSettings = null)
+	public static byte[] Serialize(IDictionary<int, int> dictionary, SerializationSettings? serializationSettings = null)
 	{
 		var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(int));
 		// Generate Key and value pairs section
@@ -68,7 +81,7 @@ public static class AUDALF_Serialize
 	/// <param name="dictionary">String to string Dictionary to serialize</param>
 	/// <param name="serializationSettings">Optional serialization settings</param>
 	/// <returns>Byte array</returns>
-	public static byte[] Serialize(IDictionary<string, string> dictionary, SerializationSettings serializationSettings = null)
+	public static byte[] Serialize(IDictionary<string, string?> dictionary, SerializationSettings? serializationSettings = null)
 	{
 		var valueTypes = dictionary.ToDictionary(pair => pair.Key, pair => typeof(string));
 		// Generate Key and value pairs section
@@ -84,7 +97,7 @@ public static class AUDALF_Serialize
 	/// <param name="valueTypes">What kind of values does the dictionary have</param>
 	/// <param name="serializationSettings">Optional serialization settings</param>
 	/// <returns>Byte array</returns>
-	public static byte[] Serialize(IDictionary<string, object> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+	public static byte[] Serialize(IDictionary<string, object?> dictionary, IDictionary<string, Type>? valueTypes = null, SerializationSettings? serializationSettings = null)
 	{
 		// Generate Key and value pairs section
 		var generateResult = GenerateDictionaryKeyValuePairs(dictionary, valueTypes, serializationSettings);
@@ -99,7 +112,7 @@ public static class AUDALF_Serialize
 	/// <param name="valueTypes">What kind of values does the dictionary have</param>
 	/// <param name="serializationSettings">Optional serialization settings</param>
 	/// <returns>Byte array</returns>
-	public static byte[] Serialize(IDictionary<string, byte[]> dictionary, IDictionary<string, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+	public static byte[] Serialize(IDictionary<string, byte[]?> dictionary, IDictionary<string, Type>? valueTypes = null, SerializationSettings? serializationSettings = null)
 	{
 		if (valueTypes == null)
 		{
@@ -168,7 +181,7 @@ public static class AUDALF_Serialize
 		}
 	}
 
-	private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(IDictionary<T, V> pairs, IDictionary<T, Type> valueTypes = null, SerializationSettings serializationSettings = null)
+	private static (byte[] bytes, List<ulong> positions) GenerateDictionaryKeyValuePairs<T,V>(IDictionary<T, V> pairs, IDictionary<T, Type>? valueTypes = null, SerializationSettings? serializationSettings = null) where T : notnull
 	{
 		using (MemoryStream stream = new MemoryStream())
 		{
@@ -178,7 +191,8 @@ public static class AUDALF_Serialize
 				List<ulong> offsets = new List<ulong>();
 				foreach (var pair in pairs)
 				{
-					Type typeOfValue = FigureOutTypeOfValue(pair.Key, pair.Value, valueTypes);
+					Type? typeOfValue = FigureOutTypeOfValue(pair.Key, pair.Value, valueTypes);
+					//Console.WriteLine($"Type: {typeOfValue}");
 
 					if (typeOfValue == null)
 					{
@@ -192,7 +206,7 @@ public static class AUDALF_Serialize
 		}
 	}
 
-	private static Type FigureOutTypeOfValue<T>(T key, object value, IDictionary<T, Type> valueTypes = null)
+	private static Type? FigureOutTypeOfValue<T>(T key, object? value, IDictionary<T, Type>? valueTypes = null)
 	{
 		// ValueTypes will override everything else
 		if (valueTypes != null && valueTypes.ContainsKey(key))
@@ -208,7 +222,26 @@ public static class AUDALF_Serialize
 		return null;
 	}
 
-	private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType, SerializationSettings serializationSettings)
+	private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairsWithPossibleNull(IEnumerable<object?> values, Type? typeForNulls, SerializationSettings? serializationSettings)
+	{
+		using (MemoryStream stream = new MemoryStream())
+		{
+			// Use UTF-8 because it has best support in different environments
+			using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8))
+			{
+				List<ulong> offsets = new List<ulong>();
+				ulong index = 0;
+				foreach (object? o in values)
+				{
+					offsets.Add(WriteOneListKeyValuePair(writer, index, o, o != null ? o.GetType() : typeForNulls!, serializationSettings));
+					index++;
+				}
+				return (stream.ToArray(), offsets);
+			}
+		}
+	}
+
+	private static (byte[] bytes, List<ulong> positions) GenerateListKeyValuePairs(IEnumerable<object> values, Type originalType, SerializationSettings? serializationSettings)
 	{
 		using (MemoryStream stream = new MemoryStream())
 		{
@@ -227,7 +260,7 @@ public static class AUDALF_Serialize
 		}
 	}
 
-	private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object value, Type keyType, Type valueType, SerializationSettings serializationSettings)
+	private static ulong WriteOneDictionaryKeyValuePair(BinaryWriter writer, object key, object? value, Type keyType, Type valueType, SerializationSettings? serializationSettings)
 	{
 		// Store current offset, because different types can take different amount of space
 		ulong returnValue = (ulong)writer.BaseStream.Position;
@@ -238,7 +271,7 @@ public static class AUDALF_Serialize
 		return returnValue;
 	}
 
-	private static ulong WriteOneListKeyValuePair(BinaryWriter writer, ulong index, object value, Type originalType, SerializationSettings serializationSettings)
+	private static ulong WriteOneListKeyValuePair(BinaryWriter writer, ulong index, object? value, Type originalType, SerializationSettings? serializationSettings)
 	{
 		// Store current offset, because different types can take different amount of space
 		ulong returnValue = (ulong)writer.BaseStream.Position;
@@ -255,6 +288,7 @@ public static class AUDALF_Serialize
 	{
 		typeof(DateTime),
 		typeof(DateTimeOffset),
+		typeof(object[]),
 	}.ToFrozenSet();
 
 	// Most types should use this
@@ -264,7 +298,7 @@ public static class AUDALF_Serialize
 		writer.Write(Definitions.GetAUDALFtypeWithDotnetType(originalType));
 	}
 
-	private static void GenericWrite(BinaryWriter writer, object variableToWrite, Type originalType, bool isKey, SerializationSettings serializationSettings)
+	private static void GenericWrite(BinaryWriter writer, object? variableToWrite, Type originalType, bool isKey, SerializationSettings? serializationSettings)
 	{
 		if (variableToWrite == null)
 		{
@@ -391,6 +425,19 @@ public static class AUDALF_Serialize
 		else if (typeof(BigInteger) == originalType)
 		{
 			WriteBigInteger(writer, variableToWrite);
+		}
+		else if (typeof(object[]) == originalType)
+		{
+			object[] objects = (object[])variableToWrite;
+			MemoryStream ms = new MemoryStream();
+			using (BinaryWriter tempWriter = new BinaryWriter(ms))
+			{
+				foreach (object o in objects)
+				{
+					GenericWrite(tempWriter, o, o.GetType(), isKey: false, serializationSettings);
+				}
+			}
+			ArrayWriter(writer, ms.ToArray());
 		}
 	}
 
