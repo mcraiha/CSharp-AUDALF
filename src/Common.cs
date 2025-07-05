@@ -48,7 +48,7 @@ public class DeserializationSettings
 	/// <summary>
 	/// Wanted time type for deserialization
 	/// </summary>
-	public Type wantedDateTimeType;
+	public required Type wantedDateTimeType;
 }
 
 /// <summary>
