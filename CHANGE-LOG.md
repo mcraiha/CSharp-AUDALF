@@ -1,7 +1,8 @@
 # Changelog
 
-## Version 0.9.3 (released X-Y-Z)
-- Support `<Nullable>enable</Nullable>`
+## Version 0.9.3 (released 2025-07-06)
+- Support `<Nullable>enable</Nullable>` (**FEATURE**)
+- Support Half aka binary16 types (**FEATURE**)
 
 ## Version 0.9.2 (released 2025-04-14)
 - Support some new array types (**FEATURE**)
