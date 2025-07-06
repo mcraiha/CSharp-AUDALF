@@ -38,8 +38,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)byteArray.Length; i++)
 			{
-				byte elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<byte>(result, i);
-				Assert.AreEqual(byteArray[i], elementAtIndex);
+				byte elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<byte>(result, i);
+				byte elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<byte>(new MemoryStream(result), i);
+				Assert.AreEqual(byteArray[i], elementAtIndex1);
+				Assert.AreEqual(byteArray[i], elementAtIndex2);
 			}
 		}
 
@@ -64,8 +66,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)ushortArray.Length; i++)
 			{
-				ushort elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<ushort>(result, i);
-				Assert.AreEqual(ushortArray[i], elementAtIndex);
+				ushort elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<ushort>(result, i);
+				ushort elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<ushort>(new MemoryStream(result), i);
+				Assert.AreEqual(ushortArray[i], elementAtIndex1);
+				Assert.AreEqual(ushortArray[i], elementAtIndex2);
 			}
 		}
 
@@ -90,8 +94,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)uintArray.Length; i++)
 			{
-				uint elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<uint>(result, i);
-				Assert.AreEqual(uintArray[i], elementAtIndex);
+				uint elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<uint>(result, i);
+				uint elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<uint>(new MemoryStream(result), i);
+				Assert.AreEqual(uintArray[i], elementAtIndex1);
+				Assert.AreEqual(uintArray[i], elementAtIndex2);
 			}
 		}
 
@@ -116,8 +122,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)ulongArray.Length; i++)
 			{
-				ulong elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<ulong>(result, i);
-				Assert.AreEqual(ulongArray[i], elementAtIndex);
+				ulong elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<ulong>(result, i);
+				ulong elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<ulong>(new MemoryStream(result), i);
+				Assert.AreEqual(ulongArray[i], elementAtIndex1);
+				Assert.AreEqual(ulongArray[i], elementAtIndex2);
 			}
 		}
 
@@ -142,8 +150,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)sbyteArray.Length; i++)
 			{
-				sbyte elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<sbyte>(result, i);
-				Assert.AreEqual(sbyteArray[i], elementAtIndex);
+				sbyte elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<sbyte>(result, i);
+				sbyte elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<sbyte>(new MemoryStream(result), i);
+				Assert.AreEqual(sbyteArray[i], elementAtIndex1);
+				Assert.AreEqual(sbyteArray[i], elementAtIndex2);
 			}
 		}
 
@@ -168,8 +178,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)shortArray.Length; i++)
 			{
-				short elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<short>(result, i);
-				Assert.AreEqual(shortArray[i], elementAtIndex);
+				short elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<short>(result, i);
+				short elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<short>(new MemoryStream(result), i);
+				Assert.AreEqual(shortArray[i], elementAtIndex1);
+				Assert.AreEqual(shortArray[i], elementAtIndex2);
 			}
 		}
 
@@ -194,8 +206,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)intArray.Length; i++)
 			{
-				int elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<int>(result, i);
-				Assert.AreEqual(intArray[i], elementAtIndex);
+				int elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<int>(result, i);
+				int elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<int>(new MemoryStream(result), i);
+				Assert.AreEqual(intArray[i], elementAtIndex1);
+				Assert.AreEqual(intArray[i], elementAtIndex2);
 			}
 		}
 
@@ -220,8 +234,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)longArray.Length; i++)
 			{
-				long elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<long>(result, i);
-				Assert.AreEqual(longArray[i], elementAtIndex);
+				long elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<long>(result, i);
+				long elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<long>(new MemoryStream(result), i);
+				Assert.AreEqual(longArray[i], elementAtIndex1);
+				Assert.AreEqual(longArray[i], elementAtIndex2);
 			}
 		}
 
@@ -246,8 +262,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)floatArray.Length; i++)
 			{
-				float elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<float>(result, i);
-				Assert.AreEqual(floatArray[i], elementAtIndex);
+				float elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<float>(result, i);
+				float elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<float>(new MemoryStream(result), i);
+				Assert.AreEqual(floatArray[i], elementAtIndex1);
+				Assert.AreEqual(floatArray[i], elementAtIndex2);
 			}
 		}
 
@@ -272,8 +290,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)doubleArray.Length; i++)
 			{
-				double elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<double>(result, i);
-				Assert.AreEqual(doubleArray[i], elementAtIndex);
+				double elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<double>(result, i);
+				double elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<double>(new MemoryStream(result), i);
+				Assert.AreEqual(doubleArray[i], elementAtIndex1);
+				Assert.AreEqual(doubleArray[i], elementAtIndex2);
 			}
 		}
 
@@ -298,8 +318,10 @@ namespace Tests
 
 			for (ulong i = 0; i < (ulong)stringArray.Length; i++)
 			{
-				string? elementAtIndex = AUDALF_Deserialize.DeserializeSingleElement<string>(result, i);
-				Assert.AreEqual(stringArray[i], elementAtIndex);
+				string? elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<string>(result, i);
+				string? elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<string>(new MemoryStream(result), i);
+				Assert.AreEqual(stringArray[i], elementAtIndex1);
+				Assert.AreEqual(stringArray[i], elementAtIndex2);
 			}
 		}
 
