@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
@@ -564,6 +563,7 @@ public static class Definitions
 		{ typeof(int), signed_32_bit_integerType.ToArray() },
 		{ typeof(long), signed_64_bit_integerType.ToArray() },
 
+		{ typeof(Half), floating_point_16_bit.ToArray() },
 		{ typeof(float), floating_point_32_bit.ToArray() },
 		{ typeof(double), floating_point_64_bit.ToArray() },
 
@@ -584,6 +584,7 @@ public static class Definitions
 		{ typeof(int[]), signed_32_bit_integerArrayType.ToArray() },
 		{ typeof(long[]), signed_64_bit_integerArrayType.ToArray() },
 
+		{ typeof(Half[]), floating_point_16_bitArrayType.ToArray() },
 		{ typeof(float[]), floating_point_32_bitArrayType.ToArray() },
 		{ typeof(double[]), floating_point_64_bitArrayType.ToArray() },
 

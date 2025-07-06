@@ -398,6 +398,14 @@ public static class AUDALF_Serialize
 		{
 			WriteArray<float>(writer, variableToWrite, sizeof(float));
 		}
+		else if (typeof(Half) == originalType)
+		{
+			WriteHalf(writer, variableToWrite);
+		}
+		else if (typeof(Half[]) == originalType)
+		{
+			WriteArray<Half>(writer, variableToWrite, 2 /* sizeof(Half) */);
+		}
 		else if (typeof(double) == originalType)
 		{
 			WriteDouble(writer, variableToWrite);
@@ -520,11 +528,21 @@ public static class AUDALF_Serialize
 		writer.Write((long)valueToWrite);
 		// No padding needed
 	}
+	
+	private static void WriteHalf(BinaryWriter writer, object valueToWrite)
+	{
+		// Single half takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
+		
+		// Write half as 2 bytes
+		writer.Write((Half)valueToWrite);
+		// Write 6 bytes of padding
+		PadWithZeros(writer, 6);
+	}
 
 	private static void WriteFloat(BinaryWriter writer, object valueToWrite)
 	{
 		// Single float takes either 8 bytes (as key since type ID is given earlier) or 16 bytes (as value since type ID must be given)
-		
+
 		// Write float as 4 bytes
 		writer.Write((float)valueToWrite);
 		// Write 4 bytes of padding
@@ -682,12 +700,31 @@ public static class AUDALF_Serialize
 
 	private static void WriteArray<T>(BinaryWriter writer, object valueToWrite, int bytesPerItem)
 	{
-		T[] array = (T[])valueToWrite;
-		byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
-		Buffer.BlockCopy(array, 0, arrayToWrite, 0, arrayToWrite.Length);
+		if (typeof(T).IsPrimitive)
+		{
+			T[] array = (T[])valueToWrite;
+			byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
+			Buffer.BlockCopy(array, 0, arrayToWrite, 0, arrayToWrite.Length);
 
-		// Write actual array
-		ArrayWriter(writer, arrayToWrite);
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
+		}
+		else if (typeof(T) == typeof(Half))
+		{
+			Half[] array = (Half[])valueToWrite;
+			byte[] arrayToWrite = new byte[array.Length * bytesPerItem];
+			for (int i = 0; i < array.Length; i++)
+			{
+				BitConverter.TryWriteBytes(new Span<byte>(arrayToWrite, i * 2, bytesPerItem), array[i]);
+			}
+
+			// Write actual array
+			ArrayWriter(writer, arrayToWrite);
+		}
+		else
+		{
+			throw new NotImplementedException($"Support for {typeof(T)} array serialization is not yet implemented!");
+		}
 	}
 
 	private static void ArrayWriter(BinaryWriter writer, byte[] arrayToWrite)

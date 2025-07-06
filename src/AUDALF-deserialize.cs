@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Frozen;
 using System.Numerics;
 using System.Buffers.Binary;
+using System.Reflection.Metadata;
 
 namespace CSharp_AUDALF;
 
@@ -83,124 +84,132 @@ public static class AUDALF_Deserialize
 	private static readonly FrozenDictionary<long, DeserializeDefinition> definitions = new Dictionary<long, DeserializeDefinition>()
 	{
 		// Null values
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.specialType.AsSpan()),
 			new DeserializeDefinition(typeof(object), ReadNull, ReadNull)
 		},
 
 		// Single values
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_8_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(byte), ReadByte, ReadByte, sizeof(byte))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_16_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(ushort), ReadUShort, ReadUShort, sizeof(ushort))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_32_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(uint), ReadUInt, ReadUInt, sizeof(uint))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_64_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(ulong), ReadULong, ReadULong, sizeof(ulong))
 		},
 
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_8_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(sbyte), ReadSByte, ReadSByte, sizeof(sbyte))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_16_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(short), ReadShort, ReadShort, sizeof(short))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_32_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(int), ReadInt, ReadInt, sizeof(int))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_64_bit_integerType.AsSpan()),
 			new DeserializeDefinition(typeof(long), ReadLong, ReadLong, sizeof(long))
 		},
 
-		{ 
+		{
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_16_bit.AsSpan()),
+			new DeserializeDefinition(typeof(Half), ReadHalf, ReadHalf, 2 /*sizeof(Half)*/)
+		},
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_32_bit.AsSpan()),
 			new DeserializeDefinition(typeof(float), ReadSingle, ReadSingle, sizeof(float))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_64_bit.AsSpan()),
 			new DeserializeDefinition(typeof(double), ReadDouble, ReadDouble, sizeof(double))
 		},
 
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.string_utf8.AsSpan()),
 			new DeserializeDefinition(typeof(string), ReadUTF8String, ReadUTF8String)
 		},
 
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.booleans.AsSpan()),
 			new DeserializeDefinition(typeof(bool), ReadBool, ReadBool, sizeof(bool))
 		},
 
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.datetime_unix_seconds.AsSpan()),
 			new DeserializeDefinition(typeof(DateTimeOffset), ReadUnixSeconds, ReadUnixSeconds, sizeof(long))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.datetime_unix_milliseconds.AsSpan()),
 			new DeserializeDefinition(typeof(DateTimeOffset), ReadUnixMilliSeconds, ReadUnixMilliSeconds, sizeof(long))
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.datetime_iso_8601.AsSpan()),
 			new DeserializeDefinition(typeof(DateTimeOffset), ReadISO8601Timestamp, ReadISO8601Timestamp)
 		},
 
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.bigIntegerType.AsSpan()),
 			new DeserializeDefinition(typeof(BigInteger), ReadBigInteger, ReadBigInteger)
 		},
 
 
 		// Array values
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_8_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(byte[]), ReadByteArray, ReadByteArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_16_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(ushort[]), ReadUShortArray, ReadUShortArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_32_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(uint[]), ReadUIntArray, ReadUIntArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.unsigned_64_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(ulong[]), ReadULongArray, ReadULongArray)
 		},
 
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_8_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(sbyte[]), ReadSByteArray, ReadSByteArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_16_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(short[]), ReadShortArray, ReadShortArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_32_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(int[]), ReadIntArray, ReadIntArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.signed_64_bit_integerArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(long[]), ReadLongArray, ReadLongArray)
 		},
 
-		{ 
+		{
+			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_16_bitArrayType.AsSpan()),
+			new DeserializeDefinition(typeof(Half[]), ReadHalfArray, ReadHalfArray)
+		},
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_32_bitArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(float[]), ReadSingleArray, ReadSingleArray)
 		},
-		{ 
+		{
 			BinaryPrimitives.ReadInt64LittleEndian(Definitions.floating_point_64_bitArrayType.AsSpan()),
 			new DeserializeDefinition(typeof(double[]), ReadDoubleArray, ReadDoubleArray)
 		},
@@ -905,6 +914,27 @@ public static class AUDALF_Deserialize
 	}
 
 
+	internal static object ReadHalf(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
+	{
+		return BinaryPrimitives.ReadHalfLittleEndian(bytesToProcess);
+	}
+
+	internal static object ReadHalf(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
+	{
+		return reader.ReadHalf();
+	}
+
+	internal static object ReadHalfArray(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
+	{
+		return ReadHalfArray(bytesToProcess);
+	}
+
+	internal static object ReadHalfArray(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
+	{
+		return ReadHalfArray(reader);
+	}
+
+
 	internal static object ReadSingle(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null)
 	{
 		return BinaryPrimitives.ReadSingleLittleEndian(bytesToProcess);
@@ -982,7 +1012,7 @@ public static class AUDALF_Deserialize
 		{
 			return dateTimeOffset;
 		}
-		
+
 		return dateTimeOffset.UtcDateTime;// .DateTime;
 	}
 
@@ -995,7 +1025,7 @@ public static class AUDALF_Deserialize
 		{
 			return dateTimeOffset;
 		}
-		
+
 		return dateTimeOffset.UtcDateTime;// .DateTime;
 	}
 
@@ -1109,6 +1139,32 @@ public static class AUDALF_Deserialize
 		ReadOnlySpan<byte> source = bytesToProcess.Slice(8, (int)byteArrayLengthInBytes);
 		T[] returnArray = new T[byteArrayLengthInBytes / bytesPerItem];
 		Buffer.BlockCopy(source.ToArray(), 0, returnArray, 0, (int)byteArrayLengthInBytes);
+		return returnArray;
+	}
+
+	private const int bytesPerHalf = 2;
+	
+	private static Half[] ReadHalfArray(BinaryReader reader)
+	{
+		ulong byteArrayLengthInBytes = reader.ReadUInt64();
+		byte[] bytes = reader.ReadBytes((int)byteArrayLengthInBytes);
+		Half[] returnArray = new Half[byteArrayLengthInBytes / bytesPerHalf];
+		for (int i = 0; i < returnArray.Length; i++)
+		{
+			returnArray[i] = BitConverter.ToHalf(new ReadOnlySpan<byte>(bytes, i * bytesPerHalf, bytesPerHalf));
+		}
+		return returnArray;
+	}
+
+	private static Half[] ReadHalfArray(ReadOnlySpan<byte> bytesToProcess)
+	{
+		ulong byteArrayLengthInBytes = BinaryPrimitives.ReadUInt64LittleEndian(bytesToProcess);
+		ReadOnlySpan<byte> source = bytesToProcess.Slice(8, (int)byteArrayLengthInBytes);
+		Half[] returnArray = new Half[byteArrayLengthInBytes / bytesPerHalf];
+		for (int i = 0; i < returnArray.Length; i++)
+		{
+			returnArray[i] = BitConverter.ToHalf(source.Slice(i * bytesPerHalf, bytesPerHalf));
+		}
 		return returnArray;
 	}
 }

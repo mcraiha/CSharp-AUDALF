@@ -241,6 +241,34 @@ namespace Tests
 			}
 		}
 
+		[Test, Description("Half array roundtrip test")]
+		public void HalfArrayRoundtripTest()
+		{
+			// Arrange
+			Half[] halfArray = new Half[] { Half.MinValue, -1, (Half)3.14, Half.MaxValue };
+
+			// Act
+			byte[] result = AUDALF_Serialize.Serialize(halfArray);
+			Half[] halfArrayDeserialized1 = AUDALF_Deserialize.Deserialize<Half>(result);
+			Half[] halfArrayDeserialized2 = AUDALF_Deserialize.Deserialize<Half>(new MemoryStream(result));
+
+			// Assert
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(halfArrayDeserialized1);
+			Assert.IsNotNull(halfArrayDeserialized2);
+
+			CollectionAssert.AreEqual(halfArray, halfArrayDeserialized1);
+			CollectionAssert.AreEqual(halfArray, halfArrayDeserialized2);
+
+			for (ulong i = 0; i < (ulong)halfArray.Length; i++)
+			{
+				Half elementAtIndex1 = AUDALF_Deserialize.DeserializeSingleElement<Half>(result, i);
+				Half elementAtIndex2 = AUDALF_Deserialize.DeserializeSingleElement<Half>(new MemoryStream(result), i);
+				Assert.AreEqual(halfArray[i], elementAtIndex1);
+				Assert.AreEqual(halfArray[i], elementAtIndex2);
+			}
+		}
+
 		[Test, Description("Float array roundtrip test")]
 		public void FloatArrayRoundtripTest()
 		{
@@ -587,6 +615,7 @@ namespace Tests
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
 
+				{ "halfarray", new Half[] { Half.MinValue, -1, (Half)3.14, Half.MaxValue } },
 				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } },
 				{ "doublearray", new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue } }
 			};
@@ -632,6 +661,7 @@ namespace Tests
 				{ "intarray", new int[] {1, int.MinValue, 7, int.MaxValue} },
 				{ "longarray", new long[] {1, long.MinValue, 4898797, 13, long.MaxValue} },
 
+				{ "halfarray", new Half[] { Half.MinValue, -1, (Half)3.14, Half.MaxValue } },
 				{ "floatarray", new float[] { float.MinValue, -1, 3.14f, float.MaxValue } },
 				{ "doublearray", new double[] { double.MinValue, -1, 0.0, 3.14, double.MaxValue } }
 			};
@@ -677,9 +707,11 @@ namespace Tests
 			CollectionAssert.AreEqual((int[])stringObjectDictionary["intarray"]!, (int[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "intarray")!);
 			CollectionAssert.AreEqual((long[])stringObjectDictionary["longarray"]!, (long[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "longarray")!);
 
+			CollectionAssert.AreEqual((Half[])stringObjectDictionary["halfarray"]!, (Half[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "halfarray")!);
 			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"]!, (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "floatarray")!);
 			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"]!, (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(result, "doublearray")!);
 
+			CollectionAssert.AreEqual((Half[])stringObjectDictionary["halfarray"]!, (Half[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "halfarray")!);
 			CollectionAssert.AreEqual((float[])stringObjectDictionary["floatarray"]!, (float[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "floatarray")!);
 			CollectionAssert.AreEqual((double[])stringObjectDictionary["doublearray"]!, (double[])AUDALF_Deserialize.DeserializeSingleValue<string,object?>(new MemoryStream(result), "doublearray")!);
 		}

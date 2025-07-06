@@ -44,10 +44,11 @@ string? deserializedString = AUDALF_Deserialize.DeserializeSingleValue<string, s
 - ulong (single value and array)
 - sbyte (single value and array)
 - short (single value and array)
-- int (single value and array) 
-- long (single value and array) 
-- float (single value and array) 
-- double (single value and array) 
+- int (single value and array)
+- long (single value and array)
+- half aka binary16 (single value and array)
+- float aka binary32 (single value and array)
+- double aka binary64 (single value and array)
 - string
 - boolean
 - BigInteger
