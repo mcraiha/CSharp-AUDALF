@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>LibAUDALF</PackageId>
-    <VersionPrefix>0.9.3</VersionPrefix>
+    <VersionPrefix>0.9.4</VersionPrefix>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Authors>Kaarlo Räihä</Authors>
     <Description>.Net 10 compatible managed AUDALF library implementation in C#</Description>

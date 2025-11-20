@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.9.4 (released 2025-11-20)
+- .NET 10 support (**FEATURE**)
+
 ## Version 0.9.3 (released 2025-07-06)
 - Support `<Nullable>enable</Nullable>` (**FEATURE**)
 - Support Half aka binary16 types (**FEATURE**)
