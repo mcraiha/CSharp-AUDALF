@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageId>LibAUDALF</PackageId>
     <VersionPrefix>0.9.3</VersionPrefix>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Authors>Kaarlo Räihä</Authors>
-    <Description>.Net 8 compatible managed AUDALF library implementation in C#</Description>
+    <Description>.Net 10 compatible managed AUDALF library implementation in C#</Description>
     <IncludeSource>true</IncludeSource>
     <PackageProjectUrl>https://github.com/mcraiha/CSharp-AUDALF</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mcraiha/CSharp-AUDALF.git</RepositoryUrl>

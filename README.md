@@ -1,6 +1,6 @@
 # CSharp-AUDALF
 
-.Net 8 compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
+.Net 10 compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
 
 ## Build status
 
