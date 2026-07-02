@@ -41,11 +41,11 @@ public enum AUDALF_ValidationResult
 	UnknownValueType
 }
 
-delegate object? ReadFromStream(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null);
+internal delegate object? ReadFromStream(BinaryReader reader, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null);
 
-delegate object? ReadFromReadOnlySpan(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null);
+internal delegate object? ReadFromReadOnlySpan(ReadOnlySpan<byte> bytesToProcess, ReadOnlySpan<byte> typeIdAsBytes, Type wantedType, DeserializationSettings? settings = null);
 
-sealed class DeserializeDefinition
+internal sealed class DeserializeDefinition
 {
 	public readonly Type type;
 	public readonly ReadFromStream readFromStream;
