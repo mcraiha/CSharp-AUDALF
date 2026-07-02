@@ -367,7 +367,7 @@ public static class AUDALF_Deserialize
 			}
 		}
 
-		return default;
+		throw new KeyNotFoundException($"Cannot find key: {keyToSeek}");
 	}
 
 	/// <summary>
@@ -395,7 +395,7 @@ public static class AUDALF_Deserialize
 			}
 		}
 
-		return default;
+		throw new KeyNotFoundException($"Cannot find key: {keyToSeek}");
 	}
 
 	/// <summary>
