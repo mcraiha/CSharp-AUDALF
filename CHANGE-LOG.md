@@ -1,7 +1,12 @@
 # Changelog
 
+## Version 0.9.5 (released 2026-07-04)
+- `KeyNotFoundException` when key is not found (**BREAKING**)
+- `IndexOutOfRangeException` when trying to seek too far (**FEATURE**)
+
 ## Version 0.9.4 (released 2025-11-20)
 - .NET 10 support (**FEATURE**)
+- Dropped .NET 8 support (**BREAKING**)
 
 ## Version 0.9.3 (released 2025-07-06)
 - Support `<Nullable>enable</Nullable>` (**FEATURE**)
