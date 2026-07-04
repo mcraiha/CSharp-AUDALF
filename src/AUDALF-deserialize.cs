@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Frozen;
 using System.Numerics;
 using System.Buffers.Binary;
-using System.Reflection.Metadata;
 
 namespace CSharp_AUDALF;
 
@@ -263,11 +262,10 @@ public static class AUDALF_Deserialize
 	/// <param name="settings">Optional Deserialization Settings</param>
 	/// <typeparam name="T">Type of array variables</typeparam>
 	/// <returns>Value of type T</returns>
+	/// <exception cref="IndexOutOfRangeException">In case wanted index is too large</exception>
 	public static T? DeserializeSingleElement<T>(ReadOnlySpan<byte> payload, ulong index, bool doSafetyChecks = true, DeserializationSettings? settings = null)
 	{
-		ulong[] entryOffsets = GetEntryDefinitionOffsets(payload);
-
-		ulong wantedOffset = entryOffsets[index];
+		ulong wantedOffset = GetElementOffset(payload, index);
 
 		(_, object? value) = ReadListKeyAndValueFromOffset(payload, wantedOffset, typeof(T));
 
@@ -283,11 +281,10 @@ public static class AUDALF_Deserialize
 	/// <param name="settings">Optional Deserialization Settings</param>
 	/// <typeparam name="T">Type of array variables</typeparam>
 	/// <returns>Value of type T</returns>
+	/// <exception cref="IndexOutOfRangeException">In case wanted index is too large</exception>
 	public static T? DeserializeSingleElement<T>(Stream inputStream, ulong index, bool doSafetyChecks = true, DeserializationSettings? settings = null)
 	{
-		ulong[] entryOffsets = GetEntryDefinitionOffsets(inputStream);
-
-		ulong wantedOffset = entryOffsets[index];
+		ulong wantedOffset = GetElementOffset(inputStream, index);
 
 		(_, object? value) = ReadListKeyAndValueFromOffset(inputStream, wantedOffset, typeof(T));
 
@@ -564,6 +561,49 @@ public static class AUDALF_Deserialize
 		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
 		{
 			reader.BaseStream.Seek(Definitions.indexCountOffset, SeekOrigin.Begin);
+			return reader.ReadUInt64();
+		}
+	}
+
+	/// <summary>
+	/// Get element offset for wanted element
+	/// </summary>
+	/// <param name="payload">AUDALF byte array</param>
+	/// <param name="wantedZeroBasedIndex">Zero based index for wanted index offset</param>
+	/// <returns>Element offset</returns>
+	/// <exception cref="IndexOutOfRangeException">In case wantedZeroBasedIndex is larger or equal than total index count</exception>
+	public static ulong GetElementOffset(ReadOnlySpan<byte> payload, ulong wantedZeroBasedIndex)
+	{
+		ulong indexCount = BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice(Definitions.indexCountOffset, 8));
+		if (indexCount <= wantedZeroBasedIndex)
+		{
+			throw new IndexOutOfRangeException($"Wanted index is larger than index count, {wantedZeroBasedIndex} vs. {indexCount}");
+		}
+
+		return BinaryPrimitives.ReadUInt64LittleEndian(payload.Slice(Definitions.entryDefinitionsOffset + (int)(wantedZeroBasedIndex * 8), 8));
+	}
+
+	/// <summary>
+	/// Get element offset for wanted element
+	/// </summary>
+	/// <param name="inputStream">Input stream</param>
+	/// <param name="wantedZeroBasedIndex">Zero based index for wanted index offset</param>
+	/// <returns>Element offset</returns>
+	/// <exception cref="IndexOutOfRangeException"></exception>
+	public static ulong GetElementOffset(Stream inputStream, ulong wantedZeroBasedIndex)
+	{
+		using (BinaryReader reader = new BinaryReader(inputStream, Encoding.UTF8, leaveOpen: true))
+		{
+			reader.BaseStream.Seek(Definitions.indexCountOffset, SeekOrigin.Begin);
+			ulong indexCount = reader.ReadUInt64();
+
+			if (indexCount <= wantedZeroBasedIndex)
+			{
+				throw new IndexOutOfRangeException($"Wanted index is larger than index count, {wantedZeroBasedIndex} vs. {indexCount}");
+			}
+
+			reader.BaseStream.Seek(Definitions.entryDefinitionsOffset + (int)(wantedZeroBasedIndex * 8), SeekOrigin.Begin);
+
 			return reader.ReadUInt64();
 		}
 	}
