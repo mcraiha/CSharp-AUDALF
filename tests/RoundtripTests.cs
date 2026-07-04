@@ -43,6 +43,9 @@ public class RoundtripTests
 			Assert.AreEqual(byteArray[i], elementAtIndex1);
 			Assert.AreEqual(byteArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<byte>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<byte>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("UShort array roundtrip test")]
@@ -71,6 +74,9 @@ public class RoundtripTests
 			Assert.AreEqual(ushortArray[i], elementAtIndex1);
 			Assert.AreEqual(ushortArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<ushort>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<ushort>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("UInt array roundtrip test")]
@@ -99,6 +105,9 @@ public class RoundtripTests
 			Assert.AreEqual(uintArray[i], elementAtIndex1);
 			Assert.AreEqual(uintArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<uint>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<uint>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("ULong array roundtrip test")]
@@ -127,6 +136,9 @@ public class RoundtripTests
 			Assert.AreEqual(ulongArray[i], elementAtIndex1);
 			Assert.AreEqual(ulongArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<ulong>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<ulong>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("SByte array roundtrip test")]
@@ -155,6 +167,9 @@ public class RoundtripTests
 			Assert.AreEqual(sbyteArray[i], elementAtIndex1);
 			Assert.AreEqual(sbyteArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<sbyte>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<sbyte>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("Short array roundtrip test")]
@@ -183,6 +198,9 @@ public class RoundtripTests
 			Assert.AreEqual(shortArray[i], elementAtIndex1);
 			Assert.AreEqual(shortArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<short>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<short>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("Int array roundtrip test")]
@@ -211,6 +229,9 @@ public class RoundtripTests
 			Assert.AreEqual(intArray[i], elementAtIndex1);
 			Assert.AreEqual(intArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<int>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<int>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("Long array roundtrip test")]
@@ -239,6 +260,9 @@ public class RoundtripTests
 			Assert.AreEqual(longArray[i], elementAtIndex1);
 			Assert.AreEqual(longArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<long>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<long>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("Half array roundtrip test")]
@@ -267,6 +291,9 @@ public class RoundtripTests
 			Assert.AreEqual(halfArray[i], elementAtIndex1);
 			Assert.AreEqual(halfArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<Half>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<Half>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("Float array roundtrip test")]
@@ -295,6 +322,9 @@ public class RoundtripTests
 			Assert.AreEqual(floatArray[i], elementAtIndex1);
 			Assert.AreEqual(floatArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<float>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<float>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("Double array roundtrip test")]
@@ -323,6 +353,9 @@ public class RoundtripTests
 			Assert.AreEqual(doubleArray[i], elementAtIndex1);
 			Assert.AreEqual(doubleArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<double>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<double>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("String array roundtrip test")]
@@ -351,6 +384,9 @@ public class RoundtripTests
 			Assert.AreEqual(stringArray[i], elementAtIndex1);
 			Assert.AreEqual(stringArray[i], elementAtIndex2);
 		}
+
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<string>(result, 1_000_000));
+		Assert.Throws<IndexOutOfRangeException>(() => AUDALF_Deserialize.DeserializeSingleElement<string>(new MemoryStream(result), 1_000_000));
 	}
 
 	[Test, Description("String-String dictionary roundtrip test")]
@@ -415,6 +451,9 @@ public class RoundtripTests
 		Assert.AreEqual("is one", AUDALF_Deserialize.DeserializeSingleValue<string,string>(new MemoryStream(result), "1"));
 		Assert.IsNull(AUDALF_Deserialize.DeserializeSingleValue<string,string>(new MemoryStream(result), "second"));
 		Assert.AreEqual("🐶🍦", AUDALF_Deserialize.DeserializeSingleValue<string,string>(new MemoryStream(result), "emojis"));
+
+		Assert.Throws<KeyNotFoundException>(() => AUDALF_Deserialize.DeserializeSingleValue<string,string>(result, "Key does not exist"));
+		Assert.Throws<KeyNotFoundException>(() => AUDALF_Deserialize.DeserializeSingleValue<string,string>(new MemoryStream(result), "Key does not exist"));
 	}
 
 	[Test, Description("Booleans array roundtrip test")]
