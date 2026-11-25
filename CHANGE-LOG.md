@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.9.4 (released 2026-11-25)
+## Version 0.9.6 (released 2026-11-25)
 - .NET 11 support (**FEATURE**)
 - Dropped .NET 10 support (**BREAKING**)
 
