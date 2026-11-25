@@ -4,10 +4,9 @@ using CSharp_AUDALF;
 
 namespace AudalfCli;
 
-
-class Program
+public class Program
 {
-	static void Main(string[] args)
+	public static void Main(string[] args)
 	{
 		if (args.Length != 1)
 		{
