@@ -1,6 +1,6 @@
 # CSharp-AUDALF
 
-.Net 10 compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
+.Net 11 compatible [AUDALF](https://github.com/mcraiha/AUDALF) implementation in C#
 
 ## How do I use this?
 

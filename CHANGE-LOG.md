@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.9.4 (released 2026-11-25)
+- .NET 11 support (**FEATURE**)
+- Dropped .NET 10 support (**BREAKING**)
+
 ## Version 0.9.5 (released 2026-07-04)
 - `KeyNotFoundException` when key is not found (**BREAKING**)
 - `IndexOutOfRangeException` when trying to seek too far (**FEATURE**)
