@@ -4,7 +4,6 @@ using System.Text;
 using CSharp_AUDALF;
 
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
-using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
 
 namespace Tests;
 

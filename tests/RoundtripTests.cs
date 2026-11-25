@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Numerics;
 
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
-using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
 using System.IO;
 
 namespace Tests;
