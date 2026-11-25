@@ -21,7 +21,7 @@ public class Program
 			{
 				if (!AUDALF_Deserialize.IsAUDALF(fs))
 				{
-					Console.WriteLine("Not an AUDALF input (incorrect FourCC)");
+					Console.Error.WriteLine("Not an AUDALF input (incorrect FourCC)");
 					return;
 				}
 
